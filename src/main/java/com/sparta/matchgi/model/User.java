@@ -18,8 +18,9 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
+
     @Column(nullable = false, unique = true)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -28,6 +29,6 @@ public class User {
     private String nickname;
 
     @Column(nullable = false)
-    private String profileImage;
+    private String profileUrl;//유저수정-API에 맞게 수정
 
 }

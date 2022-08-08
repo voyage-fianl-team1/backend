@@ -8,7 +8,7 @@ public enum MatchStatus {
     ONGOING,
     MATCHDEADLINEEND,
     PEOPLEDEADLINEEND,
-    END;
+    MATCHEND;
 
     @JsonCreator
     public static SubjectEnum from(String name)

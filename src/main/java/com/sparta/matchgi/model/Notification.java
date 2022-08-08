@@ -1,5 +1,6 @@
 package com.sparta.matchgi.model;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,21 +9,20 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ImgUrl {
-
+public class Notification extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "IMAGE_ID")
+    @Column(name = "NOTIFICATION_ID")
     private Long id;
 
+    @Column(nullable = false)
+    private String content; //알림내용
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "POST_ID")
-    private Post post;
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     @Column(nullable = false)
-    private String objectKey; //이미지 업로드-추가
-
-    @Column(nullable = false)
-    private String path;//이미지 업로드-추가
+    private boolean read;
 
 }

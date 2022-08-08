@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Post {
+public class Post extends Timestamped{
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -35,8 +35,6 @@ public class Post {
     @Column(nullable = false)
     private int peoples; //전체 모집 인원
 
-    @Column(nullable = false)
-    private int nowPeoples; //현재 인원
 
     @Column(nullable = false)
     private String content;
@@ -53,6 +51,9 @@ public class Post {
 
     @Column(nullable = false)
     private int viewCount;
+
+    @Column(nullable = false)
+    private int requestCount; //경기목록더보기-추가
 
 
     @Enumerated(value = EnumType.STRING)

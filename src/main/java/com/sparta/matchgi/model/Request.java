@@ -25,5 +25,5 @@ public class Request {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private RequestStatusEnum requestStatus;
+    private RequestStatus requestStatus;
 }

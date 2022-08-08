@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 @Getter
-public enum RequestStatusEnum {
+public enum RequestStatus {
     PENDING,
     ACCEPT,
     REJECT,
