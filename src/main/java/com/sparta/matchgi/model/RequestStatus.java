@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 public enum RequestStatusEnum {
     PENDING,
-    FUIFILED,
+    ACCEPT,
+    REJECT,
     WIN,
     LOSE,
     DRAW;
