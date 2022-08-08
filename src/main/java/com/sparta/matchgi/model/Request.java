@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Request {
+public class Request extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

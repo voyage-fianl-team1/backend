@@ -1,10 +1,8 @@
 package com.sparta.matchgi.model;
 
 
-import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -28,7 +26,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
-    private String profileUrl;//유저수정-API에 맞게 수정
+
 
 }

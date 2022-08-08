@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ImgUrl {
+public class ImgUrl extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
