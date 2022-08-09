@@ -1,15 +1,15 @@
 package com.sparta.matchgi.controller;
 
 
+import com.sparta.matchgi.dto.ImagePathDto;
 import com.sparta.matchgi.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,6 +20,11 @@ public class ImageController {
     @PostMapping("/api/image")
     public ResponseEntity<?> upload(@RequestPart MultipartFile file) throws IOException {
         return imageService.upload(file);
+    }
+
+    @DeleteMapping("/api/image")
+    public ResponseEntity<?> deleteImages(@RequestBody List<ImagePathDto> filePaths) {
+        return imageService.deleteImages(filePaths);
     }
 
 }

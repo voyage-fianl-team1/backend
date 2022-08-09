@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -22,8 +23,7 @@ import java.util.UUID;
 public class ImageService {
 
     private final AmazonS3 amazonS3;
-
-    private final ImageRepository imageRepository;
+    
 
     @Value("${S3.bucket.name}")
     private String bucket;
@@ -42,5 +42,13 @@ public class ImageService {
 
         return new ResponseEntity<>(imagePathDto, HttpStatus.valueOf(201));
 
+    }
+
+    public ResponseEntity<?> deleteImages(List<ImagePathDto> filePaths) {
+        for(ImagePathDto imagePathDto:filePaths){
+            amazonS3.deleteObject(bucket,imagePathDto.getPath());
+        }
+
+        return new ResponseEntity<>(filePaths, HttpStatus.valueOf(200));
     }
 }
