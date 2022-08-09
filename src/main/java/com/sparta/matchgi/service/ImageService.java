@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.model.ImgUrl;
+import com.sparta.matchgi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ public class ImageService {
 
     private final AmazonS3 amazonS3;
 
+    private final ImageRepository imageRepository;
+
     @Value("${S3.bucket.name}")
     private String bucket;
 
@@ -33,7 +38,9 @@ public class ImageService {
                 .withCannedAcl(CannedAccessControlList.PublicRead);
         amazonS3.putObject(por);
 
-        return new ResponseEntity<>("성공적으로 파일이 업로드 되었습니다", HttpStatus.valueOf(201));
+        ImagePathDto imagePathDto = new ImagePathDto(filename);
+
+        return new ResponseEntity<>(imagePathDto, HttpStatus.valueOf(201));
 
     }
 }
