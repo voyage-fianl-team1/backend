@@ -1,6 +1,7 @@
 package com.sparta.matchgi.model;
 
 
+import com.sparta.matchgi.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,10 +28,10 @@ public class Post extends Timestamped{
     private String title;
 
     @Column(nullable = false)
-    private LocalDate peopleDeadline;
+    private LocalDateTime peopleDeadline;
 
     @Column(nullable = false)
-    private LocalDate matchDeadline;
+    private LocalDateTime matchDeadline;
 
     @Column(nullable = false)
     private int peoples; //전체 모집 인원
@@ -44,10 +45,10 @@ public class Post extends Timestamped{
     private SubjectEnum subject;
 
     @Column(nullable = false)
-    private Double Lat;
+    private Double lat;
 
     @Column(nullable = false)
-    private Double Lng;
+    private Double lng;
 
     @Column(nullable = false)
     private int viewCount;
@@ -69,6 +70,24 @@ public class Post extends Timestamped{
 
 
 
+    public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
+        this.user = userDetails.getUser();
+        this.title = createPostRequestDto.getTitle();
+        this.peopleDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getPeopleDeadline());
+        this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
+        this.address = createPostRequestDto.getAddress();
+        this.lat = createPostRequestDto.getLat();
+        this.lng = createPostRequestDto.getLng();
+        this.peoples = createPostRequestDto.getPeoples();
+        this.content = createPostRequestDto.getContent();
+        this.subject = createPostRequestDto.getSubject();
+        this.viewCount = 0;
+        this.requestCount = 0;
+        this.matchStatus = MatchStatus.ONGOING;
+        this.address = this.getAddress();
 
-
+    }
+    public void addImgUrl(ImgUrl imgUrl){
+        this.imageList.add(imgUrl);
+    }
 }

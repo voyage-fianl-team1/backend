@@ -20,6 +20,7 @@ public class ImageService {
 
     private final AmazonS3 amazonS3;
 
+
     @Value("${S3.bucket.name}")
     private String bucket;
 
@@ -33,7 +34,17 @@ public class ImageService {
                 .withCannedAcl(CannedAccessControlList.PublicRead);
         amazonS3.putObject(por);
 
-        return new ResponseEntity<>("성공적으로 파일이 업로드 되었습니다", HttpStatus.valueOf(201));
+        ImagePathDto imagePathDto = new ImagePathDto(filename);
 
+        return new ResponseEntity<>(imagePathDto, HttpStatus.valueOf(201));
+
+    }
+
+    public ResponseEntity<?> deleteImages(List<ImagePathDto> filePaths) {
+        for(ImagePathDto imagePathDto:filePaths){
+            amazonS3.deleteObject(bucket,imagePathDto.getPath());
+        }
+
+        return new ResponseEntity<>(filePaths, HttpStatus.valueOf(200));
     }
 }

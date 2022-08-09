@@ -19,10 +19,18 @@ public class ImgUrl extends Timestamped {
     @JoinColumn(name = "POST_ID")
     private Post post;
 
-    @Column(nullable = false)
-    private String objectKey; //이미지 업로드-추가
 
     @Column(nullable = false)
     private String path;//이미지 업로드-추가
+
+    public ImgUrl(Post post,String path){
+        this.post =post;
+        this.path = path;
+    }
+
+
+    public ImagePathDto getImagePathDto(){
+        return new ImagePathDto(this.path);
+    }
 
 }
