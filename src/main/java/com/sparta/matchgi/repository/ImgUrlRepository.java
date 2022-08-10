@@ -4,5 +4,9 @@ import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ImgUrlRepository extends JpaRepository<ImgUrl,Long> {
+
+    List<ImgUrl> findByPostId(Long postId);
 }
