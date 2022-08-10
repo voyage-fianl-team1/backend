@@ -92,4 +92,8 @@ public class Post extends Timestamped{
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
     }
+
+    public void addRequestCount(){
+        this.requestCount +=1;
+    }
 }
