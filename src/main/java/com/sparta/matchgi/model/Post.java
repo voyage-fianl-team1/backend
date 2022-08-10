@@ -1,12 +1,15 @@
 package com.sparta.matchgi.model;
 
 
-import com.sparta.matchgi.dto.PostRequestDto;
+
+import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.dto.CreatePostRequestDto;
+import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,5 +92,18 @@ public class Post extends Timestamped{
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
+    }
+
+    public void updatePost(CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails){
+        this.user = userDetails.getUser();
+        this.title = createPostRequestDto.getTitle();
+        this.peopleDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getPeopleDeadline());
+        this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
+        this.address = createPostRequestDto.getAddress();
+        this.lat = createPostRequestDto.getLat();
+        this.lng = createPostRequestDto.getLng();
+        this.peoples = createPostRequestDto.getPeoples();
+        this.content = createPostRequestDto.getContent();
+        this.subject = createPostRequestDto.getSubject();
     }
 }

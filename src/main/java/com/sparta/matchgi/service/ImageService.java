@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.model.ImgUrl;
+import com.sparta.matchgi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class ImageService {
 
     private final AmazonS3 amazonS3;
+    
 
 
     @Value("${S3.bucket.name}")

@@ -1,6 +1,7 @@
 package com.sparta.matchgi.config.security;
 
 import com.sparta.matchgi.auth.FilterSkipMatcher;
+import com.sparta.matchgi.auth.FormLoginFailureHandler;
 import com.sparta.matchgi.auth.FormLoginSuccessHandler;
 import com.sparta.matchgi.auth.filter.FormLoginFilter;
 import com.sparta.matchgi.auth.filter.JwtAuthFilter;
@@ -10,6 +11,7 @@ import com.sparta.matchgi.auth.provider.JWTAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -47,10 +49,16 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public FormLoginFailureHandler formLoginFailureHandler() {
+        return new FormLoginFailureHandler();
+    }
+
+    @Bean
     public FormLoginFilter formLoginFilter() throws Exception {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
-        formLoginFilter.setFilterProcessesUrl("/api/login");
+        formLoginFilter.setFilterProcessesUrl("/api/signin");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
     }
@@ -81,13 +89,14 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/api/signup","/api/signin").permitAll()
                 .anyRequest().permitAll();
     }
 
     private JwtAuthFilter jwtFilter() throws Exception {
         List<String> skipPathList = new ArrayList<>();
 
-        skipPathList.add("POST,/api/login");
+        skipPathList.add("POST,/api/signin");
         skipPathList.add("POST,/api/signup");
         skipPathList.add("GET,/");
         skipPathList.add("GET,/api/room/*");

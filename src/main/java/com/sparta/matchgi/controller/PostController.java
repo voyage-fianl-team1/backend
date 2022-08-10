@@ -1,29 +1,31 @@
 package com.sparta.matchgi.controller;
 
-
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
-import com.sparta.matchgi.dto.PostRequestDto;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.repository.PostRepository;
+import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class PostController {
-
-    private final PostRepository postRepository;
 
     private final PostService postService;
 
-    @PostMapping("/api/posts")
-    public Post createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetail){
 
+    @PostMapping("/api/posts")
+    public ResponseEntity<?> createPost(@RequestBody CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.createPost(createPostRequestDto,userDetails);
+    }
+
+    @PutMapping("api/posts/{postId}")
+    public ResponseEntity<?> editPost(@PathVariable Long postId, @RequestBody CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.editPost(postId,requestDto,userDetails);
     }
 
 
+
 }
+

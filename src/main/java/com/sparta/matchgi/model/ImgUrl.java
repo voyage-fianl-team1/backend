@@ -1,5 +1,7 @@
 package com.sparta.matchgi.model;
 
+import com.sparta.matchgi.dto.ImagePathDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
