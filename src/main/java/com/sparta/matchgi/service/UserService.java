@@ -81,28 +81,45 @@ public class UserService {
             throw new IllegalArgumentException("없는 유저입니다.");
         }
 
+        if(file == null){
+
+            if(!reviseUserRequestDto.getDeleteImage().equals("-1")){
+                amazonS3.deleteObject(bucket, reviseUserRequestDto.getDeleteImage());
+            }
+            user.updateNick(reviseUserRequestDto);
+
+            userRepository.save(user);
+
+            return new ResponseEntity<>(new ReviseUserResponseDto(null), HttpStatus.valueOf(200));
+
+        }else{
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            amazonS3.putObject(por);
+
+            if(!reviseUserRequestDto.getDeleteImage().equals("-1")){
+                amazonS3.deleteObject(bucket, reviseUserRequestDto.getDeleteImage());
+            }
+            //이미지 삭제
+
+            //닉네임 변경
+            user.updateNick(reviseUserRequestDto);
+
+            userRepository.save(user);
+
+            //path 수정
+            profileImg.get().update(filename);
+
+            return new ResponseEntity<>(new ReviseUserResponseDto(filename), HttpStatus.valueOf(200));
+        }
+
         //이미지 올리기
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
 
-        PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead);
-        amazonS3.putObject(por);
-
-        //이미지 삭제
-        amazonS3.deleteObject(bucket, reviseUserRequestDto.getDeleteImage());
-
-        //닉네임 변경
-        user.updateNick(reviseUserRequestDto);
-
-        userRepository.save(user);
-
-        //path 수정
-        profileImg.get().update(filename);
-
-        return new ResponseEntity<>(new ReviseUserResponseDto(filename), HttpStatus.valueOf(200));
 
     }
 //1

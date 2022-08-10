@@ -30,7 +30,7 @@ public class UserController {
     @PutMapping("/api/users")
     public ResponseEntity<ReviseUserResponseDto> reviseUser(
             @RequestPart("key") ReviseUserRequestDto reviseUserRequestDto, //dto
-            @RequestPart MultipartFile file,
+            @RequestPart(required = false) MultipartFile file,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return userService.reviseUser(reviseUserRequestDto, file, userDetails);
     }
