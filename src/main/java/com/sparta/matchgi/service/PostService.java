@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.sparta.matchgi.util.ImageChange.upload;
 
 @Service
 @Transactional

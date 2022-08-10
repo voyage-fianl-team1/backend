@@ -1,6 +1,7 @@
 package com.sparta.matchgi.model;
 
 
+import com.sparta.matchgi.dto.ReviseUserRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,5 +33,13 @@ public class User {
         this.email = email;
         this.password = password;
 
+    }
+
+    public void updateNick(ReviseUserRequestDto reviseUserRequestDto){
+        this.nickname = reviseUserRequestDto.getNickname();
+    }
+
+    public void changePassword(String password){
+        this.password = password;
     }
 }
