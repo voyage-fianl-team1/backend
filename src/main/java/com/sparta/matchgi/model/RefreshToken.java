@@ -1,7 +1,6 @@
 package com.sparta.matchgi.model;
 
 
-import com.sparta.matchgi.repository.NotificationRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,26 +9,22 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Notification extends Timestamped {
+public class RefreshToken {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "NOTIFICATION_ID")
+    @Column(name = "REFRESHTOKEN_ID")
     private Long id;
-
-    @Column(nullable = false)
-    private String content; //알림내용
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
 
     @Column(nullable = false)
-    private boolean read;
+    private String refreshToken;
 
-    public Notification(String content,User user){
-        this.content = content;
-        this.user =user;
+    public RefreshToken(User user,String refreshToken){
+        this.user = user;
+        this.refreshToken = refreshToken;
     }
-
 }

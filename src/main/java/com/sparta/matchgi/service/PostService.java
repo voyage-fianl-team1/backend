@@ -5,12 +5,12 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
-import com.sparta.matchgi.model.ImgUrl;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.dto.CreatePostResponseDto;
 import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.model.ImgUrl;
+import com.sparta.matchgi.model.Post;
+import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 @Service
 @Transactional

@@ -8,6 +8,7 @@ import com.sparta.matchgi.auth.filter.JwtAuthFilter;
 import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
 import com.sparta.matchgi.auth.provider.FormLoginAuthProvider;
 import com.sparta.matchgi.auth.provider.JWTAuthProvider;
+import com.sparta.matchgi.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -45,7 +47,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public FormLoginSuccessHandler formLoginSuccessHandler() {
-        return new FormLoginSuccessHandler();
+        return new FormLoginSuccessHandler(refreshTokenRepository);
     }
 
     @Bean

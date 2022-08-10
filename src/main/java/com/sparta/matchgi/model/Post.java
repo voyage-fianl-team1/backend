@@ -87,23 +87,13 @@ public class Post extends Timestamped{
         this.viewCount = 0;
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
-        this.address = this.getAddress();
 
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
     }
 
-    public void updatePost(CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails){
-        this.user = userDetails.getUser();
-        this.title = createPostRequestDto.getTitle();
-        this.peopleDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getPeopleDeadline());
-        this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
-        this.address = createPostRequestDto.getAddress();
-        this.lat = createPostRequestDto.getLat();
-        this.lng = createPostRequestDto.getLng();
-        this.peoples = createPostRequestDto.getPeoples();
-        this.content = createPostRequestDto.getContent();
-        this.subject = createPostRequestDto.getSubject();
+    public void addRequestCount() {
+        this.requestCount += 1;
     }
 }

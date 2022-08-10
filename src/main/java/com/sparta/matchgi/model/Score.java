@@ -21,6 +21,7 @@ public class Score {
     private User user;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private SubjectEnum subject;
 
     @Column(nullable = false)
@@ -31,4 +32,19 @@ public class Score {
 
     @Column(nullable = false)
     private int draw;
+
+    public void addWin(){
+        this.win += 1;
+    }
+    public void addLose(){
+        this.lose += 1;
+    }
+    public void addDraw(){
+        this.draw += 1;
+    }
+
+    public Score(User user,SubjectEnum subject){
+        this.user = user;
+        this.subject = subject;
+    }
 }
