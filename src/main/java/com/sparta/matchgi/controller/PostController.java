@@ -23,10 +23,12 @@ public class PostController {
         return postService.createPost(createPostRequestDto,file,userDetails);
     }
 
-//    @PutMapping("api/posts/{postId}")
-//    public ResponseEntity<?> editPost(@PathVariable Long postId, @RequestBody CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return postService.editPost(postId,requestDto,userDetails);
-//    }
+    @PutMapping("/api/posts/{postId}") //이미지를 수정하거나 삭제할 때?
+    public ResponseEntity<?> editPost(@PathVariable Long postId,@RequestPart MultipartFile file,@RequestPart CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return postService.editPost(postId,requestDto,file,userDetails);
+    }
+    //내용 수정 완료
+    //이미지 수정해야함
 
 
 
