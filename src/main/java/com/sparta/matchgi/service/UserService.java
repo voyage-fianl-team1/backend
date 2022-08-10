@@ -16,21 +16,24 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
+
     public ResponseEntity<?> registerUser(SignupRequestDto signupRequestDto) {
         String nickname = signupRequestDto.getNickname();
         String email = signupRequestDto.getEmail();
         String password = signupRequestDto.getPassword();
 
-        if(userRepository.findByEmail(email).isPresent()){
-            return new ResponseEntity<>("중복된 이메일이 존재합니다",HttpStatus.valueOf(400));
+        if (userRepository.findByEmail(email).isPresent()) {
+            return new ResponseEntity<>("중복된 이메일이 존재합니다", HttpStatus.valueOf(400));
+
         }
 
-        User user = new User(nickname,email, passwordEncoder.encode(password));
+        User user = new User(nickname, email, passwordEncoder.encode(password));
 
         userRepository.save(user);
 
 
-        return new ResponseEntity<>("회원가입에 성공했습니다",HttpStatus.valueOf(200));
+        return new ResponseEntity<>("회원가입에 성공했습니다", HttpStatus.valueOf(200));
 
     }
 }
+

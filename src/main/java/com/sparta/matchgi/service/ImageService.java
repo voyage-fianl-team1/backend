@@ -25,6 +25,7 @@ public class ImageService {
     private final AmazonS3 amazonS3;
     
 
+
     @Value("${S3.bucket.name}")
     private String bucket;
 

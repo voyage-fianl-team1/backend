@@ -1,6 +1,7 @@
 package com.sparta.matchgi.model;
 
 
+
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.util.converter.DateConverter;
@@ -86,14 +87,13 @@ public class Post extends Timestamped{
         this.viewCount = 0;
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
-        this.address = this.getAddress();
 
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
     }
 
-    public void addRequestCount(){
-        this.requestCount +=1;
+    public void addRequestCount() {
+        this.requestCount += 1;
     }
 }
