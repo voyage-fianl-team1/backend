@@ -134,7 +134,7 @@ public class UserService {
         return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.valueOf(200));
     }
 
-    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
 
         String accessToken = extractor.extract(request.getHeader("Authorization"),request);
 

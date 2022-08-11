@@ -25,8 +25,8 @@ public class UserController {
 
 
     @PutMapping("/api/refresh")
-    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response){
-        return userService.refreshToken(request,response);
+    public ResponseEntity<?> refreshToken(HttpServletRequest request){
+        return userService.refreshToken(request);
     }
 
     @PostMapping("/api/signup")
