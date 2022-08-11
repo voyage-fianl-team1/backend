@@ -127,7 +127,12 @@ public class PostService {
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
-
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
+        List<ImagePathDto> pathDtoList=new ArrayList<>();
+        for(ImgUrl imgurl:imageList){
+            ImagePathDto path=imgurl.getImagePathDto();
+            deleteImages(path);
+        }
         postRepository.deleteById(postId);
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
