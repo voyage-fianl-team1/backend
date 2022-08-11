@@ -47,15 +47,19 @@ public class PostService {
 
 
     public ResponseEntity<?> createPost(
-            CreatePostRequestDto createPostRequestDto, MultipartFile file, UserDetailsImpl userDetails)
+            CreatePostRequestDto createPostRequestDto,List<MultipartFile> file, UserDetailsImpl userDetails)
             throws IOException
     {
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
+        List<ImagePathDto> pathlist=new ArrayList<>();
         ImagePathDto imagePathDto=update(file); //말그대로 String의 image path를 저장
         List<ImagePathDto> imagePathDtoList=new ArrayList<>();
+        for(MultipartFile filed:file){
+            
+        }
         imagePathDtoList.add(imagePathDto); //imagepath dto에 저장
 
         for (ImagePathDto imagePathdto : imagePathDtoList) {
@@ -69,7 +73,7 @@ public class PostService {
     }
 
     public ResponseEntity<?> editPost(
-            Long postId,CreatePostRequestDto createPostRequestDto,MultipartFile file,UserDetailsImpl userDetails)
+            Long postId,CreatePostRequestDto createPostRequestDto,List<MultipartFile> file,UserDetailsImpl userDetails)
             throws IOException {
 
         Post post=postRepository.findPostById(postId);
@@ -78,10 +82,8 @@ public class PostService {
 
         post.updatePost(createPostRequestDto,userDetails);
         postRepository.save(post);
-        //--------------------여기까지 게시물 수정 완료------------------------------------//
-        //--------------------이제 이미지 수정하자---------------------------------------//
 
-        if(!file.isEmpty())//업로드한 사진 없으면 그냥 기존사진 쓰기, 근데 비어있지 않으면
+        if(file==null)//업로드한 사진 없으면 그냥 기존사진 쓰기, 근데 비어있지 않으면
         {
             //저장된 이미지 다 불러와서 지우고(현재로써는)(나중에 개별 지우기 구현)
             //새로 업데이트
@@ -106,7 +108,7 @@ public class PostService {
 
             for (ImagePathDto imagePathdto : imagePathDtoList) {
                 ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
-                post.addImgUrl(imgUrl); //db에서 삭제
+                post.addImgUrl(imgUrl); //db에서 삭제 필요
             }
 
         }
