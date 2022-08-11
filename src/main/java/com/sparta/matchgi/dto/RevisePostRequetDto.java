@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CreatePostRequestDto {
+public class RevisePostRequetDto {
 
     private String title;
 
@@ -35,7 +35,7 @@ public class CreatePostRequestDto {
 
     private String content;
 
-    //private List<ImagePathDto> images;
+    private List<ImagePathDto> deleteImages;
 
 
 }

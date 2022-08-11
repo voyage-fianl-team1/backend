@@ -4,6 +4,8 @@ package com.sparta.matchgi.model;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
+import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.dto.RevisePostRequetDto;
 import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -87,11 +89,14 @@ public class Post extends Timestamped{
         this.viewCount = 0;
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
-        this.address = this.getAddress();
 
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
+    }
+
+    public void addRequestCount() {
+        this.requestCount += 1;
     }
 
     public void updatePost(CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails){
@@ -105,5 +110,18 @@ public class Post extends Timestamped{
         this.peoples = createPostRequestDto.getPeoples();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
+    }
+
+    public void editPost(RevisePostRequetDto revisePostRequetDto,UserDetailsImpl userDetails){ //deleteImages는 포함 X
+        this.user = userDetails.getUser();
+        this.title = revisePostRequetDto.getTitle();
+        this.peopleDeadline = DateConverter.dateToLocalDateTime(revisePostRequetDto.getPeopleDeadline());
+        this.matchDeadline = DateConverter.dateToLocalDateTime(revisePostRequetDto.getMatchDeadline());
+        this.address = revisePostRequetDto.getAddress();
+        this.lat = revisePostRequetDto.getLat();
+        this.lng = revisePostRequetDto.getLng();
+        this.peoples = revisePostRequetDto.getPeoples();
+        this.content = revisePostRequetDto.getContent();
+        this.subject = revisePostRequetDto.getSubject();
     }
 }

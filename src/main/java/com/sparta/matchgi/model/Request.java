@@ -1,5 +1,6 @@
 package com.sparta.matchgi.model;
 
+import com.sparta.matchgi.dto.UpdateRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,14 @@ public class Request extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus requestStatus;
+
+    public Request(Post post,User user){
+        this.post = post;
+        this.user = user;
+        this.requestStatus = RequestStatus.PENDING;
+    }
+
+    public void updateStatus(UpdateRequestDto updateRequestDto) {
+        this.requestStatus = updateRequestDto.getStatus();
+    }
 }

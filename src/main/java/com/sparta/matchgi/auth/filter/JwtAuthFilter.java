@@ -1,7 +1,9 @@
 package com.sparta.matchgi.auth.filter;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
+import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.auth.jwt.JwtPreProcessingToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,12 +13,16 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+
+import static com.sparta.matchgi.auth.jwt.JwtTokenUtils.CLAIM_EXPIRED_DATE;
 
 /**
  * Token 을 내려주는 Filter 가 아닌  client 에서 받아지는 Token 을 서버 사이드에서 검증하는 클레스 SecurityContextHolder 보관소에 해당
@@ -26,13 +32,17 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
     private final HeaderTokenExtractor extractor;
 
+    private final JwtDecoder jwtDecoder;
+
     public JwtAuthFilter(
             RequestMatcher requiresAuthenticationRequestMatcher,
-            HeaderTokenExtractor extractor
+            HeaderTokenExtractor extractor,
+            JwtDecoder jwtDecoder
     ) {
         super(requiresAuthenticationRequestMatcher);
 
         this.extractor = extractor;
+        this.jwtDecoder = jwtDecoder;
     }
 
     @Override
@@ -45,12 +55,18 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
         // JWT 값을 담아주는 변수 TokenPayload
         String tokenPayload = request.getHeader("Authorization");
-        if (tokenPayload == null) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
 
+
+        if (tokenPayload == null) {
+            responseMessage(response,objectMapper,"로그인 후 이용해주세요");
+
+            return null;
+        }
+
+        String accessToken = extractor.extract(tokenPayload,request);
+
+        if(jwtDecoder.isExpiredToken(accessToken)){
+            responseMessage(response,objectMapper,"ExpiredDate");
             return null;
         }
 
@@ -103,5 +119,12 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
                 response,
                 failed
         );
+    }
+
+    private void responseMessage(HttpServletResponse response,ObjectMapper objectMapper,Object object) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        objectMapper.writeValue(response.getWriter(), object);
     }
 }
