@@ -9,9 +9,7 @@ import com.sparta.matchgi.dto.ChangePasswordDto;
 import com.sparta.matchgi.dto.ReviseUserRequestDto;
 import com.sparta.matchgi.dto.ReviseUserResponseDto;
 import com.sparta.matchgi.dto.SignupRequestDto;
-import com.sparta.matchgi.model.ProfileImg;
 import com.sparta.matchgi.model.User;
-import com.sparta.matchgi.repository.ProfileImgRepository;
 import com.sparta.matchgi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +33,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final ProfileImgRepository profileImgRepository;
+
     private final AmazonS3 amazonS3;
 
     @Value("${S3.bucket.name}")
@@ -46,8 +44,7 @@ public class UserService {
         String email = signupRequestDto.getEmail();
         String password = signupRequestDto.getPassword();
 
-        //기본 이미지
-        String imageUrl = "e74929fc-ee95-461c-a50b-7b2b34c9b71e_3636_10174_4958.jpg";
+
 
         if (userRepository.findByEmail(email).isPresent()) {
             return new ResponseEntity<>("중복된 이메일이 존재합니다", HttpStatus.valueOf(400));
@@ -56,11 +53,8 @@ public class UserService {
 
         User user = new User(nickname, email, passwordEncoder.encode(password));
 
-        ProfileImg profileImg = new ProfileImg(user, imageUrl);
         userRepository.save(user);
 
-        //기본 이미지 저장
-        profileImgRepository.save(profileImg);
 
         return new ResponseEntity<>("회원가입에 성공했습니다", HttpStatus.valueOf(200));
 
@@ -76,17 +70,14 @@ public class UserService {
         }
 
         //유저의 프로필이미지 찾기
-        Optional<ProfileImg> profileImg = profileImgRepository.findByUser(user);
-        if (!profileImg.isPresent()){
-            throw new IllegalArgumentException("없는 유저입니다.");
-        }
+
 
         if(file == null){
 
             if(!reviseUserRequestDto.getDeleteImage().equals("-1")){
                 amazonS3.deleteObject(bucket, reviseUserRequestDto.getDeleteImage());
             }
-            user.updateNick(reviseUserRequestDto);
+            user.updateNickAndprofileImageUrl(reviseUserRequestDto,null);
 
             userRepository.save(user);
 
@@ -108,12 +99,11 @@ public class UserService {
             //이미지 삭제
 
             //닉네임 변경
-            user.updateNick(reviseUserRequestDto);
+            user.updateNickAndprofileImageUrl(reviseUserRequestDto,filename);
 
             userRepository.save(user);
 
             //path 수정
-            profileImg.get().update(filename);
 
             return new ResponseEntity<>(new ReviseUserResponseDto(filename), HttpStatus.valueOf(200));
         }
