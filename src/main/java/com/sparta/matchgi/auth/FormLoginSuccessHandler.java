@@ -13,13 +13,15 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     public static final String AUTH_HEADER = "Authorization";
     public static final String TOKEN_TYPE = "BEARER";
-    public static final String REFRESH_AUTH_HEADER = "Refresh_Authorization";
+    public static final String REFRESH_AUTH_HEADER = "refreshToken";
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -30,15 +32,25 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         final ObjectMapper objectMapper = new ObjectMapper();
 
         final UserDetailsImpl userDetails = ((UserDetailsImpl) authentication.getPrincipal());
+
+        String email = userDetails.getUser().getEmail();
         // Token 생성
-        final String token = JwtTokenUtils.generateJwtToken(userDetails);
+        final String token = JwtTokenUtils.generateJwtToken(email);
         final String refresh_token = JwtTokenUtils.generateJwtRefreshToken();
 
-        refreshTokenRepository.save(new RefreshToken(userDetails.getUser(),refresh_token));
 
-        LoginResponseDto loginResponseDto = new LoginResponseDto(TOKEN_TYPE + " " + token,TOKEN_TYPE + " " + refresh_token);
+        Optional<RefreshToken> refreshTokenFound = refreshTokenRepository.findByEmail(email);
+
+        if(refreshTokenFound.isPresent()){
+            refreshTokenFound.get().updateRefreshToken(refresh_token);
+            refreshTokenRepository.save(refreshTokenFound.get());
+        }else{
+            refreshTokenRepository.save(new RefreshToken(email,refresh_token));
+        }
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(TOKEN_TYPE + " " + token,refresh_token);
         response.addHeader(AUTH_HEADER, TOKEN_TYPE + " " + token);
-        response.addHeader(REFRESH_AUTH_HEADER,TOKEN_TYPE + " " + refresh_token);
+        response.addHeader(REFRESH_AUTH_HEADER, refresh_token);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(),loginResponseDto);

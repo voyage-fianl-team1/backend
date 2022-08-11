@@ -6,6 +6,7 @@ import com.sparta.matchgi.auth.FormLoginSuccessHandler;
 import com.sparta.matchgi.auth.filter.FormLoginFilter;
 import com.sparta.matchgi.auth.filter.JwtAuthFilter;
 import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
+import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.auth.provider.FormLoginAuthProvider;
 import com.sparta.matchgi.auth.provider.JWTAuthProvider;
 import com.sparta.matchgi.repository.RefreshTokenRepository;
@@ -34,6 +35,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final JwtDecoder jwtDecoder;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -91,7 +94,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/api/signup","/api/signin").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/signup","/api/signin","/api/refresh").permitAll()
                 .anyRequest().permitAll();
     }
 
@@ -103,13 +106,14 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/");
         skipPathList.add("GET,/api/room/*");
         skipPathList.add("GET,/api/rooms");
+        skipPathList.add("PUT,/api/refresh");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
                 "/**"
         );
 
-        JwtAuthFilter filter = new JwtAuthFilter(matcher, headerTokenExtractor);
+        JwtAuthFilter filter = new JwtAuthFilter(matcher, headerTokenExtractor,jwtDecoder);
         filter.setAuthenticationManager(super.authenticationManagerBean());
 
         return filter;

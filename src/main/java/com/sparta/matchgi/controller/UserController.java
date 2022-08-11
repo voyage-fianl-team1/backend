@@ -1,6 +1,7 @@
 package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.dto.ChangePasswordDto;
 import com.sparta.matchgi.dto.ReviseUserRequestDto;
 import com.sparta.matchgi.dto.ReviseUserResponseDto;
@@ -12,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
@@ -20,11 +23,15 @@ public class UserController {
 
     private final UserService userService;
 
+
+    @PutMapping("/api/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response){
+        return userService.refreshToken(request,response);
+    }
+
     @PostMapping("/api/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequestDto signupRequestDto){
-        ResponseEntity<?>  responseEntity = userService.registerUser(signupRequestDto);
-
-        return responseEntity;
+         return userService.registerUser(signupRequestDto);
     }
 
     @PutMapping("/api/users")
