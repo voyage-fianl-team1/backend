@@ -17,7 +17,6 @@ public class DtoConverter {
                 .lng(post.getLng())
                 .matchDeadline(post.getMatchDeadline())
                 .matchStatus(post.getMatchStatus())
-                .peoples(post.getPeoples())
                 .peopleDeadline(post.getPeopleDeadline())
                 .subject(post.getSubject())
                 .title(post.getTitle())

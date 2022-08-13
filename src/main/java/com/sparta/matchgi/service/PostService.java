@@ -47,16 +47,19 @@ public class PostService {
 
 
     public ResponseEntity<?> createPost(
-            CreatePostRequestDto createPostRequestDto, MultipartFile file, UserDetailsImpl userDetails)
+            CreatePostRequestDto createPostRequestDto, List<MultipartFile> file, UserDetailsImpl userDetails)
             throws IOException
     {
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
-        ImagePathDto imagePathDto=update(file); //말그대로 String의 image path를 저장
+
         List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-        imagePathDtoList.add(imagePathDto); //imagepath dto에 저장
+        for(MultipartFile filed:file){
+            ImagePathDto imagePathDto=update(filed); //파일을 하나씩 s3에 업데이트
+            imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
+        }
 
         for (ImagePathDto imagePathdto : imagePathDtoList) {
             ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
@@ -92,8 +95,7 @@ public class PostService {
             {
                 ImagePathDto path=imgUrl.getImagePathDto();
                 imagePath.add(path);
-                System.out.println(path.getPath()); //path는 잘 받아옴
-                deleteImages(imagePath);
+                deleteImages(path);//버킷에서 삭제
                 imgUrlRepository.delete(imgUrl);
                 System.out.println("삭제 성공!");
 
@@ -118,6 +120,41 @@ public class PostService {
     }
 
 
+    public ResponseEntity<?> deletePost(Long postId, UserDetailsImpl userDetails){
+        Post post=postRepository.findById(postId)
+                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
+            throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
+        }
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
+        List<ImagePathDto> pathDtoList=new ArrayList<>();
+        for(ImgUrl imgurl:imageList){
+            ImagePathDto path=imgurl.getImagePathDto();
+            deleteImages(path);
+        }
+        postRepository.deleteById(postId);
+
+        return new ResponseEntity<>(HttpStatus.valueOf(201));
+
+    }
+
+    public CreatePostResponseDto getPost(Long postId){
+        Post post=postRepository.findById(postId)
+                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
+        List<ImagePathDto> pathDtoList=new ArrayList<>();
+        for(ImgUrl imgurl:imageList){
+            ImagePathDto path=imgurl.getImagePathDto();
+            pathDtoList.add(path);
+        }
+
+        return new CreatePostResponseDto(post,pathDtoList);
+
+
+
+    }
+
+
     public ImagePathDto update(MultipartFile file) throws IOException {
 
         String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -133,9 +170,7 @@ public class PostService {
         return imagePathDto;
     }
 
-    public void deleteImages(List<ImagePathDto> filePaths) {
-        for(ImagePathDto imagePathDto:filePaths){
-            amazonS3.deleteObject(bucket,imagePathDto.getPath());
-        }
+    public void deleteImages(ImagePathDto filePaths) {
+            amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 }

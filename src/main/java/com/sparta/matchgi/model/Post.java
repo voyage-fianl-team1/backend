@@ -36,8 +36,6 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private LocalDateTime matchDeadline;
 
-    @Column(nullable = false)
-    private int peoples; //전체 모집 인원
 
 
     @Column(nullable = false)
@@ -81,7 +79,6 @@ public class Post extends Timestamped{
         this.address = createPostRequestDto.getAddress();
         this.lat = createPostRequestDto.getLat();
         this.lng = createPostRequestDto.getLng();
-        this.peoples = createPostRequestDto.getPeoples();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
         this.viewCount = 0;
@@ -102,7 +99,6 @@ public class Post extends Timestamped{
         this.address = createPostRequestDto.getAddress();
         this.lat = createPostRequestDto.getLat();
         this.lng = createPostRequestDto.getLng();
-        this.peoples = createPostRequestDto.getPeoples();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
     }
