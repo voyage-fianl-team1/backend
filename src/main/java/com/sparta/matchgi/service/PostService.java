@@ -25,6 +25,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,24 +48,12 @@ public class PostService {
 
 
     public ResponseEntity<?> createPost(
-            CreatePostRequestDto createPostRequestDto, List<MultipartFile> file, UserDetailsImpl userDetails)
+            CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails)
             throws IOException
     {
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
-
-
-        List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-        for(MultipartFile filed:file){
-            ImagePathDto imagePathDto=update(filed); //파일을 하나씩 s3에 업데이트
-            imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
-        }
-
-        for (ImagePathDto imagePathdto : imagePathDtoList) {
-            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
-            post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
-        }
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
@@ -154,6 +143,23 @@ public class PostService {
 
     }
 
+    public void imageUpload(Long postId, List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException{
+
+        List<ImagePathDto> imagePathDtoList=new ArrayList<>();
+        for(MultipartFile filed:files){
+            ImagePathDto imagePathDto=update(filed); //파일을 하나씩 s3에 업데이트
+            imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
+        }
+
+        Post post=postRepository.findPostById(postId);
+
+        for (ImagePathDto imagePathdto : imagePathDtoList) {
+            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
+            post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
+        }
+
+    }
+
 
     public ImagePathDto update(MultipartFile file) throws IOException {
 
@@ -173,4 +179,7 @@ public class PostService {
     public void deleteImages(ImagePathDto filePaths) {
             amazonS3.deleteObject(bucket,filePaths.getPath());
     }
+
+
+
 }

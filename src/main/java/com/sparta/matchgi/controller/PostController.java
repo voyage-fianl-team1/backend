@@ -23,8 +23,8 @@ public class PostController {
 
 
     @PostMapping("/api/posts")
-    public ResponseEntity<?> createPost(@RequestPart CreatePostRequestDto createPostRequestDto, @RequestPart() List<MultipartFile> file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return postService.createPost(createPostRequestDto,file,userDetails);
+    public ResponseEntity<?> createPost(@RequestPart CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return postService.createPost(createPostRequestDto,userDetails);
     }
 
     @PutMapping("/api/posts/{postId}") //이미지를 수정하거나 삭제할 때?
@@ -43,10 +43,16 @@ public class PostController {
 
     }
 
-    @GetMapping("/api/posts")
-    public ResponseEntity<?> postList(@RequestParam Subject subject, Pageable pageable){
-        return
+
+    @PostMapping("/api/images/posts/{postId}")
+    public void imageUpload(@PathVariable Long postId,List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException {
+        postService.imageUpload(postId,files,userDetails);
     }
+
+//    @GetMapping("/api/posts")
+//    public ResponseEntity<?> postList(@RequestParam Subject subject, Pageable pageable){
+//        return
+//    }
 
 
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -28,6 +29,10 @@ public class ImgUrl extends Timestamped {
     public ImgUrl(Post post,String path){
         this.post =post;
         this.path = path;
+    }
+
+    public ImgUrl(Optional<Post> post, String path) {
+        super();
     }
 
 
