@@ -25,13 +25,13 @@ public class UserController {
 
 
     @PutMapping("/api/refresh")
-    public ResponseEntity<?> refreshToken(HttpServletRequest request){
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         return userService.refreshToken(request);
     }
 
     @PostMapping("/api/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequestDto signupRequestDto){
-         return userService.registerUser(signupRequestDto);
+    public ResponseEntity<?> registerUser(@RequestBody SignupRequestDto signupRequestDto) {
+        return userService.registerUser(signupRequestDto);
     }
 
     @PutMapping("/api/users")
@@ -44,12 +44,14 @@ public class UserController {
 
     @PutMapping("/api/users/password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto,
-                               @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.changePassword(changePasswordDto, userDetails);
     }
 
-
-
+    @GetMapping("/api/users")
+    public ResponseEntity<?> personalRanking(@RequestParam int page, @RequestParam int size, @RequestParam String subject) {
+        return userService.personalRanking(page, size, subject);
+    }
 
 
 }
