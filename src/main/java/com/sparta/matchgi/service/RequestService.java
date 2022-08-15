@@ -87,11 +87,8 @@ public class RequestService {
         if(!postFound.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 포스트입니다.");
         }
-        List<Request> requestList = requestRepository.findAllByPost(postFound.get());
 
-        List<RequestResponseDto> RequestResponseDto = DtoConverter.RequestToRequestResponseDto(requestList);
-
-        return new ResponseEntity<>(new ParticipationResponseDto(RequestResponseDto),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.findAllByPost(postFound.get())),HttpStatus.valueOf(200));
 
     }
 

@@ -1,13 +1,9 @@
 package com.sparta.matchgi.util.converter;
 
 import com.sparta.matchgi.dto.CreatePostResponseDto;
-import com.sparta.matchgi.dto.ParticipationResponseDto;
-import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.Request;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class DtoConverter {
@@ -31,15 +27,4 @@ public class DtoConverter {
         return createPostResponseDto;
     }
 
-    public static List<RequestResponseDto> RequestToRequestResponseDto(List<Request> requestList) {
-
-        List<RequestResponseDto> requestResponseDtoList = requestList.stream().map(r->
-                RequestResponseDto.builder()
-                        .nickname(r.getUser().getNickname())
-                        .status(r.getRequestStatus())
-                        .build()
-                ).collect(Collectors.toList());
-
-        return requestResponseDtoList;
-    }
 }
