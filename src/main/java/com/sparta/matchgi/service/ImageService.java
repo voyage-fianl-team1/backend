@@ -23,7 +23,7 @@ import java.util.UUID;
 public class ImageService {
 
     private final AmazonS3 amazonS3;
-    
+
 
 
     @Value("${S3.bucket.name}")

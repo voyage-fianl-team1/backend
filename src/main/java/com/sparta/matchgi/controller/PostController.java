@@ -23,11 +23,20 @@ public class PostController {
 
 
     @PostMapping("/api/posts")
-    public ResponseEntity<?> createPost(@RequestPart CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<?> createPost(@RequestBody CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+
+        System.out.println(createPostRequestDto.getAddress());
+        System.out.println(createPostRequestDto.getContent());
+        System.out.println(createPostRequestDto.getTitle());
+        System.out.println(createPostRequestDto.getLat());
+        System.out.println(createPostRequestDto.getLng());
+        System.out.println(createPostRequestDto.getSubject());
+
+
         return postService.createPost(createPostRequestDto,userDetails);
     }
 
-    @PutMapping("/api/posts/{postId}") //이미지를 수정하거나 삭제할 때?
+    @PutMapping("/api/posts/{postId}")
     public ResponseEntity<?> editPost(@PathVariable Long postId,@RequestPart MultipartFile file,@RequestPart CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.editPost(postId,requestDto,file,userDetails);
     }
@@ -45,8 +54,14 @@ public class PostController {
 
 
     @PostMapping("/api/images/posts/{postId}")
-    public void imageUpload(@PathVariable Long postId,List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException {
+    public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException {
+
         postService.imageUpload(postId,files,userDetails);
+    }
+
+    @DeleteMapping("/api/images/posts/{objectKey}")
+    public void imageDelete(@PathVariable String objectKey,UserDetailsImpl userDetails){
+        postService.imageDelete(objectKey,userDetails);
     }
 
 //    @GetMapping("/api/posts")

@@ -43,8 +43,8 @@ public class CreatePostResponseDto {
 
     public CreatePostResponseDto(Post post, List<ImagePathDto> imagePathDtos){
         this.title=post.getTitle();
-        this.peopleDeadline=post.getPeopleDeadline();
-        this.matchDeadline=post.getMatchDeadline();
+//        this.peopleDeadline=post.getPeopleDeadline();
+//        this.matchDeadline=post.getMatchDeadline();
         this.address= post.getAddress();
         this.subject=post.getSubject();
         this.content=post.getContent();

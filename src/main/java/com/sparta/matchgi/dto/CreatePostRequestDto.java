@@ -16,14 +16,11 @@ public class CreatePostRequestDto {
 
     private String title;
 
-
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date peopleDeadline;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date matchDeadline;
-
-    private int peoples;
 
     private double lat;
 

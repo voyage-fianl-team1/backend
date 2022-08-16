@@ -1,6 +1,7 @@
 package com.sparta.matchgi.model;
 
 
+import com.sparta.matchgi.repository.NotificationRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,10 @@ public class Notification extends Timestamped {
 
     @Column(nullable = false)
     private boolean read;
+
+    public Notification(String content,User user){
+        this.content = content;
+        this.user =user;
+    }
 
 }

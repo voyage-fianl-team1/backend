@@ -40,7 +40,29 @@ public class JwtDecoder {
                 .asString();
     }
 
-    private Optional<DecodedJWT> isValidToken(String token) {
+    public String decodeEmail(String token){
+        DecodedJWT decodedJWT = isValidToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효한 토큰이 아닙니다"));
+
+        return decodedJWT
+                .getClaim(CLAIM_USER_NAME)
+                .asString();
+    }
+
+    public boolean isExpiredToken(String token){
+        DecodedJWT decodedJWT = isValidToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효한 토큰이 아닙니다"));
+
+        Date expiredDate = decodedJWT
+                .getClaim(CLAIM_EXPIRED_DATE)
+                .asDate();
+
+        Date now = new Date();
+
+        return expiredDate.before(now);
+    }
+
+    public Optional<DecodedJWT> isValidToken(String token) {
         DecodedJWT jwt = null;
 
         try {
