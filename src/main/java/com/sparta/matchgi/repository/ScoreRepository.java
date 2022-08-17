@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface ScoreRepository  extends JpaRepository<Score,Long> {
 
     Optional<Score> findByUserAndSubject(User user, SubjectEnum subject);
+    Optional<Score> findByUser(User user);
 
 }

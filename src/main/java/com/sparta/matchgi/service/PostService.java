@@ -76,7 +76,7 @@ public class PostService {
         if(!userDetails.getUser().getId().equals(post.getUser().getId()))
             throw new IllegalArgumentException("수정 권한이 없습니다.");
 
-        post.updatePost(createPostRequestDto,userDetails);
+//        post.updatePost(createPostRequestDto,userDetails);
         postRepository.save(post);
         //--------------------여기까지 게시물 수정 완료------------------------------------//
         //--------------------이제 이미지 수정하자---------------------------------------//

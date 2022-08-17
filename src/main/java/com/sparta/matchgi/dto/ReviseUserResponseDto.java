@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ReviseUserResponseDto {
-    private String profileImg;
+    private String nickname;
 }
