@@ -91,9 +91,11 @@ public class TestDataRunner implements ApplicationRunner {
 
             LocalDateTime matchDeadline = getRandomDeadline(day+1);
 
+            int owner=-1;
 
 
-            Post post = new Post((long)i,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null);
+
+            Post post = new Post((long)i,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null,owner);
 
             postRepository.save(post);
 

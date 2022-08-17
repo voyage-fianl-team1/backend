@@ -71,6 +71,9 @@ public class Post extends Timestamped{
     @OneToMany(cascade =CascadeType.ALL,mappedBy ="post")
     private List<ImgUrl> imageList=new ArrayList<>();
 
+    @Column(nullable = false)
+    private int owner;
+
 
 
     public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
@@ -86,10 +89,15 @@ public class Post extends Timestamped{
         this.viewCount = 0;
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
+        this.owner=-1;//일단 작성자 인걸로 세팅
 
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
+    }
+
+    public void setOwner(int ownernum){
+        this.owner=ownernum;
     }
 
 

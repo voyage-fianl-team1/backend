@@ -47,8 +47,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts/{postId}")
-    public CreatePostResponseDto getPost(@PathVariable Long postId) {
-        return postService.getPost(postId);
+    public CreatePostResponseDto getPost(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.getPost(postId,userDetails);
 
     }
 

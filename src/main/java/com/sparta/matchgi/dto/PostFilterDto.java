@@ -25,14 +25,14 @@ public class PostFilterDto {
 
     private LocalDateTime createdAt;
 
-//    public PostFilterDto(Post post){
-//        this.title=post.getTitle();
-//        this.postId=post.getId();
-//        this.peopleDeadline=post.getPeopleDeadline();
-//        this.subject=post.getSubject();
-//        this.viewCount=post.getViewCount();
-//        this.requestCount=post.getRequestCount();
-//        this.createdAt=post.getCreatedAt();
-//    }
+    public PostFilterDto(Post post){
+        this.title=post.getTitle();
+        this.postId=post.getId();
+        this.peopleDeadline=post.getPeopleDeadline();
+        this.subject=post.getSubject();
+        this.viewCount=post.getViewCount();
+        this.requestCount=post.getRequestCount();
+        this.createdAt=post.getCreatedAt();
+    }
 
 }

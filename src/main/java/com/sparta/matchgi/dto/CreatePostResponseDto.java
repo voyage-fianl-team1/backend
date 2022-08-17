@@ -41,6 +41,8 @@ public class CreatePostResponseDto {
 
     private List<ImagePathDto> images;
 
+    private int owner;
+
     public CreatePostResponseDto(Post post, List<ImagePathDto> imagePathDtos){
         this.title=post.getTitle();
 //        this.peopleDeadline=post.getPeopleDeadline();
@@ -50,6 +52,7 @@ public class CreatePostResponseDto {
         this.content=post.getContent();
         this.matchStatus=post.getMatchStatus();
         this.images=imagePathDtos;
+        this.owner=post.getOwner();
     }
 
 

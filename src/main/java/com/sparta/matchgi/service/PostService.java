@@ -69,7 +69,7 @@ public class PostService {
             throws IOException {
 
         Post post=postRepository.findPostById(postId);
-        if(!userDetails.getUser().getId().equals(post.getUser().getId()))
+        if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail()))
             throw new IllegalArgumentException("수정 권한이 없습니다.");
 
         post.updatePost(createPostRequestDto,userDetails);
@@ -126,9 +126,15 @@ public class PostService {
 
     }
 
-    public CreatePostResponseDto getPost(Long postId){
+    public CreatePostResponseDto getPost(Long postId,UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
+            post.setOwner(1);
+        }
+        else
+            post.setOwner(-1);
+
         List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
         List<ImagePathDto> pathDtoList=new ArrayList<>();
         for(ImgUrl imgurl:imageList){
