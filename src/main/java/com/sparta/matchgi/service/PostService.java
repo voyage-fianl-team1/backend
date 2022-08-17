@@ -9,6 +9,7 @@ import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
+
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
 import com.sparta.matchgi.repository.PostRepository;
@@ -190,7 +191,7 @@ public class PostService {
 
 
     public void deleteImages(ImagePathDto filePaths) {
-            amazonS3.deleteObject(bucket,filePaths.getPath());
+        amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
     public void imageDelete(String objectKey,UserDetailsImpl userDetails){
@@ -204,7 +205,6 @@ public class PostService {
     public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject, Pageable pageable){
         return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
     }
-
 
 
 }
