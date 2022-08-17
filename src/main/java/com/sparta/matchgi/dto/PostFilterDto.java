@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PostFilterDto {
 
+
     private Long postId;
     private String title;
     private SubjectEnum subject;

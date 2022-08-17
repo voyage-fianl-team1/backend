@@ -42,7 +42,9 @@ public class TestDataRunner implements ApplicationRunner {
     private void createData(User testUser1) {
 
 
-        for(int i =0; i<100; i++){
+        for(int i =1; i<100; i++){
+
+            Long id=(long)i;
 
             String title =getRandomString();
 
@@ -58,7 +60,8 @@ public class TestDataRunner implements ApplicationRunner {
 
             double lng = getRandomInt(7,125);
 
-            int subjectNumber = getRandomInt(6,1);
+            int subjectNumber = 1;
+                    //getRandomInt(6,1);
 
             String address = getRandomString();
 
@@ -95,7 +98,7 @@ public class TestDataRunner implements ApplicationRunner {
 
 
 
-            Post post = new Post((long)i,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null,owner);
+            Post post = new Post(id,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null,owner);
 
             postRepository.save(post);
 

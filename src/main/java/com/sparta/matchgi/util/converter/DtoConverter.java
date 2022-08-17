@@ -26,11 +26,11 @@ public class DtoConverter {
                 .subject(post.getSubject())
                 .title(post.getTitle())
                 .images(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
+                .owner(post.getOwner())
                 .build();
 
         return createPostResponseDto;
     }
-
     public static List<RequestResponseDto> RequestToRequestResponseDto(List<Request> requestList) {
 
         List<RequestResponseDto> requestResponseDtoList = requestList.stream().map(r->
