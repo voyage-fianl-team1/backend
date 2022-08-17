@@ -3,16 +3,15 @@ package com.sparta.matchgi.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 public class PostFilterDto {
 
     private Long postId;

@@ -126,7 +126,7 @@ public class PostService {
 
     }
 
-    public CreatePostResponseDto getPost(Long postId,UserDetailsImpl userDetails){
+    public ResponseEntity<?> getPost(Long postId,UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
@@ -141,11 +141,12 @@ public class PostService {
             ImagePathDto path=imgurl.getImagePathDto();
             pathDtoList.add(path);
         }
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
-        return new CreatePostResponseDto(post,pathDtoList);
-
+        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
 
     }
+
 
     public void imageUpload(Long postId, List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException{
 

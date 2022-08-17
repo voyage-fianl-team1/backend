@@ -9,12 +9,15 @@ import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.QPost;
 import com.sparta.matchgi.model.QSubject;
 import com.sparta.matchgi.model.SubjectEnum;
+import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom{
@@ -36,7 +39,16 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .where(
                         post.subject.eq(subject)
                 );
-        return null;
+
+        List<PostFilterDto> postList = returnPost.fetch()
+                .stream().map(DtoConverter::ofSummary).collect(Collectors.toList());
+        boolean hasNext = false;
+
+        if (postList.size() > pageable.getPageSize()) {
+            postList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(postList, pageable, hasNext);
     }
 
     private BooleanExpression subjectEq(SubjectEnum subject){

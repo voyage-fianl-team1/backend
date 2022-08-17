@@ -2,16 +2,17 @@ package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
-import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.PostFilterDto;
+import com.sparta.matchgi.model.SubjectEnum;
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.auth.Subject;
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,14 +25,6 @@ public class PostController {
 
     @PostMapping("/api/posts")
     public ResponseEntity<?> createPost(@RequestBody CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-
-        System.out.println(createPostRequestDto.getAddress());
-        System.out.println(createPostRequestDto.getContent());
-        System.out.println(createPostRequestDto.getTitle());
-        System.out.println(createPostRequestDto.getLat());
-        System.out.println(createPostRequestDto.getLng());
-        System.out.println(createPostRequestDto.getSubject());
-
 
         return postService.createPost(createPostRequestDto,userDetails);
     }
@@ -47,14 +40,14 @@ public class PostController {
     }
 
     @GetMapping("/api/posts/{postId}")
-    public CreatePostResponseDto getPost(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public  ResponseEntity<?> getPost(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.getPost(postId,userDetails);
 
     }
 
 
     @PostMapping("/api/images/posts/{postId}")
-    public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException {
+    public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         postService.imageUpload(postId,files,userDetails);
     }
@@ -64,11 +57,15 @@ public class PostController {
         postService.imageDelete(objectKey,userDetails);
     }
 
-//    @GetMapping("/api/posts")
-//    public ResponseEntity<?> postList(@RequestParam Subject subject, Pageable pageable){
-//        return
-//    }
 
+
+    @GetMapping("/api/posts")
+    public Slice<PostFilterDto> postList(@RequestParam("page") int page,
+                                         @RequestParam("size") int size,@RequestParam("subject") SubjectEnum subject, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails)
+    {
+        System.out.println("정렬 컨트롤러 진입");
+        return postService.filterDtoSlice(subject,pageable);
+    }
 
 
 }
