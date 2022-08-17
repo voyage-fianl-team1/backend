@@ -105,7 +105,7 @@ public class UserService {
 
         return new ResponseEntity<>(new MyMatchResponseDto(myMatchDetailResponseDtos), HttpStatus.valueOf(200));
     }
-
+//
     //나의 게시글
     public ResponseEntity<MyPostResponseDto> getMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
