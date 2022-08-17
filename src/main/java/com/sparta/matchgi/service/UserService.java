@@ -2,14 +2,15 @@ package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
-
-import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
-import com.sparta.matchgi.auth.jwt.JwtDecoder;
-import com.sparta.matchgi.auth.jwt.JwtTokenUtils;
 import com.sparta.matchgi.dto.*;
-import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.*;
-
+import com.sparta.matchgi.model.Post;
+import com.sparta.matchgi.model.Request;
+import com.sparta.matchgi.model.Score;
+import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.repository.PostRepository;
+import com.sparta.matchgi.repository.RequestRepository;
+import com.sparta.matchgi.repository.ScoreRepository;
+import com.sparta.matchgi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,14 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static com.sparta.matchgi.auth.FormLoginSuccessHandler.TOKEN_TYPE;
 
 @Service
 @RequiredArgsConstructor
@@ -111,7 +107,7 @@ public class UserService {
 
         return new ResponseEntity<>(new MyMatchResponseDto(myMatchDetailResponseDtos), HttpStatus.valueOf(200));
     }
-    //
+
     //나의 게시글
     public ResponseEntity<MyPostResponseDto> getMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -130,14 +126,17 @@ public class UserService {
         User user = userDetails.getUser();
         Score score = scoreRepository.findByUser(user).orElseThrow(
                 ()-> new IllegalArgumentException("잘못된 정보입니다."));
-        MyPageResponseDto myPageResponseDto = MyPageResponseDto.builder()
-                .profileImgUrl(user.getProfileImgUrl())
-                .nickname(user.getNickname())
-                .win(score.getWin())
-                .lose(score.getLose())
-                .draw(score.getDraw())
-                .build();
-        return new ResponseEntity<>(myPageResponseDto, HttpStatus.valueOf(200));
+
+        //MyPageResponseDto myPageResponseDto=new MyPageResponseDto(user,score);
+
+//        MyPageResponseDto myPageResponseDto = MyPageResponseDto.builder()
+//                .profileImgUrl(user.getProfileImgUrl())
+//                .nickname(user.getNickname())
+//                .win(score.getWin())
+//                .lose(score.getLose())
+//                .draw(score.getDraw())
+//                .build();
+        return new ResponseEntity<>(new MyPageResponseDto(user,score), HttpStatus.valueOf(200));
 
     }
 }
