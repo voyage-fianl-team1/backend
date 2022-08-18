@@ -74,8 +74,7 @@ public class PostService {
         }
         else
             post.setOwner(-1);
-        List<ImgUrl> imageList=post.getImageList();
-        System.out.println(imageList.get(0).getUrl());
+
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
