@@ -91,7 +91,7 @@ public class Post extends Timestamped{
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
         this.owner=-1;//일단 작성자 인걸로 세팅
-        //this.imageList=imageList;
+        this.imageList=imageList;
 
     }
     public void addImgUrl(ImgUrl imgUrl){

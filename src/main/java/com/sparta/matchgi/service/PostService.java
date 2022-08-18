@@ -28,6 +28,7 @@ import javax.transaction.Transactional;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,11 +74,36 @@ public class PostService {
         }
         else
             post.setOwner(-1);
-
+        List<ImgUrl> imageList=post.getImageList();
+        System.out.println(imageList.get(0).getUrl());
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
 
+    }
+
+    //이미지 db에서 지우기기
+   public ResponseEntity<?> imageDelete(Long postId,String objectKey,UserDetailsImpl userDetails){
+        Post post=postRepository.findById(postId)
+                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        System.out.println("지우기전 포스트이미지리스트: "+post.getImageList());
+        //ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
+        List<ImgUrl> imageList=post.getImageList(); //post 마다 ImgUrl(path,url)
+
+       for (Iterator<ImgUrl> iterator = imageList.iterator(); iterator.hasNext();) {
+           ImgUrl img=iterator.next();
+           if (img.getImagePathDto().getPath().equals(objectKey)) {
+               iterator.remove();
+           }
+       }
+
+       System.out.println("현재 포스트이미지리스트: "+post.getImageList().get(0).getUrl());
+       System.out.println("현재 삭제하고남은이미지리스트: "+imageList);
+
+
+       CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+
+       return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
 
     //이미지 url 받아오기(완료)
@@ -124,7 +150,7 @@ public class PostService {
         return imagePathDto;
     }
 
-    //포스트 수정하기기
+    //포스트 수정하기(완료)
    public ResponseEntity<?> editPost(
             Long postId,CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails)
             throws IOException {
@@ -160,28 +186,6 @@ public class PostService {
     //이미지 버킷에서 지우기(완료)-사용 X
     public void deleteImages(ImagePathDto filePaths) {
         amazonS3.deleteObject(bucket,filePaths.getPath());
-    }
-
-    public void imageDelete(Long postId,String objectKey,UserDetailsImpl userDetails){
-        Post post=postRepository.findPostById(postId);
-        //ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
-        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId); //post 마다 ImgUrl(path,url)
-        for(ImgUrl imgs:imageList){
-            String path=imgs.getImagePathDto().getPath();
-            if(path.equals(objectKey)){
-                System.out.println(path);
-                System.out.println(imgs.getUrl());
-                imageList.remove(imgs);//제거 잘됨
-            }
-        }
-        for(ImgUrl imgs:imageList){
-            System.out.println("PATH(패스): "+imgs.getPath());
-            System.out.println("URLS(유알엘): "+imgs.getUrl());
-
-        }
-
-
-
     }
 
     public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject, Pageable pageable){

@@ -54,8 +54,8 @@ public class PostController {
     }
 
     @DeleteMapping("/api/images/posts/{postId}/{objectKey}")
-    public void imageDelete(@PathVariable Long postId,@PathVariable String objectKey,UserDetailsImpl userDetails){
-        postService.imageDelete(postId,objectKey,userDetails);
+    public ResponseEntity<?> imageDelete(@PathVariable Long postId,@PathVariable String objectKey,UserDetailsImpl userDetails){
+        return postService.imageDelete(postId,objectKey,userDetails);
     }
 
 
