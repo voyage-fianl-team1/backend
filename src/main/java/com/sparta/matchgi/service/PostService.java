@@ -83,27 +83,29 @@ public class PostService {
     }
 
     //이미지 db에서 지우기기
-   public ResponseEntity<?> imageDelete(Long postId,String objectKey,UserDetailsImpl userDetails){
-        Post post=postRepository.findById(postId)
-                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        System.out.println("지우기전 포스트이미지리스트: "+post.getImageList());
+   public void imageDelete(Long imgId,UserDetailsImpl userDetails){
+//        Post post=postRepository.findById(postId)
+//                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+//        System.out.println("지우기전 포스트이미지리스트: "+post.getImageList());
         //ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
-        List<ImgUrl> imageList=post.getImageList(); //post 마다 ImgUrl(path,url)
 
-       for (Iterator<ImgUrl> iterator = imageList.iterator(); iterator.hasNext();) {
-           ImgUrl img=iterator.next();
-           if (img.getImagePathDto().getPath().equals(objectKey)) {
-               iterator.remove();
-           }
-       }
+        ImgUrl imageUrl=imageRepository.findImgUrlById(imgId); //post 마다 ImgUrl(path,url)
+        imageRepository.delete(imageUrl);
 
-       System.out.println("현재 포스트이미지리스트: "+post.getImageList().get(0).getUrl());
-       System.out.println("현재 삭제하고남은이미지리스트: "+imageList);
-
-
-       CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
-
-       return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
+//        for (Iterator<ImgUrl> iterator = imageList.iterator(); iterator.hasNext();) {
+//           ImgUrl img=iterator.next();
+//           if (img.getImagePathDto().getPath().equals(objectKey)) {
+//               iterator.remove();
+//           }
+//       }
+//
+//       System.out.println("현재 포스트이미지리스트: "+post.getImageList().get(0).getUrl());
+//       System.out.println("현재 삭제하고남은이미지리스트: "+imageList);
+//
+//
+//       CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+//
+//       return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
 
     //이미지 url 받아오기(완료)

@@ -53,9 +53,9 @@ public class PostController {
         postService.imageUpload(postId,files,userDetails);
     }
 
-    @DeleteMapping("/api/images/posts/{postId}/{objectKey}")
-    public ResponseEntity<?> imageDelete(@PathVariable Long postId,@PathVariable String objectKey,UserDetailsImpl userDetails){
-        return postService.imageDelete(postId,objectKey,userDetails);
+    @DeleteMapping("/api/images/posts/{imgId}")
+    public void imageDelete(@PathVariable Long imgId,UserDetailsImpl userDetails){
+        postService.imageDelete(imgId,userDetails);
     }
 
 
