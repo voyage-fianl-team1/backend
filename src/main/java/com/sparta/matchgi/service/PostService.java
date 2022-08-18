@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.security.auth.Subject;
 import javax.transaction.Transactional;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class PostService {
     @Value("${S3.bucket.name}")
     private String bucket;
 
-
+    //포스트 생성하기(완료)
     public ResponseEntity<?> createPost(
             CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails)
             throws IOException
@@ -63,6 +64,7 @@ public class PostService {
     }
 
 
+    //상세 게시글 보기(완료)
     public ResponseEntity<?> getPost(Long postId,UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -72,45 +74,40 @@ public class PostService {
         else
             post.setOwner(-1);
 
-        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);//post의 ImgUrl 가져옴(post,path,imgurl)
-//        List<ImgUrl> imgUrlList=new ArrayList<>();
-//        for(ImgUrl imgurl:imageList){
-//            imgUrlList.add(imgurl);
-//        }
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
 
     }
 
-    public String getImgUrl(String path){
-        return amazonS3.getUrl(bucket,path).toString();
+    //이미지 url 받아오기(완료)
+    public ImageUrlDto getImgUrl(String path){
+        ImageUrlDto imageUrlDto=new ImageUrlDto(amazonS3.getUrl(bucket,path).toString());
+
+        return imageUrlDto;
     }
 
 
-
+    //이미지 업로드하기(완료)
     public void imageUpload(Long postId, List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException{
         List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-        List<String> imageUrlList=new ArrayList<>();
+        List<ImageUrlDto> imageUrlDtoList=new ArrayList<>();
 
         for(MultipartFile file:files){
             ImagePathDto imagePathDto=update(file); //파일을 하나씩 s3에 업데이트
-            imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
-            String url=getImgUrl(imagePathDto.getPath());
-            imageUrlList.add(url);
+            imagePathDtoList.add(imagePathDto); //파일 path를 하나씩 db에 업데이트
         }
 
-        Post post=postRepository.findPostById(postId);
+        Post post=postRepository.findPostById(postId); //어떤 포스트에 추가할지, 포스트 불러오기
 
         for (ImagePathDto imagePathdto : imagePathDtoList) {
-            String imgurl=getImgUrl(imagePathdto.getPath());
-            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath(),imgurl);
+            ImageUrlDto imgurl=getImgUrl(imagePathdto.getPath());//path에 해당하는 url 받기
+            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath(),imgurl.getUrl());
             post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
-            System.out.println("imgurl: "+imgurl);
-            System.out.println("path: "+imagePathdto.getPath());
         }
     }
 
+    //이미지 버킷에 업로드하기(완료)
     public ImagePathDto update(MultipartFile file) throws IOException {
 
         String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -127,8 +124,9 @@ public class PostService {
         return imagePathDto;
     }
 
-    public ResponseEntity<?> editPost(
-            Long postId,CreatePostRequestDto createPostRequestDto,MultipartFile file,UserDetailsImpl userDetails)
+    //포스트 수정하기기
+   public ResponseEntity<?> editPost(
+            Long postId,CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails)
             throws IOException {
 
         Post post=postRepository.findPostById(postId);
@@ -137,38 +135,6 @@ public class PostService {
 
         post.updatePost(createPostRequestDto,userDetails);
         postRepository.save(post);
-        //--------------------여기까지 게시물 수정 완료------------------------------------//
-        //--------------------이제 이미지 수정하자---------------------------------------//
-
-//        if(!file.isEmpty())//업로드한 사진 없으면 그냥 기존사진 쓰기, 근데 비어있지 않으면
-//        {
-//            //저장된 이미지 다 불러와서 지우고(현재로써는)(나중에 개별 지우기 구현)
-//            //새로 업데이트
-//            List<ImgUrl> imgUrls = imgUrlRepository.findByPostId(postId); //기존 이미지들 다 지우기
-//            List<ImagePathDto> imagePath=new ArrayList<>();
-//
-//            for(ImgUrl imgUrl:imgUrls)
-//            {
-//                ImagePathDto path=imgUrl.getImagePathDto();
-//                imagePath.add(path);
-//                deleteImages(path);//버킷에서 삭제
-//                imgUrlRepository.delete(imgUrl);
-//                System.out.println("삭제 성공!");
-//
-//            }
-//
-//            ImagePathDto imagePathDto = update(file);
-//
-//            List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-//            imagePathDtoList.add(imagePathDto);
-//
-//            for (ImagePathDto imagePathdto : imagePathDtoList) {
-//                ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
-//                post.addImgUrl(imgUrl); //db에서 삭제
-//            }
-//
-//        }
-
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
@@ -176,6 +142,7 @@ public class PostService {
     }
 
 
+    //포스트 지우기(완료)
     public ResponseEntity<?> deletePost(Long postId, UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -190,16 +157,31 @@ public class PostService {
     }
 
 
+    //이미지 버킷에서 지우기(완료)-사용 X
     public void deleteImages(ImagePathDto filePaths) {
         amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
-    public void imageDelete(String objectKey,UserDetailsImpl userDetails){
-        ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
-        //List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
-        List<ImagePathDto> pathDtoList=new ArrayList<>();
-        ImagePathDto path=imgurl.getImagePathDto();
-        deleteImages(path);
+    public void imageDelete(Long postId,String objectKey,UserDetailsImpl userDetails){
+        Post post=postRepository.findPostById(postId);
+        //ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId); //post 마다 ImgUrl(path,url)
+        for(ImgUrl imgs:imageList){
+            String path=imgs.getImagePathDto().getPath();
+            if(path.equals(objectKey)){
+                System.out.println(path);
+                System.out.println(imgs.getUrl());
+                imageList.remove(imgs);//제거 잘됨
+            }
+        }
+        for(ImgUrl imgs:imageList){
+            System.out.println("PATH(패스): "+imgs.getPath());
+            System.out.println("URLS(유알엘): "+imgs.getUrl());
+
+        }
+
+
+
     }
 
     public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject, Pageable pageable){

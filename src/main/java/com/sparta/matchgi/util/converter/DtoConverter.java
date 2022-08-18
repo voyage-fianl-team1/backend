@@ -25,7 +25,8 @@ public class DtoConverter {
                 .peopleDeadline(post.getPeopleDeadline())
                 .subject(post.getSubject())
                 .title(post.getTitle())
-                .images(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
+                .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
+                .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(post.getOwner())
                 .build();
 

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ImageUrlDto {
-    String imageurl;
+    String url;
 }

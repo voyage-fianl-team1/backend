@@ -40,11 +40,13 @@ public class CreatePostResponseDto {
 
     private MatchStatus matchStatus;
 
-    private List<ImagePathDto> images;
+    private List<ImagePathDto> imgpaths;
+
+    private List<ImageUrlDto> imgurls;
 
     private int owner;
 
-    public CreatePostResponseDto(Post post, List<ImagePathDto> imgUrls){
+    public CreatePostResponseDto(Post post, List<ImagePathDto> imgpaths,List<ImageUrlDto> imgurls){
         this.title=post.getTitle();
         this.peopleDeadline=post.getPeopleDeadline();
         this.matchDeadline=post.getMatchDeadline();
@@ -52,8 +54,9 @@ public class CreatePostResponseDto {
         this.subject=post.getSubject();
         this.content=post.getContent();
         this.matchStatus=post.getMatchStatus();
-        this.images=imgUrls;
+        this.imgpaths=imgpaths;
         this.owner=post.getOwner();
+        this.imgurls=imgurls;
     }
 
 

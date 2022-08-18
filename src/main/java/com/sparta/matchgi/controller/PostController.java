@@ -1,5 +1,6 @@
 package com.sparta.matchgi.controller;
 
+
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.dto.PostFilterDto;
@@ -30,8 +31,8 @@ public class PostController {
     }
 
     @PutMapping("/api/posts/{postId}")
-    public ResponseEntity<?> editPost(@PathVariable Long postId,@RequestPart MultipartFile file,@RequestPart CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return postService.editPost(postId,requestDto,file,userDetails);
+    public ResponseEntity<?> editPost(@PathVariable Long postId,@RequestBody CreatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return postService.editPost(postId,requestDto,userDetails);
     }
 
     @DeleteMapping("/api/posts/{postId}")
@@ -52,9 +53,9 @@ public class PostController {
         postService.imageUpload(postId,files,userDetails);
     }
 
-    @DeleteMapping("/api/images/posts/{objectKey}")
-    public void imageDelete(@PathVariable String objectKey,UserDetailsImpl userDetails){
-        postService.imageDelete(objectKey,userDetails);
+    @DeleteMapping("/api/images/posts/{postId}/{objectKey}")
+    public void imageDelete(@PathVariable Long postId,@PathVariable String objectKey,UserDetailsImpl userDetails){
+        postService.imageDelete(postId,objectKey,userDetails);
     }
 
 
@@ -69,4 +70,3 @@ public class PostController {
 
 
 }
-

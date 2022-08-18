@@ -29,7 +29,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject, Pageable pageable){
+    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,Pageable pageable){
 
 
     List<PostFilterDto> returnPost=queryFactory.select(Projections.fields(

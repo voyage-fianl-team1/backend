@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.awt.*;
 import java.net.URL;
 import java.util.Optional;
 
@@ -36,15 +37,16 @@ public class ImgUrl extends Timestamped {
         this.url=url;
     }
 
+    public void setPath(String path){this.path=path;}
+    public void setUrl(String url){this.url=url;}
+
+
 
     public ImagePathDto getImagePathDto(){
         return new ImagePathDto(this.path);
     }
 
-    public ImageUrlDto getImageUrlDto(){
-        return new ImageUrlDto(this.url);
-    }
-//    public ImgUrl ImgUrl() {
-//        return new ImgUrl(this.post,this.path,this.imgUrl);
-//    }
+    public ImageUrlDto getImageUrlDto(){return new ImageUrlDto(this.url);}
+
+
 }
