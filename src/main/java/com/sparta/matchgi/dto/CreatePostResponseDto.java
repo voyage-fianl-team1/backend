@@ -21,6 +21,7 @@ import java.util.List;
 public class CreatePostResponseDto {
     private String title;
 
+    private Long postId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime peopleDeadline;
@@ -57,6 +58,7 @@ public class CreatePostResponseDto {
         this.imgpaths=imgpaths;
         this.owner=post.getOwner();
         this.imgurls=imgurls;
+        this.postId=post.getId();
     }
 
 

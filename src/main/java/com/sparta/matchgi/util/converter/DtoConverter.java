@@ -16,6 +16,7 @@ public class DtoConverter {
     public static CreatePostResponseDto PostToCreateResponseDto(Post post) {
 
         CreatePostResponseDto createPostResponseDto = CreatePostResponseDto.builder()
+                .postId(post.getId())
                 .address(post.getAddress())
                 .content(post.getContent())
                 .lat(post.getLat())

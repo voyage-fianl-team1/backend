@@ -42,7 +42,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
             post.peopleDeadline,
             post.requestCount))
             .from(post)
-            .where(post.subject.eq(subject))
+            .where(getSubject(subject))
             .orderBy(post.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -52,7 +52,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
 
-    private BooleanExpression subjectEq(SubjectEnum subject){
-        return ObjectUtils.isEmpty(subject)?null:post.subject.eq(subject);
+    private BooleanExpression getSubject(SubjectEnum subject){
+        return subject.equals(SubjectEnum.valueOf("ALL"))?null:post.subject.eq(subject);
     }
 }

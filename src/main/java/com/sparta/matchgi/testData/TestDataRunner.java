@@ -60,8 +60,7 @@ public class TestDataRunner implements ApplicationRunner {
 
             double lng = getRandomInt(7,125);
 
-            int subjectNumber = 1;
-                    //getRandomInt(6,1);
+            int subjectNumber = getRandomInt(6,1);
 
             String address = getRandomString();
 
