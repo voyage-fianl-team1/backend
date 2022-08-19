@@ -2,6 +2,7 @@ package com.sparta.matchgi.util.converter;
 
 import com.sparta.matchgi.dto.CreatePostResponseDto;
 import com.sparta.matchgi.dto.ParticipationResponseDto;
+import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
@@ -21,16 +22,15 @@ public class DtoConverter {
                 .lng(post.getLng())
                 .matchDeadline(post.getMatchDeadline())
                 .matchStatus(post.getMatchStatus())
-                .peoples(post.getPeoples())
                 .peopleDeadline(post.getPeopleDeadline())
                 .subject(post.getSubject())
                 .title(post.getTitle())
                 .images(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
+                .owner(post.getOwner())
                 .build();
 
         return createPostResponseDto;
     }
-
     public static List<RequestResponseDto> RequestToRequestResponseDto(List<Request> requestList) {
 
         List<RequestResponseDto> requestResponseDtoList = requestList.stream().map(r->
@@ -41,5 +41,20 @@ public class DtoConverter {
                 ).collect(Collectors.toList());
 
         return requestResponseDtoList;
+    }
+
+    public static PostFilterDto ofSummary(Post post)
+    {
+        PostFilterDto postFilterDto = PostFilterDto.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .subject(post.getSubject())
+                .viewCount(post.getViewCount())
+                .createdAt(post.getCreatedAt())
+                .peopleDeadline(post.getPeopleDeadline())
+                .requestCount(post.getRequestCount())
+                .build();
+
+        return postFilterDto;
     }
 }

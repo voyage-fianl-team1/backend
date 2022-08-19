@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ImagePathDto {
-    private String path;
-//    private String url;
+public class RefreshResponseDto {
 
+    private String accessToken;
 
+    private String refreshToken;
 }

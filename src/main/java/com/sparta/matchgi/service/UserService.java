@@ -2,12 +2,12 @@ package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
+import com.sparta.matchgi.auth.jwt.JwtDecoder;
+import com.sparta.matchgi.auth.jwt.JwtTokenUtils;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.RequestRepository;
-import com.sparta.matchgi.repository.ScoreRepository;
-import com.sparta.matchgi.repository.UserRepository;
+import com.sparta.matchgi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.Optional;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
 
     private final PostRepository postRepository;
@@ -36,6 +36,11 @@ public class UserService {
     private final AmazonS3 amazonS3;
 
     private final ScoreRepository scoreRepository;
+
+    private final JwtDecoder jwtDecoder;
+
+    private final HeaderTokenExtractor extractor;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${S3.bucket.name}")
     private String bucket;
@@ -87,6 +92,35 @@ public class UserService {
         return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.valueOf(200));
     }
 
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+
+        String accessToken = extractor.extract(request.getHeader("Authorization"),request);
+
+        String refreshToken = request.getHeader("refreshToken");
+
+        String email = jwtDecoder.decodeEmail(accessToken);
+
+        Optional<RefreshToken> refreshTokenFound = refreshTokenRepository.findByEmail(email);
+
+        if(refreshTokenFound.isPresent()){
+            if(refreshTokenFound.get().getRefreshToken().equals(refreshToken)){
+                if(jwtDecoder.isExpiredToken(refreshToken)){
+                    return new ResponseEntity<>("토큰 유효기간이 만료되었습니다. 다시 로그인 해주세요",HttpStatus.valueOf(401));
+                }else{
+                    accessToken = JwtTokenUtils.generateJwtToken(email);
+                    refreshToken = JwtTokenUtils.generateJwtRefreshToken();
+                    refreshTokenFound.get().updateRefreshToken(refreshToken);
+                }
+            }
+            else{
+                return new ResponseEntity<>("유효한 토큰이 아닙니다",HttpStatus.valueOf(401));
+            }
+        }else{
+            return new ResponseEntity<>("유효한 토큰이 아닙니다",HttpStatus.valueOf(401));
+        }
+
+        return new ResponseEntity<>(new RefreshResponseDto(accessToken,refreshToken),HttpStatus.valueOf(200));
+    }
     //나의 경기
     public ResponseEntity<MyMatchResponseDto> getMyMatch(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -126,19 +160,9 @@ public class UserService {
 
     public ResponseEntity<MyPageResponseDto> getMyPage(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Score score = scoreRepository.findByUser(user).orElseThrow(
-                ()-> new IllegalArgumentException("잘못된 정보입니다."));
-        MyPageResponseDto myPageResponseDto = MyPageResponseDto.builder()
-                .profileImgUrl(user.getProfileImgUrl())
-                .nickname(user.getNickname())
-                .win(score.getWin())
-                .lose(score.getLose())
-                .draw(score.getDraw())
-                .build();
-        return new ResponseEntity<>(myPageResponseDto, HttpStatus.valueOf(200));
+        return new ResponseEntity<>(userRepository.myRanking(user), HttpStatus.valueOf(200));
 
     }
-
 
 }
 

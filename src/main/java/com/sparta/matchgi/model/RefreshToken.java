@@ -16,15 +16,18 @@ public class RefreshToken {
     @Column(name = "REFRESHTOKEN_ID")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @Column(nullable = false,unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String refreshToken;
 
-    public RefreshToken(User user,String refreshToken){
-        this.user = user;
+    public RefreshToken(String email,String refreshToken){
+        this.email = email;
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
 }

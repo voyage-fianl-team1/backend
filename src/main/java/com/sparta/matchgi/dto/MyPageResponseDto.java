@@ -10,9 +10,9 @@ import lombok.*;
 public class MyPageResponseDto {
     private String profileImgUrl;
     private String nickname;
-    private int win;
-    private int lose;
-    private int draw;
+    private Long win;
+    private Long lose;
+    private Long draw;
 
 
 }
