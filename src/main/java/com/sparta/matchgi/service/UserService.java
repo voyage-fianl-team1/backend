@@ -45,6 +45,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
+
     private final AmazonS3 amazonS3;
     private final JwtDecoder jwtDecoder;
     private final HeaderTokenExtractor extractor;
@@ -172,19 +173,7 @@ public class UserService {
 
     public ResponseEntity<MyPageResponseDto> getMyPage(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Score score = scoreRepository.findByUser(user).orElseThrow(
-                ()-> new IllegalArgumentException("잘못된 정보입니다."));
-
-        //MyPageResponseDto myPageResponseDto=new MyPageResponseDto(user,score);
-
-//        MyPageResponseDto myPageResponseDto = MyPageResponseDto.builder()
-//                .profileImgUrl(user.getProfileImgUrl())
-//                .nickname(user.getNickname())
-//                .win(score.getWin())
-//                .lose(score.getLose())
-//                .draw(score.getDraw())
-//                .build();
-        return new ResponseEntity<>(new MyPageResponseDto(user,score), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(userRepository.myRanking(user), HttpStatus.valueOf(200));
 
     }
 
