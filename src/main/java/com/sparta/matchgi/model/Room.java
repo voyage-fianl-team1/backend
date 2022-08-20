@@ -1,35 +1,33 @@
 package com.sparta.matchgi.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Notification extends Timestamped {
+@AllArgsConstructor
+public class Room {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "NOTIFICATION_ID")
+    @Column(name = "ROOM_ID")
     private Long id;
-
-    @Column(nullable = false)
-    private String content; //알림내용
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @Column(nullable = false)
-    private boolean isread;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "POST_ID")
+    private Post post;
 
-    public Notification(String content,User user){
-        this.content = content;
-        this.user =user;
-    }
+    @OneToMany
+    private List<Chat> chatList;
+
 
 }
