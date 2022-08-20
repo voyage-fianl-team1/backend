@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
@@ -27,13 +28,6 @@ public class UserController {
     @PostMapping("/api/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequestDto signupRequestDto) {
         return userService.registerUser(signupRequestDto);
-    private final PostService postService;
-
-    @PostMapping("/api/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequestDto signupRequestDto){
-        ResponseEntity<?>  responseEntity = userService.registerUser(signupRequestDto);
-
-        return responseEntity;
     }
 
     //닉네임 변경
@@ -51,13 +45,11 @@ public class UserController {
         return userService.changePassword(changePasswordDto, userDetails);
     }
 
-    @GetMapping("/api/users")
+    @GetMapping("/api/users/rank")
     public ResponseEntity<?> personalRanking(@RequestParam int page, @RequestParam int size, @RequestParam String subject) {
         return userService.personalRanking(page, size, subject);
     }
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.changePassword(changePasswordDto, userDetails);
-    }
+
 
     //내 경기 리스트
     @GetMapping("/api/users/requests")

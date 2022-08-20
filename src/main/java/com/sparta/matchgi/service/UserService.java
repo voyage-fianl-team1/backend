@@ -2,6 +2,9 @@ package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
+import com.sparta.matchgi.auth.jwt.JwtDecoder;
+import com.sparta.matchgi.auth.jwt.JwtTokenUtils;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.RefreshToken;
 import com.sparta.matchgi.model.SubjectEnum;
@@ -47,16 +50,12 @@ public class UserService {
     private final HeaderTokenExtractor extractor;
     private final RefreshTokenRepository refreshTokenRepository;
 
-
     private final PostRepository postRepository;
 
     private final RequestRepository requestRepository;
 
-    private final AmazonS3 amazonS3;
-
     private final ScoreRepository scoreRepository;
 
-    private final ScoreRepository scoreRepository;
 
     @Value("${S3.bucket.name}")
     private String bucket;
@@ -106,6 +105,36 @@ public class UserService {
         userRepository.save(user);
 
         return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.valueOf(200));
+    }
+
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+
+        String accessToken = extractor.extract(request.getHeader("Authorization"),request);
+
+        String refreshToken = request.getHeader("refreshToken");
+
+        String email = jwtDecoder.decodeEmail(accessToken);
+
+        Optional<RefreshToken> refreshTokenFound = refreshTokenRepository.findByEmail(email);
+
+        if(refreshTokenFound.isPresent()){
+            if(refreshTokenFound.get().getRefreshToken().equals(refreshToken)){
+                if(jwtDecoder.isExpiredToken(refreshToken)){
+                    return new ResponseEntity<>("토큰 유효기간이 만료되었습니다. 다시 로그인 해주세요",HttpStatus.valueOf(401));
+                }else{
+                    accessToken = JwtTokenUtils.generateJwtToken(email);
+                    refreshToken = JwtTokenUtils.generateJwtRefreshToken();
+                    refreshTokenFound.get().updateRefreshToken(refreshToken);
+                }
+            }
+            else{
+                return new ResponseEntity<>("유효한 토큰이 아닙니다",HttpStatus.valueOf(401));
+            }
+        }else{
+            return new ResponseEntity<>("유효한 토큰이 아닙니다",HttpStatus.valueOf(401));
+        }
+
+        return new ResponseEntity<>(new RefreshResponseDto(accessToken,refreshToken),HttpStatus.valueOf(200));
     }
 
     //나의 경기
