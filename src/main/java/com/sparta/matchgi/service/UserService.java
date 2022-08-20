@@ -3,6 +3,10 @@ package com.sparta.matchgi.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
+import com.sparta.matchgi.model.RefreshToken;
+import com.sparta.matchgi.model.SubjectEnum;
+import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.repository.RefreshTokenRepository;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.Request;
 import com.sparta.matchgi.model.Score;
@@ -13,11 +17,19 @@ import com.sparta.matchgi.repository.ScoreRepository;
 import com.sparta.matchgi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +42,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
+    private final AmazonS3 amazonS3;
+    private final JwtDecoder jwtDecoder;
+    private final HeaderTokenExtractor extractor;
+    private final RefreshTokenRepository refreshTokenRepository;
+
 
     private final PostRepository postRepository;
 
     private final RequestRepository requestRepository;
 
     private final AmazonS3 amazonS3;
+
+    private final ScoreRepository scoreRepository;
 
     private final ScoreRepository scoreRepository;
 
@@ -137,6 +156,14 @@ public class UserService {
 //                .draw(score.getDraw())
 //                .build();
         return new ResponseEntity<>(new MyPageResponseDto(user,score), HttpStatus.valueOf(200));
+
+    }
+
+    public ResponseEntity<?> personalRanking(int page, int size, String subject) {
+        Pageable pageable = PageRequest.of(page,size);
+
+        return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+
 
     }
 }
