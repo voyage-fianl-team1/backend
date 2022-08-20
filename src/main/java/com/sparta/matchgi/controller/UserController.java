@@ -33,7 +33,7 @@ public class UserController {
     //닉네임 변경
     @PutMapping("/api/users")
     public ResponseEntity<ReviseUserResponseDto> reviseUser(
-            @RequestPart ReviseUserRequestDto reviseUserRequestDto,
+            @RequestBody ReviseUserRequestDto reviseUserRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return userService.reviseUser(reviseUserRequestDto, userDetails);
     }
