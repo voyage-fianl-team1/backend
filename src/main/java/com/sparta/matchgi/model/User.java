@@ -37,9 +37,8 @@ public class User {
 
     }
 
-    public void updateNickAndprofileImageUrl(ReviseUserRequestDto reviseUserRequestDto,String profileImgUrl){
+    public void updateNickAndprofileImageUrl(ReviseUserRequestDto reviseUserRequestDto){
         this.nickname = reviseUserRequestDto.getNickname();
-        this.profileImgUrl = profileImgUrl;
     }
 
     public void changePassword(String password){

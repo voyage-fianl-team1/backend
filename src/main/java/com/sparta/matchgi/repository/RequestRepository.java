@@ -21,4 +21,6 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
             "ORDER BY r.id DESC ")
     List<RequestResponseDto> findAllByPost(Post post);
 
+    List<Request> findAllByUser(User user);
+
 }

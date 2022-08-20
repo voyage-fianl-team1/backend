@@ -10,7 +10,10 @@ public enum SubjectEnum {
     TENNIS,
     BADMINTON,
     BILLIARDS,
-    BOWLING;
+    BOWLING,
+    ALL;
+
+
 
     @JsonCreator
     public static SubjectEnum from(String name)
