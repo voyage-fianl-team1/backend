@@ -62,10 +62,13 @@ public class PostController {
 
     @GetMapping("/api/posts")
     public Slice<PostFilterDto> postList(@RequestParam("page") int page,
-                                         @RequestParam("size") int size,@RequestParam("subject") SubjectEnum subject, Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails)
+                                         @RequestParam("size") int size,
+                                         @RequestParam("subject") SubjectEnum subject,
+                                         @RequestParam("sort") String sort,
+                                         Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetails)
     {
         System.out.println("정렬 컨트롤러 진입");
-        return postService.filterDtoSlice(subject,pageable);
+        return postService.filterDtoSlice(subject,sort,pageable);
     }
 
 

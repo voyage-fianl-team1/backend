@@ -14,16 +14,16 @@ import java.util.Optional;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ImgUrl extends Timestamped {
+public class ImgUrl{
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "IMAGE_ID")
+    @Column(name = "IMAGE_ID")//포스트별로 따로 증가하지 않음
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID")
     private Post post;
-
 
     @Column(nullable = false)
     private String path;//이미지 업로드-추가
@@ -36,10 +36,6 @@ public class ImgUrl extends Timestamped {
         this.path = path;
         this.url=url;
     }
-
-    public void setPath(String path){this.path=path;}
-    public void setUrl(String url){this.url=url;}
-
 
 
     public ImagePathDto getImagePathDto(){

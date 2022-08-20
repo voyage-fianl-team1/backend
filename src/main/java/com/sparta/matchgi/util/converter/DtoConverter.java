@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DtoConverter {
 
-    public static CreatePostResponseDto PostToCreateResponseDto(Post post) {
+    public static CreatePostResponseDto PostToCreateResponseDto(Post post,int owner) {
 
         CreatePostResponseDto createPostResponseDto = CreatePostResponseDto.builder()
                 .postId(post.getId())
@@ -28,7 +28,7 @@ public class DtoConverter {
                 .title(post.getTitle())
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
-                .owner(post.getOwner())
+                .owner(owner)
                 .build();
 
         return createPostResponseDto;

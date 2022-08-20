@@ -1,5 +1,7 @@
 package com.sparta.matchgi.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,Pageable pageable){
+    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,String sort,Pageable pageable){
 
 
     List<PostFilterDto> returnPost=queryFactory.select(Projections.fields(
@@ -55,4 +56,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private BooleanExpression getSubject(SubjectEnum subject){
         return subject.equals(SubjectEnum.valueOf("ALL"))?null:post.subject.eq(subject);
     }
+
+//    private BooleanBuilder getSort(String sort){
+//        return sort.equals("viewcount")?null:post.viewCount.desc();
+//    }
 }

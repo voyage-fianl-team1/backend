@@ -59,7 +59,7 @@ public class PostService {
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
@@ -69,13 +69,12 @@ public class PostService {
     public ResponseEntity<?> getPost(Long postId,UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        int owner=-1;
         if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
-            post.setOwner(1);
+            owner=1;
         }
-        else
-            post.setOwner(-1);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,owner);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
 
@@ -118,7 +117,6 @@ public class PostService {
     //이미지 업로드하기(완료)
     public void imageUpload(Long postId, List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException{
         List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-        List<ImageUrlDto> imageUrlDtoList=new ArrayList<>();
 
         for(MultipartFile file:files){
             ImagePathDto imagePathDto=update(file); //파일을 하나씩 s3에 업데이트
@@ -127,11 +125,14 @@ public class PostService {
 
         Post post=postRepository.findPostById(postId); //어떤 포스트에 추가할지, 포스트 불러오기
 
+        List<ImgUrl> imglist=new ArrayList<>();
         for (ImagePathDto imagePathdto : imagePathDtoList) {
             ImageUrlDto imgurl=getImgUrl(imagePathdto.getPath());//path에 해당하는 url 받기
             ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath(),imgurl.getUrl());
-            post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
+            imglist.add(imgUrl);
+            //post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
         }
+        imageRepository.saveAll(imglist);
     }
 
     //이미지 버킷에 업로드하기(완료)
@@ -159,11 +160,14 @@ public class PostService {
         Post post=postRepository.findPostById(postId);
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail()))
             throw new IllegalArgumentException("수정 권한이 없습니다.");
-
+       int owner=-1;
+       if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
+           owner=1;
+       }
         post.updatePost(createPostRequestDto,userDetails);
         postRepository.save(post);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,owner);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
@@ -189,8 +193,8 @@ public class PostService {
         amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
-    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject, Pageable pageable){
-        return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
+    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject,String sort,Pageable pageable){
+        return postRepository.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
     }
 
 

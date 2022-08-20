@@ -37,7 +37,14 @@ public class TestDataRunner implements ApplicationRunner {
 
         createData(testUser1);
 
+        User testUser2=new User("nickname","email",passwordEncoder.encode("password"));
+        userRepository.save(testUser2);
+        createData(testUser2);
+
+
     }
+
+
 
     private void createData(User testUser1) {
 
@@ -97,7 +104,7 @@ public class TestDataRunner implements ApplicationRunner {
 
 
 
-            Post post = new Post(id,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null,owner);
+            Post post = new Post(id,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null);
 
             postRepository.save(post);
 

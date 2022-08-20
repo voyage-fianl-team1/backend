@@ -56,7 +56,7 @@ public class CreatePostResponseDto {
         this.content=post.getContent();
         this.matchStatus=post.getMatchStatus();
         this.imgpaths=imgpaths;
-        this.owner=post.getOwner();
+        this.owner=owner;
         this.imgurls=imgurls;
         this.postId=post.getId();
     }
