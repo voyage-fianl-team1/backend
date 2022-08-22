@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class RequestResponseDto {
+
+    private Long requestId;
+
     private String nickname;
 
     private RequestStatus status;

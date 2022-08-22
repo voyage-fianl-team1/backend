@@ -14,10 +14,11 @@ import java.util.Optional;
 public interface RequestRepository extends JpaRepository<Request,Long> {
     Optional<Request> findByUserAndPost(User user, Post post);
 
-    @Query("select new com.sparta.matchgi.dto.RequestResponseDto(u.nickname,r.requestStatus)" +
+    @Query("select new com.sparta.matchgi.dto.RequestResponseDto(r.id,u.nickname,r.requestStatus)" +
             " FROM Request r " +
             "join r.user u " +
-            "WHERE r.post = :post " +
+            "join r.post p " +
+            "WHERE p = :post " +
             "ORDER BY r.id DESC ")
     List<RequestResponseDto> findAllByPost(Post post);
 
