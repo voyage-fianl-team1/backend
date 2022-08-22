@@ -22,7 +22,7 @@ public class Room {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID")
     private Post post;
 
