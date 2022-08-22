@@ -21,14 +21,10 @@ import java.util.List;
 public class CreatePostResponseDto {
     private String title;
 
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime peopleDeadline;
+    private Long postId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchDeadline;
-
-    private int peoples;
 
     private double lat;
 
@@ -42,18 +38,24 @@ public class CreatePostResponseDto {
 
     private MatchStatus matchStatus;
 
-    private List<ImagePathDto> images;
+    private List<ImagePathDto> imgpaths;
 
-    public CreatePostResponseDto(Post post,List<ImagePathDto> imagePathDtos){
+    private List<ImageUrlDto> imgurls;
+
+    private int owner;
+
+    public CreatePostResponseDto(Post post, List<ImagePathDto> imgpaths,List<ImageUrlDto> imgurls){
         this.title=post.getTitle();
-        this.peopleDeadline=post.getPeopleDeadline();
         this.matchDeadline=post.getMatchDeadline();
-        this.peoples= post.getPeoples();
         this.address= post.getAddress();
         this.subject=post.getSubject();
         this.content=post.getContent();
         this.matchStatus=post.getMatchStatus();
-        this.images=imagePathDtos;
-        }
+        this.imgpaths=imgpaths;
+        this.owner=owner;
+        this.imgurls=imgurls;
+        this.postId=post.getId();
+    }
+
 
 }

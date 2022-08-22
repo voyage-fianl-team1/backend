@@ -1,21 +1,28 @@
 package com.sparta.matchgi.dto;
 
-import com.sparta.matchgi.model.RequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class RequestResponseDto {
+public class ReviewListResponseDto {
 
-    private Long requestId;
+    private Long reviewId;
 
     private String nickname;
 
-    private RequestStatus status;
+    private String title;
+
+    private String content;
+
+    private int star;
+
+    private List<String> imgUrlList;
 
 }

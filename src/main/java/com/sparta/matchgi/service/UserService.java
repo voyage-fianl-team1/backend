@@ -6,20 +6,36 @@ import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
 import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.auth.jwt.JwtTokenUtils;
 import com.sparta.matchgi.dto.*;
-import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.model.RefreshToken;
+import com.sparta.matchgi.model.SubjectEnum;
+import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.repository.RefreshTokenRepository;
+import com.sparta.matchgi.model.Post;
+import com.sparta.matchgi.model.Request;
+import com.sparta.matchgi.model.Score;
+import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.repository.PostRepository;
+import com.sparta.matchgi.repository.RequestRepository;
+import com.sparta.matchgi.repository.ScoreRepository;
+import com.sparta.matchgi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +43,20 @@ import java.util.Optional;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
+
     private final UserRepository userRepository;
+
+    private final AmazonS3 amazonS3;
+    private final JwtDecoder jwtDecoder;
+    private final HeaderTokenExtractor extractor;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final PostRepository postRepository;
 
     private final RequestRepository requestRepository;
 
-    private final AmazonS3 amazonS3;
-
     private final ScoreRepository scoreRepository;
 
-    private final JwtDecoder jwtDecoder;
-
-    private final HeaderTokenExtractor extractor;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${S3.bucket.name}")
     private String bucket;
@@ -121,6 +137,7 @@ public class UserService {
 
         return new ResponseEntity<>(new RefreshResponseDto(accessToken,refreshToken),HttpStatus.valueOf(200));
     }
+
     //나의 경기
     public ResponseEntity<MyMatchResponseDto> getMyMatch(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -139,7 +156,7 @@ public class UserService {
 
         return new ResponseEntity<>(new MyMatchResponseDto(myMatchDetailResponseDtos), HttpStatus.valueOf(200));
     }
-//
+
     //나의 게시글
     public ResponseEntity<MyPostResponseDto> getMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -147,12 +164,8 @@ public class UserService {
         List<MyPostDetailResponseDto> myPostDetailResponseDtos = new ArrayList<>();
 
         for (Post post : posts) {
-            MyPostDetailResponseDto myPostDetailResponseDto = MyPostDetailResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .subject(post.getSubject())
-                    .build();
-            myPostDetailResponseDtos.add(myPostDetailResponseDto);
+            MyPostDetailResponseDto mypostdto=new MyPostDetailResponseDto(post);
+            myPostDetailResponseDtos.add(mypostdto);
         }
 
         return new ResponseEntity<>(new MyPostResponseDto(myPostDetailResponseDtos), HttpStatus.valueOf(200));
@@ -164,5 +177,12 @@ public class UserService {
 
     }
 
+    public ResponseEntity<?> personalRanking(int page, int size, String subject) {
+        Pageable pageable = PageRequest.of(page,size);
+
+        return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+
+
+    }
 }
 

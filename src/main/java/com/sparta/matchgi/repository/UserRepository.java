@@ -15,6 +15,4 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "FROM User u " +
             "left outer join Score s on s.user=:user WHERE u=:user group by u" ) //sum 사용 위해 group by
     MyPageResponseDto myRanking(User user);
-
-
 }

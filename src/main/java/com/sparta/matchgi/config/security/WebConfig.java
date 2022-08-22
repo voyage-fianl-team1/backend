@@ -95,6 +95,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/signup","/api/signin","/api/refresh").permitAll()
+                .antMatchers("/ws-stomp").permitAll()
+                .antMatchers("/ws-stomp/**").permitAll()
                 .anyRequest().permitAll();
     }
 
@@ -107,6 +109,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/api/room/*");
         skipPathList.add("GET,/api/rooms");
         skipPathList.add("PUT,/api/refresh");
+        skipPathList.add("GET,/ws-stomp");
+        skipPathList.add("GET,/ws-stomp/**");
+        skipPathList.add("POST,/ws-stomp/**");
+        skipPathList.add("POST,/ws-stomp");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

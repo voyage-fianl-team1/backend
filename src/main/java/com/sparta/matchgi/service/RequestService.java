@@ -52,7 +52,7 @@ public class RequestService {
         registerMatchAddNotification(user,postFound.get(),request.getRequestStatus());
 
 
-        RequestResponseDto requestResponseDto = new RequestResponseDto(user.getNickname(),request.getRequestStatus());
+        RequestResponseDto requestResponseDto = new RequestResponseDto(request.getId(),user.getNickname(),request.getRequestStatus());
 
         return new ResponseEntity<>(requestResponseDto, HttpStatus.valueOf(201));
 
@@ -69,13 +69,15 @@ public class RequestService {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
 
-        requestFound.get().updateStatus(updateRequestDto);
+        Request request = requestFound.get();
 
-        scoreUpdate(requestFound.get(),updateRequestDto.getStatus());
+        request.updateStatus(updateRequestDto);
+
+        scoreUpdate(request,updateRequestDto.getStatus());
 
         UpdateRequestAddNotification(requestFound.get());
 
-        RequestResponseDto requestResponseDto = new RequestResponseDto(requestFound.get().getUser().getNickname(),requestFound.get().getRequestStatus());
+        RequestResponseDto requestResponseDto = new RequestResponseDto(request.getId(),request.getUser().getNickname(),request.getRequestStatus());
 
         return new ResponseEntity<>(requestResponseDto,HttpStatus.valueOf(201));
 
@@ -87,11 +89,8 @@ public class RequestService {
         if(!postFound.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 포스트입니다.");
         }
-        List<Request> requestList = requestRepository.findAllByPost(postFound.get());
 
-        List<RequestResponseDto> RequestResponseDto = DtoConverter.RequestToRequestResponseDto(requestList);
-
-        return new ResponseEntity<>(new ParticipationResponseDto(RequestResponseDto),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.showParticipationList(postFound.get())),HttpStatus.valueOf(200));
 
     }
 

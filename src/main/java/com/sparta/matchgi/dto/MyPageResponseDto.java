@@ -8,11 +8,15 @@ import lombok.*;
 @Builder
 
 public class MyPageResponseDto {
-    private String profileImgUrl;
-    private String nickname;
-    private Long win;
-    private Long lose;
-    private Long draw;
 
+    private String profileImgUrl;
+
+    private String nickname;
+
+    private Long win;
+
+    private Long lose;
+
+    private Long draw;
 
 }
