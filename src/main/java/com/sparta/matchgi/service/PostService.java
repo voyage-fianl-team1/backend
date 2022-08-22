@@ -9,7 +9,6 @@ import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
-
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
 import com.sparta.matchgi.repository.PostRepository;
@@ -25,12 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.auth.Subject;
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -166,6 +162,8 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+        //post->room->userRoom,Chat
+
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
 
@@ -191,6 +189,14 @@ public class PostService {
         Pageable pageable= PageRequest.of(page,size);
 
         return postRepositoryImpl.findAllBySearchOrderByCreatedAt(search,pageable);
+    }
+
+
+    public void changeStatus(Long postId){
+        Post post=postRepository.findPostById(postId);
+
+
+
     }
 
 

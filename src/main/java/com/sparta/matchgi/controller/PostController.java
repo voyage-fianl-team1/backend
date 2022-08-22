@@ -85,6 +85,11 @@ public class PostController {
         return postService.searchDtoSlice(search,page,size);
     }
 
+    @PutMapping("/api/posts/matchStatus/{postId}")
+    public void changeStatus(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        postService.changeStatus(postId);
+    }
+
 
 
 

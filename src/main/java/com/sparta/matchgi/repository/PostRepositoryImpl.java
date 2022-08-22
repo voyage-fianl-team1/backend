@@ -111,7 +111,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.requestCount,
                         post.matchStatus))
                 .from(post)
-                .where(post.title.contains(search))
+                .where(post.title.contains(search).or(post.content.contains(search)))
                 .orderBy(orderByOngoing(),post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

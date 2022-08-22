@@ -90,7 +90,7 @@ public class Post extends Timestamped{
         this.imageList.add(imgUrl);
     }
 
-
+    public void changeStatus(MatchStatus status){this.matchStatus=status;}
 
 
 
