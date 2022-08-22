@@ -1,21 +1,21 @@
 package com.sparta.matchgi.dto;
 
-import com.sparta.matchgi.model.RequestStatus;
+import com.sparta.matchgi.model.SubjectEnum;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Builder
-public class RequestResponseDto {
-
-    private Long requestId;
+public class PersonalRankingResponseDto {
 
     private String nickname;
 
-    private RequestStatus status;
+    private SubjectEnum subject;
 
+    private String profileUrl;
+
+    private int win;
 }

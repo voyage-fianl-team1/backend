@@ -1,6 +1,6 @@
 package com.sparta.matchgi.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,26 +10,25 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Notification extends Timestamped {
+@AllArgsConstructor
+public class UserRoom {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "NOTIFICATION_ID")
+    @Column(name = "USER_ROOM_ID")
     private Long id;
-
-    @Column(nullable = false)
-    private String content; //알림내용
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @Column(nullable = false)
-    private boolean isread;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROOM_ID")
+    private Room room;
 
-    public Notification(String content,User user){
-        this.content = content;
-        this.user =user;
+    public UserRoom(User user,Room room){
+        this.user = user;
+        this.room = room;
     }
 
 }

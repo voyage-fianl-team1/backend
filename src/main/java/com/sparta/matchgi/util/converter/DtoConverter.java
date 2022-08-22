@@ -1,12 +1,14 @@
 package com.sparta.matchgi.util.converter;
 
 import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.ReviewListResponseDto;
 import com.sparta.matchgi.dto.ParticipationResponseDto;
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.Request;
+import com.sparta.matchgi.model.Review;
+import com.sparta.matchgi.model.ReviewImgUrl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,16 +35,21 @@ public class DtoConverter {
 
         return createPostResponseDto;
     }
-    public static List<RequestResponseDto> RequestToRequestResponseDto(List<Request> requestList) {
 
-        List<RequestResponseDto> requestResponseDtoList = requestList.stream().map(r->
-                RequestResponseDto.builder()
+
+    public static List<ReviewListResponseDto> reviewListToReviewListResponseDto(List<Review> reviewList){
+        List<ReviewListResponseDto> reviewListResponseDtoList = reviewList.stream().map(r->
+                ReviewListResponseDto.builder()
+                        .reviewId(r.getId())
+                        .imgUrlList(r.getReviewImageList().stream().map(ReviewImgUrl::getPath).collect(Collectors.toList()))
                         .nickname(r.getUser().getNickname())
-                        .status(r.getRequestStatus())
+                        .star(r.getStar())
+                        .title(r.getTitle())
+                        .content(r.getContent())
                         .build()
                 ).collect(Collectors.toList());
 
-        return requestResponseDtoList;
+        return reviewListResponseDtoList;
     }
 
     public static PostFilterDto ofSummary(Post post)
