@@ -1,10 +1,22 @@
 package com.sparta.matchgi.repository;
 
 import com.sparta.matchgi.model.Post;
+import com.sparta.matchgi.model.Request;
+import com.sparta.matchgi.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PostRepository extends JpaRepository<Post,Long> {
+import java.util.List;
 
 
-    Post findPostById(Long postId);
+@Repository
+public interface PostRepository extends JpaRepository<Post,Long>, PostRepositoryCustom {
+
+
+    Post findPostById(Long id);
+    List<Post> findAll();
+
+    List<Post> findAllByUser(User user);
+
+
 }

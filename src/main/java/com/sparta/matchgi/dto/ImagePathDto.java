@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ImagePathDto {
     private String path;
+
+
 }

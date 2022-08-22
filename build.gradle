@@ -44,6 +44,9 @@ dependencies {
     implementation "com.querydsl:querydsl-apt:5.0.0"
 
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
 }
 
 tasks.named('test') {

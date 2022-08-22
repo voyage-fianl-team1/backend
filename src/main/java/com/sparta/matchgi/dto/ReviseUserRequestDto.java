@@ -9,6 +9,4 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ReviseUserRequestDto {
     private String nickname;
-
-    private String deleteImage;
 }
