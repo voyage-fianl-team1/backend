@@ -13,9 +13,11 @@ import com.sparta.matchgi.model.SubjectEnum;
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
 import com.sparta.matchgi.repository.PostRepository;
+import com.sparta.matchgi.repository.PostRepositoryImpl;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,8 @@ public class PostService {
     private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
+
+    private final PostRepositoryImpl postRepositoryImpl;
 
 
 
@@ -81,10 +85,9 @@ public class PostService {
     }
 
     //이미지 db에서 지우기기
-   public void imageDelete(Long imgId,UserDetailsImpl userDetails){
-        ImgUrl imageUrl=imageRepository.findImgUrlById(imgId); //post 마다 ImgUrl(path,url)
+   public void imageDelete(String objectKey,UserDetailsImpl userDetails){
+        ImgUrl imageUrl=imageRepository.findImgUrlByPath(objectKey); //post 마다 ImgUrl(path,url)
         imageRepository.delete(imageUrl);
-
     }
 
     //이미지 url 받아오기(완료)
@@ -174,8 +177,20 @@ public class PostService {
         amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
-    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject,String sort,Pageable pageable){
-        return postRepository.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
+    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject,String sort,int size,int page){
+
+        Pageable pageable= PageRequest.of(page,size);
+        if(sort==null)
+            return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
+        else
+            return postRepository.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
+    }
+
+    public Slice<PostFilterDto> searchDtoSlice(String search, int page, int size){
+        System.out.println(search);
+        Pageable pageable= PageRequest.of(page,size);
+
+        return postRepositoryImpl.findAllBySearchOrderByCreatedAt(search,pageable);
     }
 
 

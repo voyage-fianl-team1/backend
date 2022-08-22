@@ -24,9 +24,6 @@ public class CreatePostResponseDto {
     private Long postId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime peopleDeadline;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchDeadline;
 
     private double lat;
@@ -49,7 +46,6 @@ public class CreatePostResponseDto {
 
     public CreatePostResponseDto(Post post, List<ImagePathDto> imgpaths,List<ImageUrlDto> imgurls){
         this.title=post.getTitle();
-        this.peopleDeadline=post.getPeopleDeadline();
         this.matchDeadline=post.getMatchDeadline();
         this.address= post.getAddress();
         this.subject=post.getSubject();
