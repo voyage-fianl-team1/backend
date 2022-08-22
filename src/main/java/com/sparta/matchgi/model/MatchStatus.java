@@ -6,8 +6,6 @@ import lombok.Getter;
 @Getter
 public enum MatchStatus {
     ONGOING,
-    MATCHDEADLINEEND,
-    PEOPLEDEADLINEEND,
     MATCHEND;
 
     @JsonCreator

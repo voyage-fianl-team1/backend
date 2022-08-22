@@ -28,10 +28,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
 
+    //matchstatus는 무조건 ongoing 우선 정렬
+    //모집 마감일은 없는걸로
+    //api 하나 추가해서 경기 종료하면 그냥 end 되는 걸로
+
 
     @Override
     public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,String sort,Pageable pageable){
-
 
     List<PostFilterDto> returnPost=queryFactory.select(Projections.fields(
             PostFilterDto.class,
@@ -57,7 +60,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return subject.equals(SubjectEnum.valueOf("ALL"))?null:post.subject.eq(subject);
     }
 
-//    private BooleanBuilder getSort(String sort){
-//        return sort.equals("viewcount")?null:post.viewCount.desc();
-//    }
+    private BooleanBuilder getSort(String sort){
+        return sort.equals("viewcount")?null:post.viewCount.desc();
+    }
 }
