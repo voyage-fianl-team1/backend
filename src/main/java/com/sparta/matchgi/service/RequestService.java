@@ -90,7 +90,7 @@ public class RequestService {
             throw new IllegalArgumentException("존재하지 않는 포스트입니다.");
         }
 
-        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.findAllByPost(postFound.get())),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.showParticipationList(postFound.get())),HttpStatus.valueOf(200));
 
     }
 

@@ -20,7 +20,7 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
             "join r.post p " +
             "WHERE p = :post " +
             "ORDER BY r.id DESC ")
-    List<RequestResponseDto> findAllByPost(Post post);
+    List<RequestResponseDto> showParticipationList(Post post);
 
     List<Request> findAllByUser(User user);
 
