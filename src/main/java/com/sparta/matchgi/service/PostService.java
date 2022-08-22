@@ -6,11 +6,16 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
+import com.sparta.matchgi.dto.CreatePostRequestDto;
+import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.dto.RevisePostRequetDto;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
+
 import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
@@ -49,129 +54,76 @@ public class PostService {
 
 
     public ResponseEntity<?> createPost(
-            CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails)
+            CreatePostRequestDto createPostRequestDto,List<MultipartFile> file, UserDetailsImpl userDetails)
             throws IOException
     {
-
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
-
-        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
-    }
-
-
-    public ResponseEntity<?> getPost(Long postId,UserDetailsImpl userDetails){
-        Post post=postRepository.findById(postId)
-                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
-            post.setOwner(1);
-        }
-        else
-            post.setOwner(-1);
-
-        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);//post의 ImgUrl 가져옴(post,path,imgurl)
-//        List<ImgUrl> imgUrlList=new ArrayList<>();
-//        for(ImgUrl imgurl:imageList){
-//            imgUrlList.add(imgurl);
-//        }
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
-
-        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
-
-    }
-
-    public String getImgUrl(String path){
-        return amazonS3.getUrl(bucket,path).toString();
-    }
-
-
-
-    public void imageUpload(Long postId, List<MultipartFile> files,UserDetailsImpl userDetails) throws IOException{
         List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-        List<String> imageUrlList=new ArrayList<>();
-
-        for(MultipartFile file:files){
-            ImagePathDto imagePathDto=update(file); //파일을 하나씩 s3에 업데이트
+        for(MultipartFile filed:file){
+            ImagePathDto imagePathDto=update(filed); //파일을 하나씩 s3에 업데이트
             imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
-            String url=getImgUrl(imagePathDto.getPath());
-            imageUrlList.add(url);
         }
-
-        Post post=postRepository.findPostById(postId);
 
         for (ImagePathDto imagePathdto : imagePathDtoList) {
-            String imgurl=getImgUrl(imagePathdto.getPath());
-            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath(),imgurl);
+            ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
             post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
-            System.out.println("imgurl: "+imgurl);
-            System.out.println("path: "+imagePathdto.getPath());
-        }
-    }
+        }//포스트에 이미지url만 저장
 
-    public ImagePathDto update(MultipartFile file) throws IOException {
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
 
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead);
-        amazonS3.putObject(por);
-
-        ImagePathDto imagePathDto = new ImagePathDto(filename);
-
-        return imagePathDto;
+        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
 
     public ResponseEntity<?> editPost(
-            Long postId,CreatePostRequestDto createPostRequestDto,MultipartFile file,UserDetailsImpl userDetails)
+            Long postId, RevisePostRequetDto revisePostRequetDto, List<MultipartFile> file, UserDetailsImpl userDetails)
             throws IOException {
 
+        //---------------------포스트 내용 수정--------------------------
         Post post=postRepository.findPostById(postId);
-        if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail()))
+        if(!userDetails.getUser().getId().equals(post.getUser().getId()))
             throw new IllegalArgumentException("수정 권한이 없습니다.");
 
-        post.updatePost(createPostRequestDto,userDetails);
+        post.editPost(revisePostRequetDto,userDetails);//콘텐츠는 마지막에 이미지까지 한꺼번에 받자 수정 완료!
         postRepository.save(post);
-        //--------------------여기까지 게시물 수정 완료------------------------------------//
-        //--------------------이제 이미지 수정하자---------------------------------------//
 
-//        if(!file.isEmpty())//업로드한 사진 없으면 그냥 기존사진 쓰기, 근데 비어있지 않으면
-//        {
-//            //저장된 이미지 다 불러와서 지우고(현재로써는)(나중에 개별 지우기 구현)
-//            //새로 업데이트
-//            List<ImgUrl> imgUrls = imgUrlRepository.findByPostId(postId); //기존 이미지들 다 지우기
-//            List<ImagePathDto> imagePath=new ArrayList<>();
-//
-//            for(ImgUrl imgUrl:imgUrls)
-//            {
-//                ImagePathDto path=imgUrl.getImagePathDto();
-//                imagePath.add(path);
-//                deleteImages(path);//버킷에서 삭제
-//                imgUrlRepository.delete(imgUrl);
-//                System.out.println("삭제 성공!");
-//
-//            }
-//
-//            ImagePathDto imagePathDto = update(file);
-//
-//            List<ImagePathDto> imagePathDtoList=new ArrayList<>();
-//            imagePathDtoList.add(imagePathDto);
-//
-//            for (ImagePathDto imagePathdto : imagePathDtoList) {
-//                ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
-//                post.addImgUrl(imgUrl); //db에서 삭제
-//            }
-//
-//        }
+        //---------------------이미지 파일 수정-----------------------------
+        List<ImagePathDto> deleteList=revisePostRequetDto.getDeleteImages();
 
+        if(file==null)//파일이 비어있으면
+        {
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post);
+            for (ImagePathDto listed : deleteList) {
+                if (!listed.getPath().equals("-1")) {//deleteimages가 -1이 아니면 지우고, -1이면 안지움
+                    deleteImages(listed);
+                }
+                post.addImgUrl(null);
+            }
+        }
+        else {//파일이 존재하면
+            for (ImagePathDto listed : deleteList) {
+                if (!listed.getPath().equals("-1")) {//그리고 지울 이미지도 존재하면 deleteimages가 -1이 아니면 지우고, -1이면 안지움
+                    deleteImages(listed);
+                }
+                post.addImgUrl(null);
+            }
 
-        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
+            List<ImagePathDto> imagePathDtoList=new ArrayList<>();
+            for(MultipartFile filed:file){
+                ImagePathDto imagePathDto=update(filed); //파일을 하나씩 s3에 업데이트
+                imagePathDtoList.add(imagePathDto); //파일을 하나씩 db에 업데이트
+            }
+
+            for (ImagePathDto imagePathdto : imagePathDtoList) {
+                ImgUrl imgUrl = new ImgUrl(post, imagePathdto.getPath());
+                post.addImgUrl(imgUrl); //imgurl 따로 post에 저장
+            }//포스트에 이미지url만 저장
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.valueOf(201));
+
     }
 
 
@@ -181,30 +133,55 @@ public class PostService {
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
-
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
+        List<ImagePathDto> pathDtoList=new ArrayList<>();
+        for(ImgUrl imgurl:imageList){
+            ImagePathDto path=imgurl.getImagePathDto();
+            deleteImages(path);
+        }
         postRepository.deleteById(postId);
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
 
     }
 
+    public CreatePostResponseDto getPost(Long postId){
+        Post post=postRepository.findById(postId)
+                .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
+        List<ImagePathDto> pathDtoList=new ArrayList<>();
+        for(ImgUrl imgurl:imageList){
+            ImagePathDto path=imgurl.getImagePathDto();
+            pathDtoList.add(path);
+        }
 
+        return new CreatePostResponseDto(post,pathDtoList);
+
+
+
+    }
+
+
+    //하나씩 업데이트
+    public ImagePathDto update(MultipartFile file) throws IOException {
+
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            amazonS3.putObject(por);
+
+            ImagePathDto imagePathDto = new ImagePathDto(filename);
+
+        return imagePathDto;
+    }
+
+    //하나씩 지우기
     public void deleteImages(ImagePathDto filePaths) {
             amazonS3.deleteObject(bucket,filePaths.getPath());
+
     }
-
-    public void imageDelete(String objectKey,UserDetailsImpl userDetails){
-        ImgUrl imgurl=imgUrlRepository.findImgUrlByPath(objectKey);
-        //List<ImgUrl> imageList=imgUrlRepository.findByPostId(postId);
-        List<ImagePathDto> pathDtoList=new ArrayList<>();
-        ImagePathDto path=imgurl.getImagePathDto();
-        deleteImages(path);
-    }
-
-    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject, Pageable pageable){
-        return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
-    }
-
-
-
 }

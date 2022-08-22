@@ -28,6 +28,8 @@ public class CreatePostResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchDeadline;
 
+    private int peoples;
+
     private double lat;
 
     private double lng;
@@ -42,19 +44,16 @@ public class CreatePostResponseDto {
 
     private List<ImagePathDto> images;
 
-    private int owner;
-
-    public CreatePostResponseDto(Post post, List<ImagePathDto> imgUrls){
+    public CreatePostResponseDto(Post post,List<ImagePathDto> imagePathDtos){
         this.title=post.getTitle();
         this.peopleDeadline=post.getPeopleDeadline();
         this.matchDeadline=post.getMatchDeadline();
+        this.peoples= post.getPeoples();
         this.address= post.getAddress();
         this.subject=post.getSubject();
         this.content=post.getContent();
         this.matchStatus=post.getMatchStatus();
-        this.images=imgUrls;
-        this.owner=post.getOwner();
-    }
-
+        this.images=imagePathDtos;
+        }
 
 }

@@ -45,11 +45,8 @@ public class ImageService {
 
     }
 
-    public ResponseEntity<?> deleteImages(List<ImagePathDto> filePaths) {
-        for(ImagePathDto imagePathDto:filePaths){
-            amazonS3.deleteObject(bucket,imagePathDto.getPath());
-        }
-
+    public ResponseEntity<?> deleteImages(ImagePathDto filePaths) { //한 항목만 지우기
+            amazonS3.deleteObject(bucket,filePaths.getPath());
         return new ResponseEntity<>(filePaths, HttpStatus.valueOf(200));
     }
 }

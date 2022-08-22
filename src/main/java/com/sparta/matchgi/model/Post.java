@@ -5,8 +5,8 @@ package com.sparta.matchgi.model;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.dto.ImagePathDto;
+import com.sparta.matchgi.dto.RevisePostRequetDto;
 import com.sparta.matchgi.util.converter.DateConverter;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Post extends Timestamped{
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +38,8 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private LocalDateTime matchDeadline;
 
+    @Column(nullable = false)
+    private int peoples; //전체 모집 인원
 
 
     @Column(nullable = false)
@@ -72,9 +73,6 @@ public class Post extends Timestamped{
     @OneToMany(cascade =CascadeType.ALL,mappedBy ="post")
     private List<ImgUrl> imageList=new ArrayList<>();
 
-    @Column(nullable = false)
-    private int owner;
-
 
 
     public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
@@ -85,36 +83,45 @@ public class Post extends Timestamped{
         this.address = createPostRequestDto.getAddress();
         this.lat = createPostRequestDto.getLat();
         this.lng = createPostRequestDto.getLng();
+        this.peoples = createPostRequestDto.getPeoples();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
         this.viewCount = 0;
         this.requestCount = 0;
         this.matchStatus = MatchStatus.ONGOING;
-        this.owner=-1;//일단 작성자 인걸로 세팅
-        //this.imageList=imageList;
 
     }
     public void addImgUrl(ImgUrl imgUrl){
         this.imageList.add(imgUrl);
     }
 
-    public void setOwner(int ownernum){
-        this.owner=ownernum;
+    public void addRequestCount() {
+        this.requestCount += 1;
     }
 
-
-
-    public void updatePost(CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails) {
+    public void updatePost(CreatePostRequestDto createPostRequestDto,UserDetailsImpl userDetails){
         this.user = userDetails.getUser();
         this.title = createPostRequestDto.getTitle();
+        this.peopleDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getPeopleDeadline());
+        this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
         this.address = createPostRequestDto.getAddress();
         this.lat = createPostRequestDto.getLat();
         this.lng = createPostRequestDto.getLng();
+        this.peoples = createPostRequestDto.getPeoples();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
     }
 
-    public void addRequestCount() {
-        this.requestCount += 1;
+    public void editPost(RevisePostRequetDto revisePostRequetDto,UserDetailsImpl userDetails){ //deleteImages는 포함 X
+        this.user = userDetails.getUser();
+        this.title = revisePostRequetDto.getTitle();
+        this.peopleDeadline = DateConverter.dateToLocalDateTime(revisePostRequetDto.getPeopleDeadline());
+        this.matchDeadline = DateConverter.dateToLocalDateTime(revisePostRequetDto.getMatchDeadline());
+        this.address = revisePostRequetDto.getAddress();
+        this.lat = revisePostRequetDto.getLat();
+        this.lng = revisePostRequetDto.getLng();
+        this.peoples = revisePostRequetDto.getPeoples();
+        this.content = revisePostRequetDto.getContent();
+        this.subject = revisePostRequetDto.getSubject();
     }
 }
