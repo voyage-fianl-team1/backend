@@ -9,5 +9,12 @@ public interface PostRepositoryCustom {
 
 
 
+    Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,Pageable pageable);
+
     Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,String sort,Pageable pageable);
+
+    Slice<PostFilterDto> findAllBySearchOrderByCreatedAt(String search,Pageable pageable);
+
+
+
 }

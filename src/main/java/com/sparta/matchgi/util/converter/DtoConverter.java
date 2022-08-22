@@ -25,7 +25,6 @@ public class DtoConverter {
                 .lng(post.getLng())
                 .matchDeadline(post.getMatchDeadline())
                 .matchStatus(post.getMatchStatus())
-                .peopleDeadline(post.getPeopleDeadline())
                 .subject(post.getSubject())
                 .title(post.getTitle())
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
@@ -60,7 +59,7 @@ public class DtoConverter {
                 .subject(post.getSubject())
                 .viewCount(post.getViewCount())
                 .createdAt(post.getCreatedAt())
-                .peopleDeadline(post.getPeopleDeadline())
+                .matchDeadline(post.getMatchDeadline())
                 .requestCount(post.getRequestCount())
                 .build();
 

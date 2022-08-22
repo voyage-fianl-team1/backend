@@ -33,8 +33,6 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private LocalDateTime peopleDeadline;
 
     @Column(nullable = false)
     private LocalDateTime matchDeadline;
@@ -77,7 +75,6 @@ public class Post extends Timestamped{
     public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
         this.user = userDetails.getUser();
         this.title = createPostRequestDto.getTitle();
-        this.peopleDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getPeopleDeadline());
         this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
         this.address = createPostRequestDto.getAddress();
         this.lat = createPostRequestDto.getLat();

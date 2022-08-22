@@ -37,10 +37,6 @@ public class TestDataRunner implements ApplicationRunner {
 
         createData(testUser1);
 
-        User testUser2=new User("nickname","email",passwordEncoder.encode("password"));
-        userRepository.save(testUser2);
-        createData(testUser2);
-
 
     }
 
@@ -73,6 +69,14 @@ public class TestDataRunner implements ApplicationRunner {
 
             SubjectEnum subject;
 
+            MatchStatus matchStatus;
+            int matchnum=getRandomInt(2,1);
+            switch (matchnum){
+                case 1: matchStatus=MatchStatus.ONGOING;break;
+                default: matchStatus=MatchStatus.MATCHEND;break;
+            }
+
+
             switch (subjectNumber){
                 case 1:
                     subject = SubjectEnum.SOCCER;
@@ -96,7 +100,6 @@ public class TestDataRunner implements ApplicationRunner {
             }
             int day = getRandomInt(10,3);
 
-            LocalDateTime peopleDeadline = getRandomDeadline(day);
 
             LocalDateTime matchDeadline = getRandomDeadline(day+1);
 
@@ -104,7 +107,7 @@ public class TestDataRunner implements ApplicationRunner {
 
 
 
-            Post post = new Post(id,user,title,peopleDeadline,matchDeadline,content,subject,lat,lng,viewCount,requestCount, MatchStatus.ONGOING,address,null);
+            Post post = new Post(id,user,title,matchDeadline,content,subject,lat,lng,viewCount,requestCount, matchStatus,address,null);
 
             postRepository.save(post);
 
