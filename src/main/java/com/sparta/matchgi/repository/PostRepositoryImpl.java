@@ -137,7 +137,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                                         )),"imgUrl"
                         )))
                 .from(post)
-                .where(post.title.contains(search))
+                .where(post.title.contains(search).or(post.content.contains(search)))
                 .orderBy(orderByOngoing(),post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -154,14 +154,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return subject.equals("ALL") ? null : post.subject.eq(SubjectEnum.valueOf(subject));
     }
 
-
-    BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
-        try {
-            return new BooleanBuilder(f.get());
-        } catch (Exception e) {
-            return new BooleanBuilder();
-        }
-    }
 
 
     private OrderSpecifier<Integer> orderByOngoing() {

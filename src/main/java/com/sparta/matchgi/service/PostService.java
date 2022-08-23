@@ -40,7 +40,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final ImageService imageService;
-    
+
     private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
@@ -172,6 +172,8 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+        //post->room->userRoom,Chat
+
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
 
