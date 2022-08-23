@@ -34,42 +34,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     //api 하나 추가해서 경기 종료하면 그냥 end 되는 걸로
 
 
-    //종목 필터링
-    @Override
-    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject,Pageable pageable){
-
-    List<PostFilterDto> returnPost=queryFactory.select(Projections.fields(
-            PostFilterDto.class,
-            post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
-            post.createdAt,
-            post.title,
-            subjectCaseBuilder().as("subject"),
-            post.viewCount,
-            post.matchDeadline,
-            post.requestCount,
-                    post.matchStatus,
-                    ExpressionUtils.as(
-                            JPAExpressions
-                                    .select(imgUrl.url)
-                                    .from(imgUrl)
-                                    .where(imgUrl.id.eq(
-                                            JPAExpressions
-                                                    .select(imgUrl.id.min())
-                                                    .from(imgUrl)
-                                                    .where(imgUrl.post.eq(post))
-                                    )),"imgUrl"
-                    )))
-            .from(post)
-            .where(getSubject(subject))
-            .orderBy(orderByOngoing(),post.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-
-    return new SliceImpl<>(returnPost,pageable,returnPost.iterator().hasNext());
-
-    }
 
     //종목+조회수 필터
     @Override
@@ -97,7 +61,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         )))
                 .from(post)
                 .where(getSubject(subject))
-                .orderBy(orderByOngoing(), post.viewCount.desc(), post.createdAt.desc())
+                .orderBy(orderByOngoing(), OrderBySort(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .fetch();
@@ -169,6 +133,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .when(post.subject.eq(SubjectEnum.TENNIS)).then("테니스")
                 .otherwise("기타");
 
+    }
+
+    private OrderSpecifier<?> OrderBySort(String sort) {
+        if ("viewcount".equals(sort)) {
+            return post.viewCount.desc();
+        }
+        return post.createdAt.desc();
     }
 
 
