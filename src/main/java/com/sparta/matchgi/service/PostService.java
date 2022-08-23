@@ -40,7 +40,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final ImageService imageService;
-    
+
     private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
@@ -172,6 +172,8 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+        //post->room->userRoom,Chat
+
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
 
@@ -183,13 +185,13 @@ public class PostService {
         amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
-    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject,String sort,int size,int page){
+    public Slice<PostFilterDto> filterDtoSlice(String subject,String sort,int size,int page){
 
         Pageable pageable= PageRequest.of(page,size);
         if(sort==null)
-            return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
+            return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,pageable);
         else
-            return postRepository.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
+            return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
     }
 
     public Slice<PostFilterDto> searchDtoSlice(String search, int page, int size){

@@ -18,7 +18,7 @@ public class PostFilterDto {
 
     private Long postId;
     private String title;
-    private SubjectEnum subject;
+    private String subject;
     private int viewCount;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime matchDeadline;
@@ -28,15 +28,8 @@ public class PostFilterDto {
 
     private MatchStatus matchStatus;
 
-    public PostFilterDto(Post post){
-        this.title=post.getTitle();
-        this.postId=post.getId();
-        this.matchDeadline=post.getMatchDeadline();
-        this.subject=post.getSubject();
-        this.viewCount=post.getViewCount();
-        this.requestCount=post.getRequestCount();
-        this.createdAt=post.getCreatedAt();
-        this.matchStatus=post.getMatchStatus();
-    }
+    private String imgUrl;
+
+
 
 }

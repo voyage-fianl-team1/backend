@@ -1,10 +1,7 @@
 package com.sparta.matchgi.testData;
 
 import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.RoomRepository;
-import com.sparta.matchgi.repository.UserRepository;
-import com.sparta.matchgi.repository.UserRoomRepository;
+import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -30,6 +27,8 @@ public class TestDataRunner implements ApplicationRunner {
     private final RoomRepository roomRepository;
 
     private final UserRoomRepository userRoomRepository;
+
+    private final ImageRepository imageRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -113,6 +112,11 @@ public class TestDataRunner implements ApplicationRunner {
             Post post = new Post(id,user,title,matchDeadline,content,subject,lat,lng,viewCount,requestCount, matchStatus,address,null);
 
             postRepository.save(post);
+
+            ImgUrl imgUrl =new ImgUrl(post,"2f133003-1c1f-4329-a02b-8619c89e385a_KakaoTalk_Image_2022-07-26-01-35-18.png","https://yougeun-bucket.s3.ap-northeast-2.amazonaws.com/2f133003-1c1f-4329-a02b-8619c89e385a_KakaoTalk_Image_2022-07-26-01-35-18.png");
+
+            imageRepository.save(imgUrl);
+
 
             Room room = new Room(post.getId(),user,post);
 
