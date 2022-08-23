@@ -8,9 +8,6 @@ import org.springframework.data.domain.Slice;
 public interface PostRepositoryCustom {
 
 
-
-    Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject,Pageable pageable);
-
     Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject,String sort,Pageable pageable);
 
     Slice<PostFilterDto> findAllBySearchOrderByCreatedAt(String search,Pageable pageable);

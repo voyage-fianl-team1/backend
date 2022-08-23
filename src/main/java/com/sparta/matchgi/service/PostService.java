@@ -48,6 +48,8 @@ public class PostService {
     private final RoomRepository roomRepository;
     private final UserRoomRepository userRoomRepository;
 
+    private final ReviewRepository reviewRepository;
+
 
 
 
@@ -188,10 +190,8 @@ public class PostService {
     public Slice<PostFilterDto> filterDtoSlice(String subject,String sort,int size,int page){
 
         Pageable pageable= PageRequest.of(page,size);
-        if(sort==null)
-            return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,pageable);
-        else
-            return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
+
+        return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
     }
 
     public Slice<PostFilterDto> searchDtoSlice(String search, int page, int size){
@@ -201,17 +201,23 @@ public class PostService {
         return postRepositoryImpl.findAllBySearchOrderByCreatedAt(search,pageable);
     }
 
-    public void changeStatus(Long postId,UserDetailsImpl userDetails){
+    public ResponseEntity<?> changeStatus(Long postId,UserDetailsImpl userDetails){
 
         Post post=postRepository.findPostById(postId);
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
+        }
+
+        if(reviewRepository.findByPost(post).size()>0){
+            throw new IllegalArgumentException("리뷰가 존재하여 경기상태를 바꿀수 없습니다.");
         }
         if(post.getMatchStatus().equals(MatchStatus.ONGOING)){
             post.changeStatus(MatchStatus.MATCHEND);
         }
         else
             post.changeStatus(MatchStatus.ONGOING);
+
+        return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다",HttpStatus.valueOf(200));
     }
 
 
