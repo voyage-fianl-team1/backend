@@ -61,9 +61,17 @@ public class TestDataRunner implements ApplicationRunner {
 
             int requestCount = 0;
 
-            double lat = getRandomInt(6,33);
+            double lat;
 
-            double lng = getRandomInt(7,125);
+            double lng;
+
+            int latnum=getRandomInt(3,1);
+            switch (latnum){
+                case 1:lat=35.8923285861355;lng=128.61556339142595;break;
+                case 2:lat=35.882713157875514;lng=128.61357418841052;break;
+                default:lat=35.60577161640945;lng=128.56142639705237;break;
+            }
+
 
             int subjectNumber = getRandomInt(6,1);
 
@@ -128,6 +136,7 @@ public class TestDataRunner implements ApplicationRunner {
 
 
         }
+
     }
 
     private String getRandomString(){

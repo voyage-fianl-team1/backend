@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.ImgUrl;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static java.lang.Math.*;
+import static java.lang.Math.toRadians;
+import static org.aspectj.runtime.internal.Conversions.doubleValue;
 
 @Service
 @Transactional
@@ -70,6 +76,13 @@ public class PostService {
 
         UserRoom userRoom = new UserRoom(userDetails.getUser(),room);
         userRoomRepository.save(userRoom);
+//
+//        Double latitude=createPostRequestDto.getLat();
+//        Double longitude= createPostRequestDto.getLng();
+//
+//        String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
+//
+//        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 
@@ -218,6 +231,12 @@ public class PostService {
             post.changeStatus(MatchStatus.ONGOING);
 
         return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다",HttpStatus.valueOf(200));
+    }
+
+
+    public List<PostFilterDto> findLocation(double lat,double lng){
+
+        return postRepositoryImpl.findAllByLocation(lat,lng);
     }
 
 

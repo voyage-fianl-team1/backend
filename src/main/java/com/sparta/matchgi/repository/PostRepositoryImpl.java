@@ -1,12 +1,8 @@
 package com.sparta.matchgi.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
@@ -16,22 +12,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.function.Supplier;
+
+import static com.querydsl.core.types.dsl.MathExpressions.*;
+import static org.aspectj.runtime.internal.Conversions.doubleValue;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     private final JPAQueryFactory queryFactory;
-
     private QPost post=QPost.post;
+
     private QImgUrl imgUrl = QImgUrl.imgUrl;
-
-
-
-    //matchstatus는 무조건 ongoing 우선 정렬
-    //api 하나 추가해서 경기 종료하면 그냥 end 되는 걸로
 
 
 
@@ -112,11 +107,81 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
 
+    @Override
+    public List<PostFilterDto> findAllByLocation(Double lat, Double lng){
+        NumberExpression<Double> distanceExpression=getLocation(lat,lng);
+        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+        Expressions.as(distanceExpression, distancePath);
+        List<PostFilterDto> returnPost= queryFactory.select(Projections.fields(
+                PostFilterDto.class,
+                post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
+                post.createdAt,
+                post.title,
+                subjectCaseBuilder().as("subject"),
+                post.viewCount,
+                post.matchDeadline,
+                post.requestCount,
+                post.matchStatus,
+                ExpressionUtils.as(
+                        JPAExpressions
+                                .select(imgUrl.url)
+                                .from(imgUrl)
+                                .where(imgUrl.id.eq(
+                                        JPAExpressions
+                                                .select(imgUrl.id.min())
+                                                .from(imgUrl)
+                                                .where(imgUrl.post.eq(post))
+                                )),"imgUrl"
+                ),Expressions.as(distanceExpression, distancePath)))
+                .from(post)
+                .where(distancePath.loe(new Double("5.00")))
+                .orderBy(orderByOngoing())
+                .fetch();
+
+        return returnPost;
+
+    }
+
+    //querydsl에서는 Doubld에서 double로 형 변환이 안되네
+    //서비스에서 하려니까 데이터가 너무 많아서 for문 돌리는게 안될 것 같음
+
+
+
+
+
+    private NumberExpression<Double> getLocation(double lat, double lng){
+        NumberExpression<Double> distanceExpression =
+                acos(cos(radians(Expressions.constant(lat)))
+                        .multiply(cos(radians(post.lat))
+                                .multiply(cos(radians(post.lng))
+                                        .subtract(radians(Expressions.constant(lng)))
+                                        .add(sin(radians(Expressions.constant(lat)))
+                                                .multiply(sin(radians(post.lat))))))).multiply(6371);
+
+
+        System.out.println("현재위도,경도 : "+lat+", "+lng);
+        return distanceExpression;
+    }
+
+//    private  BooleanExpression list(double lat,double lng){
+//        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+//
+//        NumberExpression<Double> range=getLocation(lat,lng);
+//        return range.loe(ExpressionUtils.any(new Double("5.00")));
+//        }
+
+
+
+
 
 
     private BooleanExpression getSubject(String subject){
         return subject.equals("ALL") ? null : post.subject.eq(SubjectEnum.valueOf(subject));
     }
+
+
+
+
 
 
 
