@@ -1,11 +1,10 @@
 package com.sparta.matchgi.testData;
 
-import com.sparta.matchgi.model.MatchStatus;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.SubjectEnum;
-import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.PostRepository;
+import com.sparta.matchgi.repository.RoomRepository;
 import com.sparta.matchgi.repository.UserRepository;
+import com.sparta.matchgi.repository.UserRoomRepository;
 import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -27,6 +26,10 @@ public class TestDataRunner implements ApplicationRunner {
     private final PostRepository postRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final RoomRepository roomRepository;
+
+    private final UserRoomRepository userRoomRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -110,6 +113,15 @@ public class TestDataRunner implements ApplicationRunner {
             Post post = new Post(id,user,title,matchDeadline,content,subject,lat,lng,viewCount,requestCount, matchStatus,address,null);
 
             postRepository.save(post);
+
+            Room room = new Room(post.getId(),user,post);
+
+            roomRepository.save(room);
+
+            UserRoom userRoom = new UserRoom(user,room);
+
+            userRoomRepository.save(userRoom);
+
 
         }
     }
