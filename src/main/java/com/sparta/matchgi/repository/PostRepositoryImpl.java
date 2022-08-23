@@ -3,25 +3,19 @@ package com.sparta.matchgi.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
-import com.sparta.matchgi.model.MatchStatus;
-import com.sparta.matchgi.model.QPost;
-import com.sparta.matchgi.model.QSubject;
-import com.sparta.matchgi.model.SubjectEnum;
+import com.sparta.matchgi.model.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.data.support.PageableExecutionUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -32,8 +26,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     private QPost post=QPost.post;
-
-    private QSubject subject=QSubject.subject;
+    private QImgUrl imgUrl = QImgUrl.imgUrl;
 
 
 
@@ -43,18 +36,29 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     //종목 필터링
     @Override
-    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,Pageable pageable){
+    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject,Pageable pageable){
 
     List<PostFilterDto> returnPost=queryFactory.select(Projections.fields(
             PostFilterDto.class,
             post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
             post.createdAt,
             post.title,
-            post.subject,
+            subjectCaseBuilder().as("subject"),
             post.viewCount,
             post.matchDeadline,
             post.requestCount,
-                    post.matchStatus))
+                    post.matchStatus,
+                    ExpressionUtils.as(
+                            JPAExpressions
+                                    .select(imgUrl.url)
+                                    .from(imgUrl)
+                                    .where(imgUrl.id.eq(
+                                            JPAExpressions
+                                                    .select(imgUrl.id.min())
+                                                    .from(imgUrl)
+                                                    .where(imgUrl.post.eq(post))
+                                    )),"imgUrl"
+                    )))
             .from(post)
             .where(getSubject(subject))
             .orderBy(orderByOngoing(),post.createdAt.desc())
@@ -69,17 +73,28 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     //종목+조회수 필터
     @Override
-    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject, String sort, Pageable pageable) {
+    public Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject, String sort, Pageable pageable) {
         List<com.sparta.matchgi.dto.PostFilterDto> returnPost = queryFactory.select(Projections.fields(
                         com.sparta.matchgi.dto.PostFilterDto.class,
                         post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
                         post.createdAt,
                         post.title,
-                        post.subject,
+                        subjectCaseBuilder().as("subject"),
                         post.viewCount,
                         post.matchDeadline,
                         post.requestCount,
-                        post.matchStatus))
+                        post.matchStatus,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(imgUrl.url)
+                                        .from(imgUrl)
+                                        .where(imgUrl.id.eq(
+                                                JPAExpressions
+                                                        .select(imgUrl.id.min())
+                                                        .from(imgUrl)
+                                                        .where(imgUrl.post.eq(post))
+                                        )),"imgUrl"
+                        )))
                 .from(post)
                 .where(getSubject(subject))
                 .orderBy(orderByOngoing(), post.viewCount.desc(), post.createdAt.desc())
@@ -105,11 +120,22 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
                         post.createdAt,
                         post.title,
-                        post.subject,
+                        subjectCaseBuilder().as("subject"),
                         post.viewCount,
                         post.matchDeadline,
                         post.requestCount,
-                        post.matchStatus))
+                        post.matchStatus,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(imgUrl.url)
+                                        .from(imgUrl)
+                                        .where(imgUrl.id.eq(
+                                                JPAExpressions
+                                                        .select(imgUrl.id.min())
+                                                        .from(imgUrl)
+                                                        .where(imgUrl.post.eq(post))
+                                        )),"imgUrl"
+                        )))
                 .from(post)
                 .where(post.title.contains(search))
                 .orderBy(orderByOngoing(),post.createdAt.desc())
@@ -124,8 +150,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
 
-    private BooleanExpression getSubject(SubjectEnum subject){
-        return subject.equals(SubjectEnum.valueOf("ALL"))?null:post.subject.eq(subject);
+    private BooleanExpression getSubject(String subject){
+        return subject.equals("ALL") ? null : post.subject.eq(SubjectEnum.valueOf(subject));
     }
 
 
@@ -137,16 +163,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         }
     }
 
-    BooleanBuilder titleCt(String search) {
-        return nullSafeBuilder(() -> post.title.contains(search));
-    }
-    BooleanBuilder contentCt(String search) {
-        return nullSafeBuilder(() -> post.content.contains(search));
-    }
 
     private OrderSpecifier<Integer> orderByOngoing() {
-        LocalDateTime date = LocalDateTime.now();
         return new CaseBuilder().when(post.matchStatus.eq(MatchStatus.ONGOING)).then(1).otherwise(2).asc();
+    }
+
+    private StringExpression subjectCaseBuilder(){
+        return new CaseBuilder().when(post.subject.eq(SubjectEnum.SOCCER)).then("축구")
+                .when(post.subject.eq(SubjectEnum.BADMINTON)).then("배드민턴")
+                .when(post.subject.eq(SubjectEnum.BASKETBALL)).then("농구")
+                .when(post.subject.eq(SubjectEnum.BILLIARDS)).then("당구")
+                .when(post.subject.eq(SubjectEnum.BOWLING)).then("볼링")
+                .when(post.subject.eq(SubjectEnum.TENNIS)).then("테니스")
+                .otherwise("기타");
+
     }
 
 

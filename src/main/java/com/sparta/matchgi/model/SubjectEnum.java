@@ -11,7 +11,8 @@ public enum SubjectEnum {
     BADMINTON,
     BILLIARDS,
     BOWLING,
-    ALL;
+
+    ETC;
 
 
 

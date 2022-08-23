@@ -71,7 +71,7 @@ public class PostController {
     @GetMapping("/api/posts")
     public Slice<PostFilterDto> postList(@RequestParam("page") int page,
                                          @RequestParam("size") int size,
-                                         @RequestParam(value="subject",required = false) SubjectEnum subject,
+                                         @RequestParam(value="subject",required = false) String subject,
                                          @RequestParam(value = "sort",required = false)String sort
     )
     {
