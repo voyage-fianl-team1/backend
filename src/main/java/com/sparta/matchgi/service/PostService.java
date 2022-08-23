@@ -10,11 +10,12 @@ import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.MatchStatus;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
-
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
 import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.repository.PostRepositoryImpl;
+import com.sparta.matchgi.model.*;
+import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +26,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.security.auth.Subject;
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,11 +40,13 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final ImageService imageService;
+    
     private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
-
     private final PostRepositoryImpl postRepositoryImpl;
+    private final RoomRepository roomRepository;
+    private final UserRoomRepository userRoomRepository;
 
 
 
@@ -63,6 +62,12 @@ public class PostService {
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
+
+        Room room = new Room(post.getId(),userDetails.getUser(),post);
+        roomRepository.save(room);
+
+        UserRoom userRoom = new UserRoom(userDetails.getUser(),room);
+        userRoomRepository.save(userRoom);
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 

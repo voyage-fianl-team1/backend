@@ -26,8 +26,4 @@ public class Room {
     @JoinColumn(name = "POST_ID")
     private Post post;
 
-    @OneToMany
-    private List<Chat> chatList;
-
-
 }

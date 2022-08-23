@@ -5,10 +5,7 @@ import com.sparta.matchgi.dto.ParticipationResponseDto;
 import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.dto.UpdateRequestDto;
 import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.NotificationRepository;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.RequestRepository;
-import com.sparta.matchgi.repository.ScoreRepository;
+import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +27,10 @@ public class RequestService {
     private final ScoreRepository scoreRepository;
 
     private final NotificationRepository notificationRepository;
+
+    private final RoomRepository roomRepository;
+
+    private final UserRoomRepository userRoomRepository;
 
     public ResponseEntity<?> registerMatch(Long postId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -75,11 +76,41 @@ public class RequestService {
 
         scoreUpdate(request,updateRequestDto.getStatus());
 
-        UpdateRequestAddNotification(requestFound.get());
+        UpdateRequestAddNotification(request);
+
+        inviteRoom(request);
 
         RequestResponseDto requestResponseDto = new RequestResponseDto(request.getId(),request.getUser().getNickname(),request.getRequestStatus());
 
         return new ResponseEntity<>(requestResponseDto,HttpStatus.valueOf(201));
+
+    }
+
+    private void inviteRoom(Request request) {
+        RequestStatus requestStatus = request.getRequestStatus();
+
+        if(requestStatus.equals(RequestStatus.ACCEPT)){
+            User user = request.getUser();
+
+            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
+            );
+
+            UserRoom userRoom = new UserRoom(user,room);
+            userRoomRepository.save(userRoom);
+
+        } else if (requestStatus.equals(RequestStatus.REJECT)) {
+            User user = request.getUser();
+
+            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
+            );
+
+            Optional<UserRoom> userRoom = userRoomRepository.findByUserAndRoom(user,room);
+
+            userRoom.ifPresent(userRoomRepository::delete);
+
+        }
 
     }
 
