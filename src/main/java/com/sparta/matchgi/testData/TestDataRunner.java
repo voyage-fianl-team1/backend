@@ -47,7 +47,7 @@ public class TestDataRunner implements ApplicationRunner {
     private void createData(User testUser1) {
 
 
-        for(int i =1; i<100; i++){
+        for(int i =1; i<=10; i++){
 
             Long id=(long)i;
 
@@ -65,15 +65,22 @@ public class TestDataRunner implements ApplicationRunner {
 
             double lng;
 
-            int latnum=getRandomInt(3,1);
+            int latnum=i;
             switch (latnum){
-                case 1:lat=35.8923285861355;lng=128.61556339142595;break;
-                case 2:lat=35.882713157875514;lng=128.61357418841052;break;
-                default:lat=35.60577161640945;lng=128.56142639705237;break;
+                case 1:lat=35.89064935862601;lng=128.6121073156588;break;//경북대
+                case 2:lat=35.88298540137134;lng=128.61376795659538;break;//대구공고
+                case 3:lat=35.905792656554134;lng=128.61715517604347;break;//코스트코
+                case 4:lat=35.88398926233881;lng=128.62486167276103;break;//파티마병원
+                case 5:lat=35.87125226706986;lng=128.62048289351063;break;//신천초
+                case 6:lat=33.458832173698866;lng=126.9408389117477;break;//제주도-성산일출봉
+                case 7:lat=37.567427873950024;lng=126.97867472484094;break;//서울-서울시청
+                case 8:lat=36.0540405039569;lng=129.3784666991711;break;//포항-영일대
+                case 9:lat=35.1688135372758;lng=129.0582845214676;break;//부산-부산시민공원
+                default:lat=34.840214358040356;lng=127.61343090283592;break;//여수-여수공항
             }
 
 
-            int subjectNumber = getRandomInt(6,1);
+            int subjectNumber = getRandomInt(7,1);
 
             String address = getRandomString();
 
@@ -103,9 +110,10 @@ public class TestDataRunner implements ApplicationRunner {
                 case 5:
                     subject = SubjectEnum.BOWLING;
                     break;
-                default:
-                    subject = SubjectEnum.TENNIS;
+                case 6:subject = SubjectEnum.TENNIS;
                     break;
+                default: subject=SubjectEnum.ETC;break;
+
 
             }
             int day = getRandomInt(10,3);

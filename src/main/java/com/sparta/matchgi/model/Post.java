@@ -73,7 +73,6 @@ public class Post extends Timestamped{
     private List<ImgUrl> imageList=new ArrayList<>();
 
 
-
     public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
         this.user = userDetails.getUser();
         this.title = createPostRequestDto.getTitle();

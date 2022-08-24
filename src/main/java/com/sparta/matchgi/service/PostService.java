@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.ImgUrl;
@@ -34,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//import static com.querydsl.core.types.dsl.MathExpressions.*;
+//import static com.querydsl.core.types.dsl.MathExpressions.radians;
+//import static com.querydsl.core.types.dsl.MathExpressions.sin;
 import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
 import static org.aspectj.runtime.internal.Conversions.doubleValue;

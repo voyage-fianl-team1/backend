@@ -14,7 +14,7 @@ public interface PostRepositoryCustom {
 
     Slice<PostFilterDto> findAllBySearchOrderByCreatedAt(String search,Pageable pageable);
 
-    List<PostFilterDto> findAllByLocation(Double lat, Double lng);
+    List<PostFilterDto> findAllByLocation(double lat, double lng);
 
 
 }
