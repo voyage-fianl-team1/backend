@@ -1,14 +1,17 @@
 package com.sparta.matchgi.service;
 
+import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.dto.SendChatRequestDto;
 import com.sparta.matchgi.dto.ChatResponseDto;
 import com.sparta.matchgi.model.Chat;
+import com.sparta.matchgi.model.RedisChat;
 import com.sparta.matchgi.model.Room;
 import com.sparta.matchgi.model.User;
 import com.sparta.matchgi.repository.ChatRepository;
 import com.sparta.matchgi.repository.RoomRepository;
 import com.sparta.matchgi.repository.UserRepository;
+import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -27,6 +31,8 @@ public class ChatService {
     private final JwtDecoder jwtDecoder;
 
     private final UserRepository userRepository;
+
+    private final RedisChatRepository redisChatRepository;
 
     public ResponseEntity<?> sendChat(Long roomId, SendChatRequestDto sendChatRequestDto,String token) {
 
@@ -40,11 +46,11 @@ public class ChatService {
                 ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다.")
         );
 
-        Chat chat = new Chat(room, sendChatRequestDto.getMessage(),user);
+        RedisChat redisChat = new RedisChat(room.getId().toString(),room, sendChatRequestDto.getMessage(),user, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
 
-        chatRepository.save(chat);
+        redisChatRepository.save(redisChat);
 
-        ChatResponseDto chatResponseDto = new ChatResponseDto(chat);
+        ChatResponseDto chatResponseDto = new ChatResponseDto(redisChat);
 
         return new ResponseEntity<>(chatResponseDto,HttpStatus.valueOf(200));
 
@@ -54,6 +60,16 @@ public class ChatService {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다")
         );
+
+        List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
+
+        List<Chat> chatList = redisChatList.stream().map(r->
+                new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
+        ).collect(Collectors.toList());
+
+        chatRepository.saveAll(chatList);
+
+        redisChatRepository.deleteAll(redisChatList);
 
         Pageable pageable =Pageable.ofSize(limit);
 
