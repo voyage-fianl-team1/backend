@@ -13,14 +13,14 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
             "FROM Chat c  " +
             "JOIN c.user u " +
             "WHERE c.room = :room" +
-            " ORDER BY c.id DESC ")
+            " ORDER BY c.createdAt DESC ")
     Slice<ChatResponseDto> showChatsFirst(Room room, Pageable pageable);
 
     @Query("SELECT new com.sparta.matchgi.dto.ChatResponseDto(c.id,u.id,u.nickname,u.profileImgUrl,c.message,c.createdAt) " +
             "FROM Chat c  " +
             "JOIN c.user u " +
             "WHERE c.room = :room AND c.id<:lastChat" +
-            " ORDER BY c.id DESC ")
+            " ORDER BY c.createdAt DESC ")
     Slice<ChatResponseDto> showChatsAfter(Room room, Long lastChat, Pageable pageable);
 
 }
