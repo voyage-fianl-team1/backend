@@ -107,4 +107,9 @@ public class Post extends Timestamped{
     public void addRequestCount() {
         this.requestCount += 1;
     }
+
+    public void changeStatus(MatchStatus matchStatus){
+        this.matchStatus=matchStatus;
+    }
+
 }

@@ -3,8 +3,12 @@ package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
+import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.RevisePostRequetDto;
+
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.model.SubjectEnum;
+
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -67,9 +71,9 @@ public class PostController {
     @GetMapping("/api/posts")
     public Slice<PostFilterDto> postList(@RequestParam("page") int page,
                                          @RequestParam("size") int size,
-                                         @RequestParam(value="subject",required = false) SubjectEnum subject,
-                                         @RequestParam(value = "sort",required = false)String sort
-                                         )
+                                         @RequestParam(value="subject") String subject,
+                                         @RequestParam(value = "sort")String sort
+    )
     {
         System.out.println("정렬 컨트롤러 진입");
 
@@ -84,6 +88,12 @@ public class PostController {
                                            @RequestParam(value="search",required = false)String search){
         return postService.searchDtoSlice(search,page,size);
     }
+
+    @PutMapping("/api/posts/matchstatus/{postId}")
+    public ResponseEntity<?> changeStatus(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+       return  postService.changeStatus(postId,userDetails);
+    }
+
 
 
 

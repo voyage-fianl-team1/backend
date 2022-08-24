@@ -32,6 +32,4 @@ public class CreatePostRequestDto {
 
     private String content;
 
-    //private List<ImagePathDto> images;
-
 }

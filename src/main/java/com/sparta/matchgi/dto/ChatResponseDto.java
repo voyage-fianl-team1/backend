@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ChatResponseDto {
 
-    private Long id;
+    private Long chatId;
+
+    private Long userId;
 
     private String nickname;
 
@@ -26,6 +28,8 @@ public class ChatResponseDto {
 
 
     public ChatResponseDto(Chat chat){
+        this.chatId = chat.getId();
+        this.userId = chat.getUser().getId();
         this.nickname = chat.getUser().getNickname();
         this.profileImgUrl = chat.getUser().getProfileImgUrl();
         this.message = chat.getMessage();

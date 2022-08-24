@@ -51,18 +51,4 @@ public class DtoConverter {
         return reviewListResponseDtoList;
     }
 
-    public static PostFilterDto ofSummary(Post post)
-    {
-        PostFilterDto postFilterDto = PostFilterDto.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .subject(post.getSubject())
-                .viewCount(post.getViewCount())
-                .createdAt(post.getCreatedAt())
-                .matchDeadline(post.getMatchDeadline())
-                .requestCount(post.getRequestCount())
-                .build();
-
-        return postFilterDto;
-    }
 }
