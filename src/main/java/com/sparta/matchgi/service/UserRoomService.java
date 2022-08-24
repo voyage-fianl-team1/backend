@@ -3,10 +3,7 @@ package com.sparta.matchgi.service;
 import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.ShowRoomResponseDto;
-import com.sparta.matchgi.model.Chat;
-import com.sparta.matchgi.model.RedisChat;
-import com.sparta.matchgi.model.Room;
-import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.ChatRepository;
 import com.sparta.matchgi.repository.RoomRepository;
 import com.sparta.matchgi.repository.UserRoomRepository;
@@ -17,8 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,10 +31,13 @@ public class UserRoomService {
 
     private final ChatRepository chatRepository;
 
+    private final RoomRepository roomRepository;
 
-    public ResponseEntity<?> showUserRoom(Long lastActive, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> showUserRoom(UserDetailsImpl userDetails) {
 
-        List<Room> roomList = userRoomRepository.findRoomList(userDetails.getUser());
+        User user = userDetails.getUser();
+
+        List<Room> roomList = userRoomRepository.findRoomList(user);
 
         for(Room room:roomList){
 
@@ -50,13 +52,30 @@ public class UserRoomService {
             redisChatRepository.deleteAll(redisChatList);
         }
 
-        LocalDateTime lastActiveLocalDateTime = DateConverter.millsToLocalDateTime(lastActive);
+
+        List<ShowRoomResponseDto> showRoomResponseDtoList = userRoomRepositoryImpl.ShowRoomPost(user);
+
+        return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
+
+    }
+    public ResponseEntity<?> updateLastActive(Long roomId, UserDetailsImpl userDetails) {
+
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다.")
+        );
 
         User user = userDetails.getUser();
 
-        List<ShowRoomResponseDto> showRoomResponseDtoList = userRoomRepositoryImpl.ShowRoomPost(user,lastActiveLocalDateTime);
+        Optional<UserRoom> userRoomFound = userRoomRepository.findByUserAndRoom(user,room);
 
-        return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
+        if(userRoomFound.isPresent()){
+            userRoomFound.get().updateLastActive(DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
+            userRoomRepository.save(userRoomFound.get());
+        }else{
+            throw new IllegalArgumentException("채팅방에 속해있지 않습니다.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.valueOf(200));
 
     }
 }

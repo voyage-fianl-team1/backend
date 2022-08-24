@@ -6,6 +6,7 @@ import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.dto.UpdateRequestDto;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -96,7 +97,7 @@ public class RequestService {
                     () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
             );
 
-            UserRoom userRoom = new UserRoom(user,room);
+            UserRoom userRoom = new UserRoom(user,room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
             userRoomRepository.save(userRoom);
 
         } else if (requestStatus.equals(RequestStatus.REJECT)) {

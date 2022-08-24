@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,9 +27,16 @@ public class UserRoom {
     @JoinColumn(name = "ROOM_ID")
     private Room room;
 
-    public UserRoom(User user,Room room){
+    @Column(nullable = false)
+    private LocalDateTime lastActive;
+
+    public UserRoom(User user,Room room,LocalDateTime lastActive){
         this.user = user;
         this.room = room;
+        this.lastActive = lastActive;
     }
 
+    public void updateLastActive(LocalDateTime lastActive) {
+        this.lastActive = lastActive;
+    }
 }
