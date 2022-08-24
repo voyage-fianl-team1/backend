@@ -11,6 +11,7 @@ import com.sparta.matchgi.repository.RoomRepository;
 import com.sparta.matchgi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class ChatService {
 
         Pageable pageable =Pageable.ofSize(limit);
 
-        List<ChatResponseDto> chatResponseDtoList;
+        Slice<ChatResponseDto> chatResponseDtoList;
 
         if(lastChat == -1)
         {

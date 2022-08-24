@@ -9,6 +9,8 @@ import lombok.*;
 
 public class MyPageResponseDto {
 
+    private Long id;
+
     private String profileImgUrl;
 
     private String nickname;
