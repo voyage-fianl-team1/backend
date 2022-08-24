@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface UserRoomRepositoryCustom {
 
-    List<ShowRoomResponseDto> ShowRoomPost(User user1, LocalDateTime lastActive);
+    List<ShowRoomResponseDto> ShowRoomPost(User user1);
 
 }

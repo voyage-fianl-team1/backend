@@ -16,6 +16,7 @@ import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.repository.PostRepositoryImpl;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +67,7 @@ public class PostService {
         Room room = new Room(post.getId(),userDetails.getUser(),post);
         roomRepository.save(room);
 
-        UserRoom userRoom = new UserRoom(userDetails.getUser(),room);
+        UserRoom userRoom = new UserRoom(userDetails.getUser(),room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
         userRoomRepository.save(userRoom);
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
