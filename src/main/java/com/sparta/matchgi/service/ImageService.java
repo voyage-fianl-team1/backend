@@ -30,6 +30,7 @@ public class ImageService {
     private String bucket;
 
     public ResponseEntity<?> upload(MultipartFile file) throws IOException {
+
         String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
