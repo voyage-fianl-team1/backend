@@ -32,7 +32,7 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
 
 
     @Override
-    public List<ShowRoomResponseDto> ShowRoomPost(User user1, LocalDateTime lastActive) {
+    public List<ShowRoomResponseDto> ShowRoomPost(User user1) {
 
         List<ShowRoomResponseDto> showRoomResponseDtoList = queryFactory.select(Projections.fields(
                         ShowRoomResponseDto.class,
@@ -43,7 +43,7 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
                                 JPAExpressions
                                         .select(chat.count())
                                         .from(chat)
-                                        .where(chat.room.eq(room),chat.createdAt.gt(lastActive))
+                                        .where(chat.room.eq(room),chat.createdAt.gt(userRoom.lastActive))
                                         .groupBy(chat.room),"unreadMessageCount"
                         ),
                         ExpressionUtils.as(
@@ -122,7 +122,7 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
                 .join(userRoom.room,room)
                 .join(room.post,post)
                 .where(userRoom.user.eq(user1))
-                .orderBy(room.id.desc())
+                .orderBy(userRoom.lastActive.desc())
                 .fetch();
 
         return showRoomResponseDtoList;

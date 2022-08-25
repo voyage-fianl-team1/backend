@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,8 +69,11 @@ public class UserController {
         return userService.getMyPage(userDetails);
     }
 
-
-
+    @PutMapping("/api/images/users")
+    public ResponseEntity<?> putMyImage(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestPart MultipartFile file) throws IOException {
+        return userService.putMyImage(userDetails, file);
+    }
 
 
 }

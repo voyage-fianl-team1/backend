@@ -138,7 +138,7 @@ public class TestDataRunner implements ApplicationRunner {
 
             roomRepository.save(room);
 
-            UserRoom userRoom = new UserRoom(user,room);
+            UserRoom userRoom = new UserRoom(user,room,DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
 
             userRoomRepository.save(userRoom);
 

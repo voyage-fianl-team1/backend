@@ -25,7 +25,7 @@ public class Notification extends Timestamped {
     private User user;
 
     @Column(nullable = false)
-    private boolean isread;
+    private boolean read;
 
     public Notification(String content,User user){
         this.content = content;

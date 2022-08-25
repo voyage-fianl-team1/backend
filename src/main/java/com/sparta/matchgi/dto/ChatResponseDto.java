@@ -1,6 +1,7 @@
 package com.sparta.matchgi.dto;
 
 import com.sparta.matchgi.model.Chat;
+import com.sparta.matchgi.model.RedisChat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ChatResponseDto {
 
-    private Long id;
+    private Long chatId;
+
+    private Long userId;
 
     private String nickname;
 
@@ -25,7 +28,8 @@ public class ChatResponseDto {
     private LocalDateTime createdAt;
 
 
-    public ChatResponseDto(Chat chat){
+    public ChatResponseDto(RedisChat chat){
+        this.userId = chat.getUser().getId();
         this.nickname = chat.getUser().getNickname();
         this.profileImgUrl = chat.getUser().getProfileImgUrl();
         this.message = chat.getMessage();
