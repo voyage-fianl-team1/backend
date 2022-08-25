@@ -56,6 +56,9 @@ public class UserService {
     @Value("${S3.bucket.name}")
     private String bucket;
 
+    @Value("${S3.Url}")
+    private String S3Url;
+
     public ResponseEntity<?> registerUser(SignupRequestDto signupRequestDto) {
         String nickname = signupRequestDto.getNickname();
         String email = signupRequestDto.getEmail();
@@ -183,7 +186,9 @@ public class UserService {
         User user =userDetails.getUser();
         String key = s3Image.upload(file);
 
-        user.updateProfileImgUrl(key);
+        user.updateProfileImgUrl(S3Url+key);
+
+        userRepository.save(user);
 
         return new ResponseEntity<>("사진이 등록되었습니다.", HttpStatus.valueOf(201));
     }
