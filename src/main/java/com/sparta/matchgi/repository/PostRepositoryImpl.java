@@ -198,6 +198,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
 
+
     private OrderSpecifier<?> OrderBySort(String sort) {
         if ("viewcount".equals(sort)) {
             return post.viewCount.desc();
@@ -210,5 +211,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     //경기목록에 내용 굳이 안줘도 될듯? 제목도 길면 한 카드가 너무 복잡함
 
 
+//    public void batchUpdate(){
+//        queryFactory
+//                .update(post)
+//                .set(post.imageList,post.imageList.get().url.)
+//                .execute();
+//    }
 
 }

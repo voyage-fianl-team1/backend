@@ -24,4 +24,6 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
             " ORDER BY c.id DESC ")
     List<ChatResponseDto> showChatsAfter(Room room,Long lastChat, Pageable pageable);
 
+    List<Chat> findAllByRoom(Room room);
+
 }

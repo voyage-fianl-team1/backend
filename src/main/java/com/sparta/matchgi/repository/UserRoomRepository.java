@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface UserRoomRepository extends JpaRepository<UserRoom,Long> {
 
     Optional<UserRoom> findByUserAndRoom(User user, Room room);
+    UserRoom findByRoom(Room room);
 
 }
