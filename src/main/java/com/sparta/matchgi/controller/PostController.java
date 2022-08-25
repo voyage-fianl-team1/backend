@@ -94,6 +94,13 @@ public class PostController {
        return  postService.changeStatus(postId,userDetails);
     }
 
+    @GetMapping("/api/posts/gps")
+    public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
+                                             @RequestParam("lng")double lng)
+    {
+        return postService.findLocation(lat,lng);
+    }
+
 
 
 

@@ -2,6 +2,7 @@ package com.sparta.matchgi.model;
 
 
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.dto.ImagePathDto;
@@ -9,6 +10,7 @@ import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -47,10 +49,10 @@ public class Post extends Timestamped{
     private SubjectEnum subject;
 
     @Column(nullable = false)
-    private Double lat;
+    private double lat;
 
     @Column(nullable = false)
-    private Double lng;
+    private double lng;
 
     @Column(nullable = false)
     private int viewCount;
@@ -69,7 +71,6 @@ public class Post extends Timestamped{
 
     @OneToMany(cascade =CascadeType.ALL,mappedBy ="post")
     private List<ImgUrl> imageList=new ArrayList<>();
-
 
 
     public Post(CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {

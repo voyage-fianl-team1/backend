@@ -29,6 +29,9 @@ public class PostFilterDto {
     private MatchStatus matchStatus;
 
     private String imgUrl;
+    //private String distance;
+    private double lat;
+    private double lng;
 
 
 

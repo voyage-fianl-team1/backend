@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.ImgUrl;
@@ -19,10 +21,12 @@ import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+//import static com.querydsl.core.types.dsl.MathExpressions.*;
+//import static com.querydsl.core.types.dsl.MathExpressions.radians;
+//import static com.querydsl.core.types.dsl.MathExpressions.sin;
+import static java.lang.Math.*;
+import static java.lang.Math.toRadians;
+import static org.aspectj.runtime.internal.Conversions.doubleValue;
 
 @Service
 @Transactional
@@ -71,6 +82,13 @@ public class PostService {
 
         UserRoom userRoom = new UserRoom(userDetails.getUser(),room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
         userRoomRepository.save(userRoom);
+//
+//        Double latitude=createPostRequestDto.getLat();
+//        Double longitude= createPostRequestDto.getLng();
+//
+//        String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
+//
+//        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 
@@ -140,6 +158,8 @@ public class PostService {
                 .withCannedAcl(CannedAccessControlList.PublicRead);
         amazonS3.putObject(por);
 
+        //S3Image에서
+
         ImagePathDto imagePathDto = new ImagePathDto(filename);
 
         return imagePathDto;
@@ -167,6 +187,7 @@ public class PostService {
 
 
     //포스트 지우기(완료)
+    //관련된 거 다 삭제하기
     public ResponseEntity<?> deletePost(Long postId, UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -176,6 +197,25 @@ public class PostService {
 
         postRepository.deleteById(postId);
         //post->room->userRoom,Chat
+        Room room=roomRepository.findByPostId(postId);
+        Long roomId=room.getId();
+        roomRepository.deleteById(roomId);
+
+        UserRoom userRoom=userRoomRepository.findByRoom(room);
+        Long userRoomId=userRoom.getId();
+        userRoomRepository.deleteById(userRoomId);
+
+
+
+        List<Review> review=reviewRepository.findByPost(post);
+        //reviewRepository.de
+
+
+
+        //chat->redisreop->userroom->room->post 순으로 지우기
+        //지도 MRB어쩌구랑 ST어쩌구 중에서 거리 정렬하는 부분 선택해서 바꾸기
+        //지도에서 경기 불러올때 해당 경기마커 이미지도 추가해서 주기
+
 
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
@@ -219,6 +259,13 @@ public class PostService {
             post.changeStatus(MatchStatus.ONGOING);
 
         return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다",HttpStatus.valueOf(200));
+    }
+
+
+    public List<PostFilterDto> findLocation(double lat,double lng){
+
+
+        return postRepositoryImpl.findAllByLocation(lat,lng);
     }
 
 

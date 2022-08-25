@@ -1,37 +1,33 @@
 package com.sparta.matchgi.repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
-import com.sparta.matchgi.model.*;
+import com.sparta.matchgi.model.MatchStatus;
+import com.sparta.matchgi.model.QImgUrl;
+import com.sparta.matchgi.model.QPost;
+import com.sparta.matchgi.model.SubjectEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
-import java.util.function.Supplier;
+
+import static com.querydsl.core.types.dsl.MathExpressions.*;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     private final JPAQueryFactory queryFactory;
-
     private QPost post=QPost.post;
+
     private QImgUrl imgUrl = QImgUrl.imgUrl;
-
-
-
-    //matchstatus는 무조건 ongoing 우선 정렬
-    //api 하나 추가해서 경기 종료하면 그냥 end 되는 걸로
 
 
 
@@ -112,6 +108,69 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
 
+    @Override
+    public List<PostFilterDto> findAllByLocation(double lat, double lng){
+
+        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+
+        List<PostFilterDto> returnPost= queryFactory.select(Projections.fields(
+                PostFilterDto.class,
+                post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
+                post.createdAt,
+                post.title,
+                subjectCaseBuilder().as("subject"),
+                post.viewCount,
+                post.matchDeadline,
+                post.requestCount,
+                post.matchStatus,
+                post.lat,
+                post.lng,
+                ExpressionUtils.as(
+                        JPAExpressions
+                                .select(imgUrl.url)
+                                .from(imgUrl)
+                                .where(imgUrl.id.eq(
+                                        JPAExpressions
+                                                .select(imgUrl.id.min())
+                                                .from(imgUrl)
+                                                .where(imgUrl.post.eq(post))
+                                )),"imgUrl"
+                )
+                        ))
+//                ,Expressions.as(
+//                        acos(cos(radians(Expressions.constant(lat)))
+//                                .multiply(cos(radians(post.lat)))
+//                                .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
+//                                .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
+//                        ).multiply(Expressions.constant(6371)).stringValue(),"distance")
+                .from(post)
+                .where(acos(cos(radians(Expressions.constant(lat)))
+                        .multiply(cos(radians(post.lat)))
+                        .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
+                        .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
+                ).multiply(Expressions.constant(6371)).loe(5))//getLocation(lat,lng)로하면 안뜸
+                .orderBy(post.id.asc())
+                .fetch();
+        return returnPost;
+
+    }
+
+    //querydsl에서는 Doubld에서 double로 형 변환이 안되네
+
+
+    private NumberExpression<Double> getLocation(double lat, double lng){
+        NumberExpression<Double> distanceExpression =
+                acos(cos(radians(Expressions.constant(lat)))
+                        .multiply(cos(radians(post.lat))
+                                .multiply(cos(radians(post.lng))
+                                        .subtract(radians(Expressions.constant(lng)))
+                                        .add(sin(radians(Expressions.constant(lat)))
+                                                .multiply(sin(radians(post.lat))))))).multiply(6371);
+
+
+        System.out.println("현재위도,경도 : "+lat+", "+lng);
+        return distanceExpression;
+    }
 
 
     private BooleanExpression getSubject(String subject){
@@ -122,6 +181,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     private OrderSpecifier<Integer> orderByOngoing() {
         return new CaseBuilder().when(post.matchStatus.eq(MatchStatus.ONGOING)).then(1).otherwise(2).asc();
+    }
+
+    private BooleanExpression orderOnlyOngoing(){
+        return orderOnlyOngoing().equals(1)?post.matchStatus.eq(MatchStatus.ONGOING):null;
     }
 
     private StringExpression subjectCaseBuilder(){
@@ -135,6 +198,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
 
+
     private OrderSpecifier<?> OrderBySort(String sort) {
         if ("viewcount".equals(sort)) {
             return post.viewCount.desc();
@@ -142,6 +206,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return post.createdAt.desc();
     }
 
+    //경기목록(필터)api에서 몇월/며칠(요일)로 주기
+    //지도 경기줄 때, 경기별로 경기 아이콘 이미지url도 추가해서 주기기
+    //경기목록에 내용 굳이 안줘도 될듯? 제목도 길면 한 카드가 너무 복잡함
 
 
 
