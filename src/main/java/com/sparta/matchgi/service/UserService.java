@@ -1,23 +1,17 @@
 package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
 import com.sparta.matchgi.auth.jwt.JwtDecoder;
 import com.sparta.matchgi.auth.jwt.JwtTokenUtils;
 import com.sparta.matchgi.dto.*;
-import com.sparta.matchgi.model.RefreshToken;
-import com.sparta.matchgi.model.SubjectEnum;
-import com.sparta.matchgi.model.User;
-import com.sparta.matchgi.repository.RefreshTokenRepository;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.Request;
-import com.sparta.matchgi.model.Score;
-import com.sparta.matchgi.model.User;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.RequestRepository;
-import com.sparta.matchgi.repository.ScoreRepository;
-import com.sparta.matchgi.repository.UserRepository;
+import com.sparta.matchgi.model.*;
+import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.Image.S3Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -26,16 +20,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +39,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final AmazonS3 amazonS3;
+    private final S3Image s3Image;
     private final JwtDecoder jwtDecoder;
     private final HeaderTokenExtractor extractor;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -56,6 +49,8 @@ public class UserService {
     private final RequestRepository requestRepository;
 
     private final ScoreRepository scoreRepository;
+
+    private final ImageRepository imageRepository;
 
 
     @Value("${S3.bucket.name}")
@@ -86,7 +81,7 @@ public class UserService {
         }
 
         //닉네임 변경
-        user.updateNickAndprofileImageUrl(reviseUserRequestDto);
+        user.updateNickname(reviseUserRequestDto);
 
         userRepository.save(user);
 
@@ -164,7 +159,7 @@ public class UserService {
         List<MyPostDetailResponseDto> myPostDetailResponseDtos = new ArrayList<>();
 
         for (Post post : posts) {
-            MyPostDetailResponseDto mypostdto=new MyPostDetailResponseDto(post);
+            MyPostDetailResponseDto mypostdto = new MyPostDetailResponseDto(post);
             myPostDetailResponseDtos.add(mypostdto);
         }
 
@@ -182,7 +177,16 @@ public class UserService {
 
         return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
 
-
     }
+
+    public ResponseEntity<?> putMyImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException{
+        User user =userDetails.getUser();
+        String key = s3Image.upload(file);
+
+        user.updateProfileImgUrl(key);
+
+        return new ResponseEntity<>("사진이 등록되었습니다.", HttpStatus.valueOf(201));
+    }
+
 }
 

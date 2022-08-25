@@ -5,9 +5,7 @@ import com.sparta.matchgi.service.UserRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,7 +15,12 @@ public class UserRoomController {
 
 
     @GetMapping("/api/users/rooms")
-    public ResponseEntity<?> showUserRoom(@RequestParam Long lastActive, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userRoomService.showUserRoom(lastActive,userDetails);
+    public ResponseEntity<?> showUserRoom(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userRoomService.showUserRoom(userDetails);
+    }
+
+    @PutMapping("/api/room/{roomId}/lastActive")
+    public ResponseEntity<?> updateLastActive(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userRoomService.updateLastActive(roomId,userDetails);
     }
 }

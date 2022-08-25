@@ -10,11 +10,13 @@ import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.MatchStatus;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
-
 import com.sparta.matchgi.repository.ImageRepository;
 import com.sparta.matchgi.repository.ImgUrlRepository;
 import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.repository.PostRepositoryImpl;
+import com.sparta.matchgi.model.*;
+import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.security.auth.Subject;
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,11 +41,15 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final ImageService imageService;
+
     private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
-
     private final PostRepositoryImpl postRepositoryImpl;
+    private final RoomRepository roomRepository;
+    private final UserRoomRepository userRoomRepository;
+
+    private final ReviewRepository reviewRepository;
 
 
 
@@ -63,6 +65,12 @@ public class PostService {
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
+
+        Room room = new Room(post.getId(),userDetails.getUser(),post);
+        roomRepository.save(room);
+
+        UserRoom userRoom = new UserRoom(userDetails.getUser(),room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
+        userRoomRepository.save(userRoom);
 
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 
@@ -167,6 +175,8 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+        //post->room->userRoom,Chat
+
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
 
@@ -178,13 +188,11 @@ public class PostService {
         amazonS3.deleteObject(bucket,filePaths.getPath());
     }
 
-    public Slice<PostFilterDto> filterDtoSlice(SubjectEnum subject,String sort,int size,int page){
+    public Slice<PostFilterDto> filterDtoSlice(String subject,String sort,int size,int page){
 
         Pageable pageable= PageRequest.of(page,size);
-        if(sort==null)
-            return postRepository.findAllBySubjectOrderByCreatedAt(subject,pageable);
-        else
-            return postRepository.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
+
+        return postRepositoryImpl.findAllBySubjectOrderByCreatedAt(subject,sort,pageable);
     }
 
     public Slice<PostFilterDto> searchDtoSlice(String search, int page, int size){
@@ -194,17 +202,23 @@ public class PostService {
         return postRepositoryImpl.findAllBySearchOrderByCreatedAt(search,pageable);
     }
 
-    public void changeStatus(Long postId,UserDetailsImpl userDetails){
+    public ResponseEntity<?> changeStatus(Long postId,UserDetailsImpl userDetails){
 
         Post post=postRepository.findPostById(postId);
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
+        }
+
+        if(reviewRepository.findByPost(post).size()>0){
+            throw new IllegalArgumentException("리뷰가 존재하여 경기상태를 바꿀수 없습니다.");
         }
         if(post.getMatchStatus().equals(MatchStatus.ONGOING)){
             post.changeStatus(MatchStatus.MATCHEND);
         }
         else
             post.changeStatus(MatchStatus.ONGOING);
+
+        return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다",HttpStatus.valueOf(200));
     }
 
 

@@ -71,8 +71,8 @@ public class PostController {
     @GetMapping("/api/posts")
     public Slice<PostFilterDto> postList(@RequestParam("page") int page,
                                          @RequestParam("size") int size,
-                                         @RequestParam(value="subject",required = false) SubjectEnum subject,
-                                         @RequestParam(value = "sort",required = false)String sort
+                                         @RequestParam(value="subject") String subject,
+                                         @RequestParam(value = "sort")String sort
     )
     {
         System.out.println("정렬 컨트롤러 진입");
@@ -90,8 +90,8 @@ public class PostController {
     }
 
     @PutMapping("/api/posts/matchstatus/{postId}")
-    public void changeStatus(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails){
-        postService.changeStatus(postId,userDetails);
+    public ResponseEntity<?> changeStatus(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+       return  postService.changeStatus(postId,userDetails);
     }
 
 
