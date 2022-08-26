@@ -222,29 +222,7 @@ public class PostService {
     }
 
     //거리찾기-nativeQuery 사용
-    public List<PostFilterDto> findLocationWithQuery(double lat, double lng) throws ParseException {return queryLocation(lat,lng);}
-    @Transactional
-    public List<PostFilterDto> queryLocation(double lat,double lng)throws ParseException {
-        //List<PostFilterDto> posts = new ArrayList<>();
-        System.out.println("쿼리문 진입");
-        Query query = (Query) em.createNativeQuery("SELECT id, created_at, title, lat, lng,viewCount,matchDeadline,requestCount,matchStatus,subject,"
-                        + "ROUND(ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat))) AS 'distance' "//두 좌표 사이의 거리
-                        + "FROM post AS p "
-                        + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) < 5000"//5km 이내
-                        + "ORDER BY p.id ", Post.class)//현위치~경기 위치까지의 거리 순으로 정렬
-                .setParameter("myPoint", makePoint(lng, lat));
-        //.setParameter("distance", 5000);
-        List<PostFilterDto> posts = query.getResultList();
-        //Query도 적절한 타입으로 import 잘해줄 것
-        //import org.springframework.data.jpa.repository.Query; 이걸로 하면 안됨
-        return posts;
-    }
 
-    public Point makePoint(double lng, double lat) throws org.locationtech.jts.io.ParseException {
-        String pointWKT = String.format("POINT(%s %s)", lng, lat);//Poing는 경도,위도 순 입력
-        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
-        return (Point) new WKTReader().read(pointWKT);
-    }
 
 
 }
