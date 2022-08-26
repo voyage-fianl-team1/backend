@@ -44,6 +44,9 @@ public class CreatePostResponseDto {
 
     private int owner;
 
+    private int viewCount;
+
+
     public CreatePostResponseDto(Post post, List<ImagePathDto> imgpaths,List<ImageUrlDto> imgurls){
         this.title=post.getTitle();
         this.matchDeadline=post.getMatchDeadline();
@@ -55,6 +58,7 @@ public class CreatePostResponseDto {
         this.owner=owner;
         this.imgurls=imgurls;
         this.postId=post.getId();
+        this.viewCount=post.getViewCount();
     }
 
 

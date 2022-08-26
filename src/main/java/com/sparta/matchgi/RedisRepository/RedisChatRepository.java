@@ -11,4 +11,6 @@ public interface RedisChatRepository extends CrudRepository<RedisChat,Long> {
 
     List<RedisChat> findByRoomIdOrderByCreatedAt(Long roomId);
 
+    void deleteAllByRoomId(Long roomId);
+
 }

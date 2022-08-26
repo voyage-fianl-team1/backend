@@ -56,7 +56,7 @@ public class UserService {
     @Value("${S3.bucket.name}")
     private String bucket;
 
-    @Value("arn:aws:s3:::yunju")
+    @Value("${S3.Url}")
     private String S3Url;
 
     public ResponseEntity<?> registerUser(SignupRequestDto signupRequestDto) {

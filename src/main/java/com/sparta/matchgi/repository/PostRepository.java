@@ -5,6 +5,7 @@ import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.Request;
 import com.sparta.matchgi.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,12 +21,10 @@ public interface PostRepository extends JpaRepository<Post,Long>, PostRepository
 
     List<Post> findAllByUser(User user);
 
-//    @Query(value = "SELECT id, created_at, title, lat, lng, longitude,viewCount,matchDeadline,requestCount,matchStatus"
-//            + "ROUND(ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat))) AS 'distance' "//두 좌표 사이의 거리
-//            + "FROM post AS p "
-//            + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.longitude, p.latitude)) < :distance "
-//            + "ORDER BY matchStatus ")
-//    List<PostFilterDto> findlocation(double lat, double lng, double distance);
+    @Modifying
+    @Query("update Post p set p.viewCount = p.viewCount + 1 where p.id = :postId")
+    int updateView(Long postId);
+
 
 
 

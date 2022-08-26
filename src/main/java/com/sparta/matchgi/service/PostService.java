@@ -82,7 +82,7 @@ public class PostService {
         if(userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             owner=1;
         }
-
+        postRepository.updateView(postId);
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,owner);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
@@ -160,19 +160,15 @@ public class PostService {
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
-        Room room=roomRepository.findByPostId(postId);
 
-        //post->room->userRoom,Chat
+        Room room=roomRepository.findByPostId(postId);
         Long roomId=room.getId();
 
         UserRoom userRoom=userRoomRepository.findByRoom(room);
         Long userRoomId=userRoom.getId();
         userRoomRepository.deleteById(userRoomId);
 
-        //Post-ImgUrl,Request,Review,Room
-        //Room-chat,UserRoom
-        // List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
-
+        redisChatRepository.deleteAllByRoomId(roomId);
         chatRepository.deleteAllByRoom(room);
         userRoomRepository.deleteAllByRoom(room);
 
