@@ -9,6 +9,6 @@ public interface RedisChatRepository extends CrudRepository<RedisChat,Long> {
 
     List<RedisChat> findAll();
 
-    List<RedisChat> findByRoomIdOrderByCreatedAt(String roomId);
+    List<RedisChat> findByRoomIdOrderByCreatedAt(Long roomId);
 
 }
