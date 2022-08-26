@@ -148,7 +148,8 @@ public class UserService {
                     .id(request.getPost().getId())
                     .title(request.getPost().getTitle())
                     .subject(request.getPost().getSubject())
-                    .matchStatus(request.getPost().getMatchStatus())
+                    .requestStatus(request.getRequestStatus())
+                    .createdAt(request.getCreatedAt())
                     .imageUrl(request.getPost().getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
                     .build();
             myMatchDetailResponseDtos.add(myMatchDetailResponseDto);

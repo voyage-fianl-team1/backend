@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,6 +19,13 @@ public class MyPostDetailResponseDto {
     private String title;
     private SubjectEnum subject;
     private List<String> imageUrl;
+    private LocalDateTime createdAt;
+
+    public MyPostDetailResponseDto(Post post){
+        this.id=post.getId();
+        this.title=post.getTitle();
+        this.subject=post.getSubject();
+    }
 
 
 }
