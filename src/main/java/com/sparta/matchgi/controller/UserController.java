@@ -59,11 +59,13 @@ public class UserController {
         return userService.getMyMatch(userDetails);
     }
 
+    //내 게시글
     @GetMapping("/api/users/posts")
     public ResponseEntity<MyPostResponseDto> getMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.getMyPost(userDetails);
     }
 
+    //마이페이지
     @GetMapping("/api/users")
     public ResponseEntity<MyPageResponseDto> getMyPage(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.getMyPage(userDetails);

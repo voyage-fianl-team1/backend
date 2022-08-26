@@ -10,10 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class NotificationDetailResponseDto {
+    private Long postId;
     private Long id;
     private String content;
     private LocalDateTime createdAt;
-    private Long userId;
-    private boolean read;
-
+    private boolean isread;
 }
