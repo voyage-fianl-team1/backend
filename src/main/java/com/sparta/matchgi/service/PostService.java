@@ -1,48 +1,35 @@
 package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
-import com.sparta.matchgi.model.ImgUrl;
-import com.sparta.matchgi.model.MatchStatus;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.SubjectEnum;
-import com.sparta.matchgi.repository.ImageRepository;
-import com.sparta.matchgi.repository.ImgUrlRepository;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.PostRepositoryImpl;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.Image.S3Image;
 import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.WKTReader;
+import javax.persistence.Query;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-//import static com.querydsl.core.types.dsl.MathExpressions.*;
-//import static com.querydsl.core.types.dsl.MathExpressions.radians;
-//import static com.querydsl.core.types.dsl.MathExpressions.sin;
-import static java.lang.Math.*;
-import static java.lang.Math.toRadians;
-import static org.aspectj.runtime.internal.Conversions.doubleValue;
 
 @Service
 @Transactional
@@ -50,18 +37,18 @@ import static org.aspectj.runtime.internal.Conversions.doubleValue;
 public class PostService {
 
     private final PostRepository postRepository;
-
-    private final ImageService imageService;
-
-    private final ImgUrlRepository imgUrlRepository;
     private final ImageRepository imageRepository;
     private final AmazonS3 amazonS3;
     private final PostRepositoryImpl postRepositoryImpl;
     private final RoomRepository roomRepository;
     private final UserRoomRepository userRoomRepository;
-
     private final ReviewRepository reviewRepository;
-
+    private final RedisChatRepository redisChatRepository;
+    private final ChatRepository chatRepository;
+    private final RequestRepository requestRepository;
+    private final S3Image s3Image;
+    private final EntityManager em;
+    private final double distanceKm = 5000.0;
 
 
 
@@ -73,7 +60,6 @@ public class PostService {
             CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails)
             throws IOException
     {
-
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
@@ -82,14 +68,6 @@ public class PostService {
 
         UserRoom userRoom = new UserRoom(userDetails.getUser(),room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
         userRoomRepository.save(userRoom);
-//
-//        Double latitude=createPostRequestDto.getLat();
-//        Double longitude= createPostRequestDto.getLng();
-//
-//        String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
-//
-//        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
-
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post,1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
@@ -148,20 +126,8 @@ public class PostService {
 
     //이미지 버킷에 업로드하기(완료)
     public ImagePathDto update(MultipartFile file) throws IOException {
-
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead);
-        amazonS3.putObject(por);
-
-        //S3Image에서
-
+        String filename = s3Image.upload(file);
         ImagePathDto imagePathDto = new ImagePathDto(filename);
-
         return imagePathDto;
     }
 
@@ -194,39 +160,33 @@ public class PostService {
         if(!userDetails.getUser().getEmail().equals(post.getUser().getEmail())){
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
-
-        postRepository.deleteById(postId);
-        //post->room->userRoom,Chat
         Room room=roomRepository.findByPostId(postId);
+
+        //post->room->userRoom,Chat
         Long roomId=room.getId();
-        roomRepository.deleteById(roomId);
 
         UserRoom userRoom=userRoomRepository.findByRoom(room);
         Long userRoomId=userRoom.getId();
         userRoomRepository.deleteById(userRoomId);
 
+        //Post-ImgUrl,Request,Review,Room
+        //Room-chat,UserRoom
 
-
-        List<Review> review=reviewRepository.findByPost(post);
         //reviewRepository.de
+        //List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
 
+        chatRepository.deleteAllByRoom(room);
+        userRoomRepository.deleteAllByRoom(room);
 
-
-        //chat->redisreop->userroom->room->post 순으로 지우기
-        //지도 MRB어쩌구랑 ST어쩌구 중에서 거리 정렬하는 부분 선택해서 바꾸기
-        //지도에서 경기 불러올때 해당 경기마커 이미지도 추가해서 주기
-
-
+        roomRepository.deleteById(roomId);
+        reviewRepository.deleteAllByPost(post);
+        requestRepository.deleteAllByPost(post);
+        imageRepository.deleteAllByPost(post);
+        postRepository.deleteById(postId);
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
-
     }
 
-
-    //이미지 버킷에서 지우기(완료)-사용 X
-    public void deleteImages(ImagePathDto filePaths) {
-        amazonS3.deleteObject(bucket,filePaths.getPath());
-    }
 
     public Slice<PostFilterDto> filterDtoSlice(String subject,String sort,int size,int page){
 
@@ -262,10 +222,34 @@ public class PostService {
     }
 
 
+    //거리찾기-querydsl 사용
     public List<PostFilterDto> findLocation(double lat,double lng){
-
-
         return postRepositoryImpl.findAllByLocation(lat,lng);
+    }
+
+    //거리찾기-nativeQuery 사용
+    public List<PostFilterDto> findLocationWithQuery(double lat, double lng) throws ParseException {return queryLocation(lat,lng);}
+    @Transactional
+    public List<PostFilterDto> queryLocation(double lat,double lng)throws ParseException {
+        //List<PostFilterDto> posts = new ArrayList<>();
+        System.out.println("쿼리문 진입");
+        Query query = (Query) em.createNativeQuery("SELECT id, created_at, title, lat, lng,viewCount,matchDeadline,requestCount,matchStatus,subject,"
+                        + "ROUND(ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat))) AS 'distance' "//두 좌표 사이의 거리
+                        + "FROM post AS p "
+                        + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) < 5000"//5km 이내
+                        + "ORDER BY p.id ", Post.class)//현위치~경기 위치까지의 거리 순으로 정렬
+                .setParameter("myPoint", makePoint(lng, lat));
+        //.setParameter("distance", 5000);
+        List<PostFilterDto> posts = query.getResultList();
+        //Query도 적절한 타입으로 import 잘해줄 것
+        //import org.springframework.data.jpa.repository.Query; 이걸로 하면 안됨
+        return posts;
+    }
+
+    public Point makePoint(double lng, double lat) throws org.locationtech.jts.io.ParseException {
+        String pointWKT = String.format("POINT(%s %s)", lng, lat);//Poing는 경도,위도 순 입력
+        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
+        return (Point) new WKTReader().read(pointWKT);
     }
 
 

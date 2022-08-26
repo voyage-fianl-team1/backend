@@ -8,6 +8,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ChatRepository extends JpaRepository<Chat,Long> {
     @Query("SELECT new com.sparta.matchgi.dto.ChatResponseDto(c.id,u.id,u.nickname,u.profileImgUrl,c.message,c.createdAt) " +
             "FROM Chat c  " +
@@ -22,6 +24,8 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
             "WHERE c.room = :room AND c.id<:lastChat" +
             " ORDER BY c.createdAt DESC ")
     Slice<ChatResponseDto> showChatsAfter(Room room, Long lastChat, Pageable pageable);
+    List<Chat> findAllByRoom(Room room);
 
+    void deleteAllByRoom(Room room); //Room이랑 roomId랑 지우는 것의 차이?
 
 }

@@ -38,4 +38,8 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
             "ORDER BY p.matchDeadline DESC ")
     List<GetScoresResponseDto> ScoresSubject(User user, SubjectEnum subject,List<RequestStatus>requestStatusList);
 
+
+    void deleteAllByPost(Post post);
+
+
 }
