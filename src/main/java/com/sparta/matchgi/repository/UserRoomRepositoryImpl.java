@@ -48,7 +48,7 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
                         ),
                         ExpressionUtils.as(
                                 JPAExpressions
-                                        .select(imgUrl.url)
+                                        .select(imgUrl.path)
                                         .from(imgUrl)
                                         .where(imgUrl.id.eq(
                                                 JPAExpressions

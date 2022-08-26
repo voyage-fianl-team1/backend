@@ -173,7 +173,9 @@ public class PostService {
         //Room-chat,UserRoom
 
         //reviewRepository.de
-        //List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
+        //
+        //
+        // List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
 
         chatRepository.deleteAllByRoom(room);
         userRoomRepository.deleteAllByRoom(room);
