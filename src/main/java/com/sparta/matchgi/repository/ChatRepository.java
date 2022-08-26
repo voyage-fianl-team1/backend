@@ -24,9 +24,9 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
             "WHERE c.room = :room AND c.id<:lastChat" +
             " ORDER BY c.createdAt DESC ")
     Slice<ChatResponseDto> showChatsAfter(Room room, Long lastChat, Pageable pageable);
-
-
     List<Chat> findAllByRoom(Room room);
+
+
 
     void deleteAllByRoom(Room room); //Room이랑 roomId랑 지우는 것의 차이?
 }

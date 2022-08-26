@@ -15,10 +15,10 @@ public class MyPageResponseDto {
 
     private String nickname;
 
-    private Long win;
+    private Object win;
 
-    private Long lose;
+    private Object lose;
 
-    private Long draw;
+    private Object draw;
 
 }

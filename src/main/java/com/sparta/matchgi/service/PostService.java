@@ -171,9 +171,7 @@ public class PostService {
 
         //Post-ImgUrl,Request,Review,Room
         //Room-chat,UserRoom
-
-        //reviewRepository.de
-        List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
+        // List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
 
         chatRepository.deleteAllByRoom(room);
         userRoomRepository.deleteAllByRoom(room);
@@ -239,7 +237,7 @@ public class PostService {
                         + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) < 5000"//5km 이내
                         + "ORDER BY p.id ", Post.class)//현위치~경기 위치까지의 거리 순으로 정렬
                 .setParameter("myPoint", makePoint(lng, lat));
-                //.setParameter("distance", 5000);
+        //.setParameter("distance", 5000);
         List<PostFilterDto> posts = query.getResultList();
         //Query도 적절한 타입으로 import 잘해줄 것
         //import org.springframework.data.jpa.repository.Query; 이걸로 하면 안됨

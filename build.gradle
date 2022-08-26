@@ -50,7 +50,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.5.7.Final'
+
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
