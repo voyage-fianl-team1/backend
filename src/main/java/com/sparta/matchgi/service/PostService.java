@@ -234,7 +234,7 @@ public class PostService {
         //List<PostFilterDto> posts = new ArrayList<>();
         System.out.println("쿼리문 진입");
         Query query = (Query) em.createNativeQuery("SELECT id, created_at, title, lat, lng,viewCount,matchDeadline,requestCount,matchStatus,subject,"
-                        + "ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) AS 'distance' "//두 좌표 사이의 거리
+                        + "ROUND(ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat))) AS 'distance' "//두 좌표 사이의 거리
                         + "FROM post AS p "
                         + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) < 5000"//5km 이내
                         + "ORDER BY p.id ", Post.class)//현위치~경기 위치까지의 거리 순으로 정렬
