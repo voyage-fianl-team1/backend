@@ -21,11 +21,7 @@ public class MyPostDetailResponseDto {
     private List<String> imageUrl;
     private LocalDateTime createdAt;
 
-    public MyPostDetailResponseDto(Post post){
-        this.id=post.getId();
-        this.title=post.getTitle();
-        this.subject=post.getSubject();
-    }
+
 
 
 }

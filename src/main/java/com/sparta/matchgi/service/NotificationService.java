@@ -34,13 +34,13 @@ public class NotificationService {
         );
 
         notification.change();
-        return new ResponseEntity<>("",HttpStatus.OK);
+        return new ResponseEntity<>("정상적으로 변경되었습니다.",HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteNotice(Long notificationId) {
 
         notificationRepository.deleteById(notificationId);
 
-        return new ResponseEntity<>("",HttpStatus.OK);
+        return new ResponseEntity<>("정상적으로 삭제되었습니다",HttpStatus.OK);
     }
 }

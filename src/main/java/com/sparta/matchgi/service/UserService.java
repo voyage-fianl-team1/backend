@@ -168,6 +168,7 @@ public class UserService {
                         .imageUrl(p.getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
                         .title(p.getTitle())
                         .subject(p.getSubject())
+                        .createdAt(p.getCreatedAt())
                         .build()
                 ).collect(Collectors.toList());
 

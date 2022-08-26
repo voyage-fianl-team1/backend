@@ -39,10 +39,7 @@ public class Notification extends Timestamped {
     }
 
     public void change(){
-        if(isread == false){
-            isread = true;
-        }
-
+        this.isread = true;
     }
 
 }
