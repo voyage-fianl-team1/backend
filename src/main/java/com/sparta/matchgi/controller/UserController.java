@@ -75,5 +75,10 @@ public class UserController {
         return userService.putMyImage(userDetails, file);
     }
 
+    @GetMapping("/api/users/{userId}/ranking")
+    public ResponseEntity<?> getScores(@RequestParam String subject,@PathVariable Long userId){
+        return userService.getScores(subject,userId);
+    }
+
 
 }
