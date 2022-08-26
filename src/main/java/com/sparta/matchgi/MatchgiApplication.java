@@ -10,7 +10,9 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 @SpringBootApplication
 public class MatchgiApplication {
-
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));

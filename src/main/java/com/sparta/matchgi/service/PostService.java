@@ -171,10 +171,6 @@ public class PostService {
 
         //Post-ImgUrl,Request,Review,Room
         //Room-chat,UserRoom
-
-        //reviewRepository.de
-        //
-        //
         // List<RedisChat> redislist=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId);
 
         chatRepository.deleteAllByRoom(room);

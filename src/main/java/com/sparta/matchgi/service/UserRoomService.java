@@ -41,7 +41,7 @@ public class UserRoomService {
 
         for(Room room:roomList){
 
-            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
+            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId());
 
             List<Chat> chatList = redisChatList.stream().map(r->
                     new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
