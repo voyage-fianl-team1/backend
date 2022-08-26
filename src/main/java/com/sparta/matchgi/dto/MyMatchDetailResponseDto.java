@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,4 +18,5 @@ public class MyMatchDetailResponseDto {
     private String title;
     private SubjectEnum subject;
     private MatchStatus matchStatus;
+    private List<String> imageUrl;
 }
