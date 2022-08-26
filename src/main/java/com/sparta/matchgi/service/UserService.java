@@ -56,6 +56,9 @@ public class UserService {
     @Value("${S3.bucket.name}")
     private String bucket;
 
+    @Value("${S3.Url}")
+    private String S3Url;
+
     public ResponseEntity<?> registerUser(SignupRequestDto signupRequestDto) {
         String nickname = signupRequestDto.getNickname();
         String email = signupRequestDto.getEmail();
@@ -175,7 +178,12 @@ public class UserService {
     public ResponseEntity<?> personalRanking(int page, int size, String subject) {
         Pageable pageable = PageRequest.of(page,size);
 
-        return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+        if(subject.equals("ALL")){
+            return new ResponseEntity<>(scoreRepository.AllPersonalRanking(pageable),HttpStatus.valueOf(200));
+
+        }else{
+            return new ResponseEntity<>(scoreRepository.PersonalRankingSubject(pageable,SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+        }
 
     }
 
@@ -183,10 +191,29 @@ public class UserService {
         User user =userDetails.getUser();
         String key = s3Image.upload(file);
 
-        user.updateProfileImgUrl(key);
+        user.updateProfileImgUrl(S3Url+key);
+
+        userRepository.save(user);
 
         return new ResponseEntity<>("사진이 등록되었습니다.", HttpStatus.valueOf(201));
     }
 
+    public ResponseEntity<?> getScores(String subject,Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
+        List<RequestStatus> requestStatusList = new ArrayList<>();
+        requestStatusList.add(RequestStatus.WIN);
+        requestStatusList.add(RequestStatus.LOSE);
+        requestStatusList.add(RequestStatus.DRAW);
+
+        if(subject.equals("ALL")){
+            return new ResponseEntity<>(requestRepository.AllScores(user,requestStatusList),HttpStatus.valueOf(200));
+        }else{
+            return new ResponseEntity<>(requestRepository.ScoresSubject(user,SubjectEnum.valueOf(subject),requestStatusList),HttpStatus.valueOf(200));
+        }
+    }
 }
 
