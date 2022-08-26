@@ -30,6 +30,7 @@ public class DtoConverter {
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(owner)
+                .viewCount(post.getViewCount())
                 .build();
 
         return createPostResponseDto;

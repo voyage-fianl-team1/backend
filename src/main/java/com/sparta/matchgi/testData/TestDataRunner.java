@@ -57,7 +57,7 @@ public class TestDataRunner implements ApplicationRunner {
 
             String content = getRandomString();
 
-            int viewCount = getRandomInt(100,0);
+            int viewCount = 0;
 
             int requestCount = 0;
 
