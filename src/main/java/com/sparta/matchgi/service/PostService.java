@@ -49,6 +49,7 @@ public class PostService {
     private final S3Image s3Image;
     private final EntityManager em;
     private final double distanceKm = 5000.0;
+    private final NotificationRepository notificationRepository;
 
 
 
@@ -154,6 +155,7 @@ public class PostService {
 
     //포스트 지우기(완료)
     //관련된 거 다 삭제하기
+    @Transactional
     public ResponseEntity<?> deletePost(Long postId, UserDetailsImpl userDetails){
         Post post=postRepository.findById(postId)
                 .orElseThrow( () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -164,18 +166,29 @@ public class PostService {
         Room room=roomRepository.findByPostId(postId);
         Long roomId=room.getId();
 
-        UserRoom userRoom=userRoomRepository.findByRoom(room);
-        Long userRoomId=userRoom.getId();
-        userRoomRepository.deleteById(userRoomId);
+        List<Notification> notifications=notificationRepository.findAllByPost(post);
+        notificationRepository.deleteAll(notifications);
 
-        redisChatRepository.deleteAllByRoomId(roomId);
-        chatRepository.deleteAllByRoom(room);
-        userRoomRepository.deleteAllByRoom(room);
+        List<RedisChat> redisChats=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId.toString());
+        redisChatRepository.deleteAll(redisChats);
+
+        List<Chat> chatList=chatRepository.findAllByRoom(room);
+        chatRepository.deleteAll(chatList);
+
+        List<UserRoom> userRooms=userRoomRepository.findAllByRoom(room);
+        userRoomRepository.deleteAll(userRooms);
 
         roomRepository.deleteById(roomId);
-        reviewRepository.deleteAllByPost(post);
-        requestRepository.deleteAllByPost(post);
-        imageRepository.deleteAllByPost(post);
+
+        List<Review> reviewList=reviewRepository.findAllByPost(post);
+        reviewRepository.deleteAll(reviewList);
+
+        List<Request> requests=requestRepository.findAllByPost(post);
+        requestRepository.deleteAll(requests);
+
+        List<ImgUrl> imgUrls=imageRepository.findAllByPost(post);
+        imageRepository.deleteAll(imgUrls);
+
         postRepository.deleteById(postId);
 
         return new ResponseEntity<>(HttpStatus.valueOf(201));
@@ -222,29 +235,7 @@ public class PostService {
     }
 
     //거리찾기-nativeQuery 사용
-    public List<PostFilterDto> findLocationWithQuery(double lat, double lng) throws ParseException {return queryLocation(lat,lng);}
-    @Transactional
-    public List<PostFilterDto> queryLocation(double lat,double lng)throws ParseException {
-        //List<PostFilterDto> posts = new ArrayList<>();
-        System.out.println("쿼리문 진입");
-        Query query = (Query) em.createNativeQuery("SELECT id, created_at, title, lat, lng,viewCount,matchDeadline,requestCount,matchStatus,subject,"
-                        + "ROUND(ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat))) AS 'distance' "//두 좌표 사이의 거리
-                        + "FROM post AS p "
-                        + "WHERE ST_DISTANCE_SPHERE(:myPoint, POINT(p.lng, p.lat)) < 5000"//5km 이내
-                        + "ORDER BY p.id ", Post.class)//현위치~경기 위치까지의 거리 순으로 정렬
-                .setParameter("myPoint", makePoint(lng, lat));
-        //.setParameter("distance", 5000);
-        List<PostFilterDto> posts = query.getResultList();
-        //Query도 적절한 타입으로 import 잘해줄 것
-        //import org.springframework.data.jpa.repository.Query; 이걸로 하면 안됨
-        return posts;
-    }
 
-    public Point makePoint(double lng, double lat) throws org.locationtech.jts.io.ParseException {
-        String pointWKT = String.format("POINT(%s %s)", lng, lat);//Poing는 경도,위도 순 입력
-        // WKTReader를 통해 WKT를 실제 타입으로 변환합니다.
-        return (Point) new WKTReader().read(pointWKT);
-    }
 
 
 }
