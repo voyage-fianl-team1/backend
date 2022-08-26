@@ -100,7 +100,7 @@ public class PostController {
                                              @RequestParam("lng")double lng) throws ParseException {
         System.out.println("정렬 컨트롤러 진입");
 
-        return postService.findLocationWithQuery(lat,lng);
+        return postService.findLocation(lat,lng);
     }
 
 
