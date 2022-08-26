@@ -25,6 +25,7 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
     List<Request> findAllByUser(User user);
 
 
+
 //    @Query("SELECT new com.sparta.matchgi.dto.GetScoresResponseDto(p.matchDeadline ,p.subject,r.requestStatus) " +
 //            "FROM Request r " +
 //            "join r.user u  join r.post p " +
