@@ -11,6 +11,6 @@ public interface ImageRepository extends JpaRepository<ImgUrl,Long> {
     ImgUrl findImgUrlById(Long id);
 
     ImgUrl findImgUrlByPath(String path);
-    void deleteAllByPost(Post post);
 
+    List<ImgUrl> findAllByPost(Post post);
 }

@@ -10,5 +10,5 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
 
     List<Review> findByPost(Post post);
 
-    void deleteAllByPost(Post post);
+    List<Review> findAllByPost(Post post);
 }
