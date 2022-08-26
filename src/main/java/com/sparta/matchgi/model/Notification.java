@@ -1,7 +1,6 @@
 package com.sparta.matchgi.model;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Notification extends Timestamped {
+
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -24,12 +24,22 @@ public class Notification extends Timestamped {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @Column(nullable = false)
-    private boolean read;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "POST_ID")
+    private Post post;
 
-    public Notification(String content,User user){
+
+    @Column(nullable = false)
+    private boolean isread;
+
+    public Notification(String content,User user, Post post){
         this.content = content;
         this.user =user;
+        this.post = post;
+    }
+
+    public void change(){
+        this.isread = true;
     }
 
 }

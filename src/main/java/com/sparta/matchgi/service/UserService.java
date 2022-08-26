@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -147,7 +148,9 @@ public class UserService {
                     .id(request.getPost().getId())
                     .title(request.getPost().getTitle())
                     .subject(request.getPost().getSubject())
-                    .matchStatus(request.getPost().getMatchStatus())
+                    .requestStatus(request.getRequestStatus())
+                    .createdAt(request.getCreatedAt())
+                    .imageUrl(request.getPost().getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
                     .build();
             myMatchDetailResponseDtos.add(myMatchDetailResponseDto);
         }
@@ -159,12 +162,17 @@ public class UserService {
     public ResponseEntity<MyPostResponseDto> getMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<Post> posts = postRepository.findAllByUser(user);
-        List<MyPostDetailResponseDto> myPostDetailResponseDtos = new ArrayList<>();
+        List<MyPostDetailResponseDto> myPostDetailResponseDtos = posts.stream().map(p->
+                MyPostDetailResponseDto.builder()
+                        .id(p.getId())
+                        .imageUrl(p.getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
+                        .title(p.getTitle())
+                        .subject(p.getSubject())
+                        .createdAt(p.getCreatedAt())
+                        .build()
+                ).collect(Collectors.toList());
 
-        for (Post post : posts) {
-            MyPostDetailResponseDto mypostdto = new MyPostDetailResponseDto(post);
-            myPostDetailResponseDtos.add(mypostdto);
-        }
+
 
         return new ResponseEntity<>(new MyPostResponseDto(myPostDetailResponseDtos), HttpStatus.valueOf(200));
     }
