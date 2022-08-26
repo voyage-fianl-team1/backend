@@ -3,10 +3,15 @@ package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
+import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.RevisePostRequetDto;
+
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.model.SubjectEnum;
+
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,9 +72,9 @@ public class PostController {
     @GetMapping("/api/posts")
     public Slice<PostFilterDto> postList(@RequestParam("page") int page,
                                          @RequestParam("size") int size,
-                                         @RequestParam(value="subject",required = false) SubjectEnum subject,
-                                         @RequestParam(value = "sort",required = false)String sort
-                                         )
+                                         @RequestParam(value="subject") String subject,
+                                         @RequestParam(value = "sort")String sort
+    )
     {
         System.out.println("정렬 컨트롤러 진입");
 
@@ -84,6 +89,22 @@ public class PostController {
                                            @RequestParam(value="search",required = false)String search){
         return postService.searchDtoSlice(search,page,size);
     }
+
+    @PutMapping("/api/posts/matchstatus/{postId}")
+    public ResponseEntity<?> changeStatus(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+       return  postService.changeStatus(postId,userDetails);
+    }
+
+    @GetMapping("/api/posts/gps")
+    public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
+                                             @RequestParam("lng")double lng) throws ParseException {
+        System.out.println("정렬 컨트롤러 진입");
+
+        return postService.findLocation(lat,lng);
+    }
+
+
+
 
 
 

@@ -12,10 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CreatePostRequestDto {
+public class RevisePostRequetDto {
 
     private String title;
 
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date peopleDeadline;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date matchDeadline;
@@ -31,5 +34,8 @@ public class CreatePostRequestDto {
     private SubjectEnum subject;
 
     private String content;
+
+    private List<ImagePathDto> deleteImages;
+
 
 }

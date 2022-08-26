@@ -5,16 +5,16 @@ import com.sparta.matchgi.model.SubjectEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
+
 public interface PostRepositoryCustom {
 
 
-
-    Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,Pageable pageable);
-
-    Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(SubjectEnum subject,String sort,Pageable pageable);
+    Slice<PostFilterDto> findAllBySubjectOrderByCreatedAt(String subject,String sort,Pageable pageable);
 
     Slice<PostFilterDto> findAllBySearchOrderByCreatedAt(String search,Pageable pageable);
 
+    List<PostFilterDto> findAllByLocation(double lat, double lng);
 
 
 }

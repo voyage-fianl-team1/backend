@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Chat extends Timestamped{
+public class Chat{
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,10 +29,13 @@ public class Chat extends Timestamped{
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-    public Chat(Room room, String message, User user) {
+    public Chat(Room room, String message, User user,LocalDateTime createdAt) {
         this.room = room;
         this.message = message;
         this.user = user;
+        this.createdAt = createdAt;
     }
 }

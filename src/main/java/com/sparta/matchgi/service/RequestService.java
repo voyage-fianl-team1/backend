@@ -1,18 +1,18 @@
 package com.sparta.matchgi.service;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.dto.NotificationDetailResponseDto;
 import com.sparta.matchgi.dto.ParticipationResponseDto;
 import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.dto.UpdateRequestDto;
 import com.sparta.matchgi.model.*;
-import com.sparta.matchgi.repository.NotificationRepository;
-import com.sparta.matchgi.repository.PostRepository;
-import com.sparta.matchgi.repository.RequestRepository;
-import com.sparta.matchgi.repository.ScoreRepository;
+import com.sparta.matchgi.repository.*;
+import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,6 +30,12 @@ public class RequestService {
     private final ScoreRepository scoreRepository;
 
     private final NotificationRepository notificationRepository;
+
+    private final RoomRepository roomRepository;
+
+    private final UserRoomRepository userRoomRepository;
+
+    private final SimpMessagingTemplate template;
 
     public ResponseEntity<?> registerMatch(Long postId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -75,11 +81,41 @@ public class RequestService {
 
         scoreUpdate(request,updateRequestDto.getStatus());
 
-        UpdateRequestAddNotification(requestFound.get());
+        UpdateRequestAddNotification(request);
+
+        inviteRoom(request);
 
         RequestResponseDto requestResponseDto = new RequestResponseDto(request.getId(),request.getUser().getNickname(),request.getRequestStatus());
 
         return new ResponseEntity<>(requestResponseDto,HttpStatus.valueOf(201));
+
+    }
+
+    private void inviteRoom(Request request) {
+        RequestStatus requestStatus = request.getRequestStatus();
+
+        if(requestStatus.equals(RequestStatus.ACCEPT)){
+            User user = request.getUser();
+
+            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
+            );
+
+            UserRoom userRoom = new UserRoom(user,room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
+            userRoomRepository.save(userRoom);
+
+        } else if (requestStatus.equals(RequestStatus.REJECT)) {
+            User user = request.getUser();
+
+            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
+            );
+
+            Optional<UserRoom> userRoom = userRoomRepository.findByUserAndRoom(user,room);
+
+            userRoom.ifPresent(userRoomRepository::delete);
+
+        }
 
     }
 
@@ -119,13 +155,26 @@ public class RequestService {
 
 
     private void registerMatchAddNotification(User user, Post post,RequestStatus status) {
-        Notification notification = new Notification(status.getNotificationContent(post.getTitle(), user.getNickname()),post.getUser());
+        Notification notification = new Notification(status.getNotificationContent(post.getTitle(), user.getNickname()),post.getUser(),post);
         notificationRepository.save(notification);
+        NotificationDetailResponseDto notificationDetailResponseDto =
+                new NotificationDetailResponseDto(post.getId(), notification.getId(), notification.getContent(),notification.getCreatedAt(),notification.isIsread());
+        template.convertAndSend("/room/user/"+post.getUser().getId(),notificationDetailResponseDto);
+
+
     }
 
     private void UpdateRequestAddNotification(Request request) {
-        Notification notification = new Notification(request.getRequestStatus().getNotificationContent(request.getPost().getTitle(),null),request.getUser());
+        Notification notification = new Notification(request.getRequestStatus().getNotificationContent(request.getPost().getTitle(),null),request.getUser(),request.getPost());
         notificationRepository.save(notification);
+        NotificationDetailResponseDto notificationDetailResponseDto =
+                new NotificationDetailResponseDto(notification.getPost().getId(), notification.getId(), notification.getContent(),notification.getCreatedAt(),notification.isIsread());
+        template.convertAndSend("/room/user/"+request.getUser().getId(),notificationDetailResponseDto);
     }
+
+
+
+
+
 
 }

@@ -23,7 +23,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/api/image")
-    public ResponseEntity<?> deleteImages(@RequestBody List<ImagePathDto> filePaths) {
+    public ResponseEntity<?> deleteImages(@RequestBody ImagePathDto filePaths) {
         return imageService.deleteImages(filePaths);
     }
 

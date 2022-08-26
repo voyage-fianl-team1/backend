@@ -30,6 +30,7 @@ public class DtoConverter {
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(owner)
+                .viewCount(post.getViewCount())
                 .build();
 
         return createPostResponseDto;
@@ -51,18 +52,4 @@ public class DtoConverter {
         return reviewListResponseDtoList;
     }
 
-    public static PostFilterDto ofSummary(Post post)
-    {
-        PostFilterDto postFilterDto = PostFilterDto.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .subject(post.getSubject())
-                .viewCount(post.getViewCount())
-                .createdAt(post.getCreatedAt())
-                .matchDeadline(post.getMatchDeadline())
-                .requestCount(post.getRequestCount())
-                .build();
-
-        return postFilterDto;
-    }
 }
