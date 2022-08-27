@@ -41,9 +41,8 @@ public class DtoConverter {
         List<ReviewListResponseDto> reviewListResponseDtoList = reviewList.stream().map(r->
                 ReviewListResponseDto.builder()
                         .reviewId(r.getId())
-                        .imgUrlList(r.getReviewImageList().stream().map(ReviewImgUrl::getPath).collect(Collectors.toList()))
+                        .imgUrlList(r.getReviewImageList().stream().map(ReviewImgUrl::getUrl).collect(Collectors.toList()))
                         .nickname(r.getUser().getNickname())
-                        .star(r.getStar())
                         .title(r.getTitle())
                         .content(r.getContent())
                         .build()
