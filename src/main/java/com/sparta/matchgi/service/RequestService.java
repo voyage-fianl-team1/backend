@@ -97,9 +97,7 @@ public class RequestService {
         if(requestStatus.equals(RequestStatus.ACCEPT)){
             User user = request.getUser();
 
-            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
-                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
-            );
+            Room room = roomRepository.findByPost(request.getPost());
 
             UserRoom userRoom = new UserRoom(user,room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
             userRoomRepository.save(userRoom);
@@ -107,9 +105,7 @@ public class RequestService {
         } else if (requestStatus.equals(RequestStatus.REJECT)) {
             User user = request.getUser();
 
-            Room room = roomRepository.findById(request.getPost().getId()).orElseThrow(
-                    () -> new IllegalArgumentException("존재하지 않는 채팅방입니다. ")
-            );
+            Room room = roomRepository.findByPost(request.getPost());
 
             Optional<UserRoom> userRoom = userRoomRepository.findByUserAndRoom(user,room);
 
