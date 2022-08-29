@@ -63,7 +63,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     }
     private String makeRedirectUrl(String accessToken,String refreshToken,String isFirst) {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/redirectKakao?accessToken="+accessToken+"&refreshToken="+refreshToken+"&isFirst="+isFirst)
+        return UriComponentsBuilder.fromUriString("http://match-gi.com/redirectKakao?accessToken="+accessToken+"&refreshToken="+refreshToken+"&isFirst="+isFirst)
                 .build().toUriString();
     }
 }
