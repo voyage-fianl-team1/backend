@@ -44,8 +44,6 @@ public class PostService {
     private final ChatRepository chatRepository;
     private final RequestRepository requestRepository;
     private final S3Image s3Image;
-    private final EntityManager em;
-    private final double distanceKm = 5000.0;
     private final NotificationRepository notificationRepository;
 
 
@@ -244,8 +242,6 @@ public class PostService {
     public List<PostFilterDto> findLocation(double lat, double lng) {
         return postRepositoryImpl.findAllByLocation(lat, lng);
     }
-
-    //거리찾기-nativeQuery 사용
 
 
 }

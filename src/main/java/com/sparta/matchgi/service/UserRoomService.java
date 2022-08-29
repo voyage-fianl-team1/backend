@@ -37,6 +37,7 @@ public class UserRoomService {
 
         User user = userDetails.getUser();
 
+
         List<Room> roomList = userRoomRepository.findRoomList(user);
 
         for(Room room:roomList){
@@ -58,6 +59,7 @@ public class UserRoomService {
         return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
 
     }
+
     public ResponseEntity<?> updateLastActive(Long roomId, UserDetailsImpl userDetails) {
 
         Room room = roomRepository.findById(roomId).orElseThrow(
