@@ -64,7 +64,7 @@ public class PostService {
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
 
-        Room room = new Room(post.getId(),userDetails.getUser(),post);
+        Room room = new Room(userDetails.getUser(),post);
         roomRepository.save(room);
 
         UserRoom userRoom = new UserRoom(userDetails.getUser(),room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
@@ -163,6 +163,10 @@ public class PostService {
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
 
+        if(post.getMatchStatus().equals(MatchStatus.MATCHEND)){
+            throw new IllegalArgumentException("경기가 끝난 게시물은 지울 수 없습니다.");
+        }
+
         Room room=roomRepository.findByPostId(postId);
         Long roomId=room.getId();
 
@@ -216,14 +220,15 @@ public class PostService {
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
 
-        if(reviewRepository.findByPost(post).size()>0){
-            throw new IllegalArgumentException("리뷰가 존재하여 경기상태를 바꿀수 없습니다.");
+        if(post.getMatchDeadline().isBefore(DateConverter.millsToLocalDateTime(System.currentTimeMillis()))){
+            throw new IllegalArgumentException("경기가 끝난 다음 날부터 경기를 종료할 수 있습니다.");
         }
+
         if(post.getMatchStatus().equals(MatchStatus.ONGOING)){
             post.changeStatus(MatchStatus.MATCHEND);
+        }else{
+            throw new IllegalArgumentException("경기가 끝난 게시물은 상태를 바꿀 수 없습니다.");
         }
-        else
-            post.changeStatus(MatchStatus.ONGOING);
 
         return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다",HttpStatus.valueOf(200));
     }
