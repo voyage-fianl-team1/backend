@@ -11,6 +11,7 @@ import com.sparta.matchgi.model.SubjectEnum;
 
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class PostController {
 
 
     @PostMapping("/api/posts")
-    public ResponseEntity<?> createPost(@RequestBody CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<?> createPost(@RequestBody CreatePostRequestDto createPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return postService.createPost(createPostRequestDto,userDetails);
     }
@@ -96,8 +97,9 @@ public class PostController {
 
     @GetMapping("/api/posts/gps")
     public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
-                                             @RequestParam("lng")double lng)
-    {
+                                             @RequestParam("lng")double lng) throws ParseException {
+        System.out.println("정렬 컨트롤러 진입");
+
         return postService.findLocation(lat,lng);
     }
 

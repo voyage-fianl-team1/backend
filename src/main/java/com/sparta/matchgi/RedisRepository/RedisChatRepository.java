@@ -5,9 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface RedisChatRepository extends CrudRepository<RedisChat,Long> {
-
-    List<RedisChat> findAll();
+public interface RedisChatRepository extends CrudRepository<RedisChat,String> {
 
     List<RedisChat> findByRoomIdOrderByCreatedAt(String roomId);
 

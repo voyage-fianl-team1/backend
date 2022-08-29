@@ -1,5 +1,6 @@
 package com.sparta.matchgi.testData;
 
+import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DateConverter;
@@ -30,6 +31,9 @@ public class TestDataRunner implements ApplicationRunner {
 
     private final ImageRepository imageRepository;
 
+    private final RedisChatRepository redisChatRepository;
+    private final  ChatRepository chatRepository;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
@@ -57,7 +61,7 @@ public class TestDataRunner implements ApplicationRunner {
 
             String content = getRandomString();
 
-            int viewCount = getRandomInt(100,0);
+            int viewCount = 0;
 
             int requestCount = 0;
 
@@ -141,6 +145,12 @@ public class TestDataRunner implements ApplicationRunner {
             UserRoom userRoom = new UserRoom(user,room,DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
 
             userRoomRepository.save(userRoom);
+
+            RedisChat redisChat=new RedisChat("1",room,"안녕하세요",user,getRandomDeadline(day+1));
+            redisChatRepository.save(redisChat);
+
+            Chat chat=new Chat(room, "네 안녕하세요", user,getRandomDeadline(day+1));
+            chatRepository.save(chat);
 
 
         }

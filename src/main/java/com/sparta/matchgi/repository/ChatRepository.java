@@ -26,6 +26,7 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
     Slice<ChatResponseDto> showChatsAfter(Room room, Long lastChat, Pageable pageable);
     List<Chat> findAllByRoom(Room room);
 
-    void deleteAllByRoom(Room room); //Room이랑 roomId랑 지우는 것의 차이?
 
+
+    void deleteAllByRoom(Room room); //Room이랑 roomId랑 지우는 것의 차이?
 }

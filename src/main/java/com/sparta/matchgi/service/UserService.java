@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -147,7 +148,9 @@ public class UserService {
                     .id(request.getPost().getId())
                     .title(request.getPost().getTitle())
                     .subject(request.getPost().getSubject())
-                    .matchStatus(request.getPost().getMatchStatus())
+                    .requestStatus(request.getRequestStatus())
+                    .createdAt(request.getCreatedAt())
+                    .imageUrl(request.getPost().getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
                     .build();
             myMatchDetailResponseDtos.add(myMatchDetailResponseDto);
         }
@@ -159,12 +162,17 @@ public class UserService {
     public ResponseEntity<MyPostResponseDto> getMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<Post> posts = postRepository.findAllByUser(user);
-        List<MyPostDetailResponseDto> myPostDetailResponseDtos = new ArrayList<>();
+        List<MyPostDetailResponseDto> myPostDetailResponseDtos = posts.stream().map(p->
+                MyPostDetailResponseDto.builder()
+                        .id(p.getId())
+                        .imageUrl(p.getImageList().stream().map(ImgUrl::getUrl).collect(Collectors.toList()))
+                        .title(p.getTitle())
+                        .subject(p.getSubject())
+                        .createdAt(p.getCreatedAt())
+                        .build()
+                ).collect(Collectors.toList());
 
-        for (Post post : posts) {
-            MyPostDetailResponseDto mypostdto = new MyPostDetailResponseDto(post);
-            myPostDetailResponseDtos.add(mypostdto);
-        }
+
 
         return new ResponseEntity<>(new MyPostResponseDto(myPostDetailResponseDtos), HttpStatus.valueOf(200));
     }
@@ -191,6 +199,24 @@ public class UserService {
         userRepository.save(user);
 
         return new ResponseEntity<>("사진이 등록되었습니다.", HttpStatus.valueOf(201));
+    }
+
+    public ResponseEntity<?> getScores(String subject,Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
+        List<RequestStatus> requestStatusList = new ArrayList<>();
+        requestStatusList.add(RequestStatus.WIN);
+        requestStatusList.add(RequestStatus.LOSE);
+        requestStatusList.add(RequestStatus.DRAW);
+
+        if(subject.equals("ALL")){
+            return new ResponseEntity<>(requestRepository.AllScores(user,requestStatusList),HttpStatus.valueOf(200));
+        }else{
+            return new ResponseEntity<>(requestRepository.ScoresSubject(user,SubjectEnum.valueOf(subject),requestStatusList),HttpStatus.valueOf(200));
+        }
     }
 
 }

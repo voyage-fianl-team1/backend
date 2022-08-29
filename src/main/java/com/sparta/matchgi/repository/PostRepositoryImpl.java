@@ -44,6 +44,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.matchDeadline,
                         post.requestCount,
                         post.matchStatus,
+                        post.address,
                         ExpressionUtils.as(
                                 JPAExpressions
                                         .select(imgUrl.url)
@@ -85,6 +86,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.matchDeadline,
                         post.requestCount,
                         post.matchStatus,
+                        post.address,
                         ExpressionUtils.as(
                                 JPAExpressions
                                         .select(imgUrl.url)
@@ -125,6 +127,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 post.matchStatus,
                 post.lat,
                 post.lng,
+                post.address,
                 ExpressionUtils.as(
                         JPAExpressions
                                 .select(imgUrl.url)
@@ -137,41 +140,18 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                                 )),"imgUrl"
                 )
                         ))
-//                ,Expressions.as(
-//                        acos(cos(radians(Expressions.constant(lat)))
-//                                .multiply(cos(radians(post.lat)))
-//                                .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
-//                                .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
-//                        ).multiply(Expressions.constant(6371)).stringValue(),"distance")
                 .from(post)
                 .where(acos(cos(radians(Expressions.constant(lat)))
                         .multiply(cos(radians(post.lat)))
                         .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
                         .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
-                ).multiply(Expressions.constant(6371)).loe(5)
-                        ,post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
+                ).multiply(Expressions.constant(6371)).loe(5),post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
                 .orderBy(post.id.asc())
                 .fetch();
         return returnPost;
 
     }
-
-    //querydsl에서는 Doubld에서 double로 형 변환이 안되네
-
-
-    private NumberExpression<Double> getLocation(double lat, double lng){
-        NumberExpression<Double> distanceExpression =
-                acos(cos(radians(Expressions.constant(lat)))
-                        .multiply(cos(radians(post.lat))
-                                .multiply(cos(radians(post.lng))
-                                        .subtract(radians(Expressions.constant(lng)))
-                                        .add(sin(radians(Expressions.constant(lat)))
-                                                .multiply(sin(radians(post.lat))))))).multiply(6371);
-
-
-        System.out.println("현재위도,경도 : "+lat+", "+lng);
-        return distanceExpression;
-    }
+    //querydsl이나 nativeQuery에서 st_distance_sphere을 쓰려면 db를 mysql로 연결해야함
 
 
     private BooleanExpression getSubject(String subject){

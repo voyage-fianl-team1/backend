@@ -13,4 +13,5 @@ public interface ImgUrlRepository extends JpaRepository<ImgUrl,Long> {
     ImgUrl findImgUrlByPath(String path);
     List<ImgUrl> findByPostId(Long postId);
 
+
 }
