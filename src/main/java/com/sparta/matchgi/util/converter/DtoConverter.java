@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class DtoConverter {
 
-    public static CreatePostResponseDto PostToCreateResponseDto(Post post,int owner) {
+    public static CreatePostResponseDto PostToCreateResponseDto(Post post,int owner, int player) {
 
         CreatePostResponseDto createPostResponseDto = CreatePostResponseDto.builder()
                 .postId(post.getId())
@@ -30,6 +30,7 @@ public class DtoConverter {
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(owner)
+                .player(player)
                 .viewCount(post.getViewCount())
                 .build();
 
