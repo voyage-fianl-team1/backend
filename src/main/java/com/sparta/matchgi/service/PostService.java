@@ -234,8 +234,6 @@ public class PostService {
         return postRepositoryImpl.findAllByLocation(lat,lng);
     }
 
-    //거리찾기-nativeQuery 사용
-
 
 
 }
