@@ -19,21 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
 
 
-//    private final ChatService chatService;
-//
-//    @MessageMapping("/{roomId}")
-//    @SendTo("/room/{roomId}")
-//    public ResponseEntity<?> sendChat(@DestinationVariable Long roomId, SendChatRequestDto sendChatRequestDto, @Header("accessToken") String token){
-//
-//        return chatService.sendChat(roomId,sendChatRequestDto,token);
-//
-//    }
-//
-//    @GetMapping("/api/rooms/{roomId}/chats")
-//    public ResponseEntity<?> showChats(@PathVariable Long roomId, @RequestParam(required = false,defaultValue = "-1") Long lastChat, @RequestParam int limit){
-//        return chatService.showChats(roomId,lastChat,limit);
-//
-//    }
+    private final ChatService chatService;
+
+    @MessageMapping("/{roomId}")
+    @SendTo("/room/{roomId}")
+    public ResponseEntity<?> sendChat(@DestinationVariable Long roomId, SendChatRequestDto sendChatRequestDto, @Header("accessToken") String token){
+
+        return chatService.sendChat(roomId,sendChatRequestDto,token);
+
+    }
+
+    @GetMapping("/api/rooms/{roomId}/chats")
+    public ResponseEntity<?> showChats(@PathVariable Long roomId, @RequestParam(required = false,defaultValue = "-1") Long lastChat, @RequestParam int limit){
+        return chatService.showChats(roomId,lastChat,limit);
+
+    }
 
 
 }
