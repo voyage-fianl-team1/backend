@@ -1,7 +1,7 @@
 package com.sparta.matchgi.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.sparta.matchgi.RedisRepository.RedisChatRepository;
+//import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.*;
@@ -37,7 +37,7 @@ public class PostService {
     private final RoomRepository roomRepository;
     private final UserRoomRepository userRoomRepository;
     private final ReviewRepository reviewRepository;
-    private final RedisChatRepository redisChatRepository;
+//    private final RedisChatRepository redisChatRepository;
     private final ChatRepository chatRepository;
     private final RequestRepository requestRepository;
     private final S3Image s3Image;
@@ -161,8 +161,8 @@ public class PostService {
         List<Notification> notifications=notificationRepository.findAllByPost(post);
         notificationRepository.deleteAll(notifications);
 
-        List<RedisChat> redisChats=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId.toString());
-        redisChatRepository.deleteAll(redisChats);
+//        List<RedisChat> redisChats=redisChatRepository.findByRoomIdOrderByCreatedAt(roomId.toString());
+//        redisChatRepository.deleteAll(redisChats);
 
         List<Chat> chatList=chatRepository.findAllByRoom(room);
         chatRepository.deleteAll(chatList);
