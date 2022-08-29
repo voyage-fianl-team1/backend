@@ -71,7 +71,7 @@ public class TestDataRunner implements ApplicationRunner {
 
             int latnum=i;
             switch (latnum){
-                case 1:lat=35.89064935862601;lng=128.6121073156588;break;//경북대
+                case 1:lat=35.89064935862601;lng=128.6121073156588;break;//경북대학교
                 case 2:lat=35.88298540137134;lng=128.61376795659538;break;//대구공고
                 case 3:lat=35.905792656554134;lng=128.61715517604347;break;//코스트코
                 case 4:lat=35.88398926233881;lng=128.62486167276103;break;//파티마병원

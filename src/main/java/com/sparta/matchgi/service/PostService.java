@@ -10,20 +10,14 @@ import com.sparta.matchgi.util.Image.S3Image;
 import com.sparta.matchgi.util.converter.DateConverter;
 import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.io.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.io.WKTReader;
-import javax.persistence.Query;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -47,8 +41,6 @@ public class PostService {
     private final ChatRepository chatRepository;
     private final RequestRepository requestRepository;
     private final S3Image s3Image;
-    private final EntityManager em;
-    private final double distanceKm = 5000.0;
     private final NotificationRepository notificationRepository;
 
 
@@ -233,8 +225,6 @@ public class PostService {
     public List<PostFilterDto> findLocation(double lat,double lng){
         return postRepositoryImpl.findAllByLocation(lat,lng);
     }
-
-    //거리찾기-nativeQuery 사용
 
 
 
