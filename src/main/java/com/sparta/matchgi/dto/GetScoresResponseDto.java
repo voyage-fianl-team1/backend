@@ -19,5 +19,11 @@ public class GetScoresResponseDto {
 
     private RequestStatus status;
 
+    private String ImgUrl;
+
+    private String title;
+
+    private Long postId;
+
 
 }
