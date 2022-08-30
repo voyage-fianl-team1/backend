@@ -52,6 +52,8 @@ public class CreatePostResponseDto {
 
     private String profileImgUrl;
 
+    private SubjectEnum subjectValue;
+
 
 
 }

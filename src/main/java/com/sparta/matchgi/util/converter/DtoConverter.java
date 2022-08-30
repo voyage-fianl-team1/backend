@@ -31,6 +31,7 @@ public class DtoConverter {
                 .viewCount(post.getViewCount())
                 .profileImgUrl(post.getUser().getProfileImgUrl())
                 .nickname(post.getUser().getNickname())
+                .subjectValue(post.getSubject())
                 .build();
 
         return createPostResponseDto;

@@ -19,7 +19,7 @@ public class GetScoresResponseDto {
 
     private RequestStatus status;
 
-    private String ImgUrl;
+    private String imgUrl;
 
     private String title;
 

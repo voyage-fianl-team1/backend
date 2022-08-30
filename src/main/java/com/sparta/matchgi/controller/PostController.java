@@ -106,6 +106,11 @@ public class PostController {
         return postService.findLocation(lat,lng);
     }
 
+    @GetMapping("/api/posts/authority")
+    public ResponseEntity<?> confirmAuthority(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.confirmAuthority(userDetails);
+    }
+
 
 
 
