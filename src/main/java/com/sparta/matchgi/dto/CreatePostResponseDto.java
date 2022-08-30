@@ -53,4 +53,5 @@ public class CreatePostResponseDto {
     private String profileImgUrl;
 
 
+
 }

@@ -24,6 +24,8 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
 
     List<Request> findAllByUser(User user);
 
+<<<<<<< HEAD
+
 
     @Query("SELECT new com.sparta.matchgi.dto.GetScoresResponseDto(p.matchDeadline ,p.subject,r.requestStatus) " +
             "FROM Request r " +
@@ -43,4 +45,6 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
     void deleteAllByPost(Post post);
 
 
+=======
+>>>>>>> parent of 2a7569e (유저의 경기결과를 보여주는 api 구현)
 }
