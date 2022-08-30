@@ -25,13 +25,15 @@ public class DtoConverter {
                 .lng(post.getLng())
                 .matchDeadline(post.getMatchDeadline())
                 .matchStatus(post.getMatchStatus())
-                .subject(post.getSubject())
+                .subject(post.getSubject().getValue())
                 .title(post.getTitle())
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(owner)
                 .player(player)
                 .viewCount(post.getViewCount())
+                .profileImgUrl(post.getUser().getProfileImgUrl())
+                .nickname(post.getUser().getNickname())
                 .build();
 
         return createPostResponseDto;
