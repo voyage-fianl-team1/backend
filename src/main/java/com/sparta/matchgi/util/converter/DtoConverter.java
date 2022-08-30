@@ -2,9 +2,6 @@ package com.sparta.matchgi.util.converter;
 
 import com.sparta.matchgi.dto.CreatePostResponseDto;
 import com.sparta.matchgi.dto.ReviewListResponseDto;
-import com.sparta.matchgi.dto.ParticipationResponseDto;
-import com.sparta.matchgi.dto.PostFilterDto;
-import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.model.ImgUrl;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.Review;
@@ -49,7 +46,7 @@ public class DtoConverter {
                         .title(r.getTitle())
                         .content(r.getContent())
                         .build()
-                ).collect(Collectors.toList());
+        ).collect(Collectors.toList());
 
         return reviewListResponseDtoList;
     }
