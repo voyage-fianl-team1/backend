@@ -1,6 +1,6 @@
 package com.sparta.matchgi.service;
 
-//import com.sparta.matchgi.RedisRepository.RedisChatRepository;
+import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.ShowRoomResponseDto;
 import com.sparta.matchgi.model.*;
@@ -27,37 +27,37 @@ public class UserRoomService {
     private final UserRoomRepositoryImpl userRoomRepositoryImpl;
 
     private final UserRoomRepository userRoomRepository;
-//    private final RedisChatRepository redisChatRepository;
+    private final RedisChatRepository redisChatRepository;
 
     private final ChatRepository chatRepository;
 
     private final RoomRepository roomRepository;
 
-//    public ResponseEntity<?> showUserRoom(UserDetailsImpl userDetails) {
+    public ResponseEntity<?> showUserRoom(UserDetailsImpl userDetails) {
 
-//        User user = userDetails.getUser();
-//
-//        List<Room> roomList = userRoomRepository.findRoomList(user);
-//
-//        for(Room room:roomList){
-//
-//            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
-//
-//            List<Chat> chatList = redisChatList.stream().map(r->
-//                    new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
-//            ).collect(Collectors.toList());
-//
-//            chatRepository.saveAll(chatList);
-//
-//            redisChatRepository.deleteAll(redisChatList);
-//        }
-//
-//
-//        List<ShowRoomResponseDto> showRoomResponseDtoList = userRoomRepositoryImpl.ShowRoomPost(user);
-//
-//        return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
+        User user = userDetails.getUser();
 
-//    }
+        List<Room> roomList = userRoomRepository.findRoomList(user);
+
+        for(Room room:roomList){
+
+            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
+
+            List<Chat> chatList = redisChatList.stream().map(r->
+                    new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
+            ).collect(Collectors.toList());
+
+            chatRepository.saveAll(chatList);
+
+            redisChatRepository.deleteAll(redisChatList);
+        }
+
+
+        List<ShowRoomResponseDto> showRoomResponseDtoList = userRoomRepositoryImpl.ShowRoomPost(user);
+
+        return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
+
+    }
     public ResponseEntity<?> updateLastActive(Long roomId, UserDetailsImpl userDetails) {
 
         Room room = roomRepository.findById(roomId).orElseThrow(

@@ -14,10 +14,10 @@ public class UserRoomController {
     private final UserRoomService userRoomService;
 
 
-//    @GetMapping("/api/users/rooms")
-//    public ResponseEntity<?> showUserRoom(@AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return userRoomService.showUserRoom(userDetails);
-//    }
+    @GetMapping("/api/users/rooms")
+    public ResponseEntity<?> showUserRoom(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userRoomService.showUserRoom(userDetails);
+    }
 
     @PutMapping("/api/room/{roomId}/lastActive")
     public ResponseEntity<?> updateLastActive(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
