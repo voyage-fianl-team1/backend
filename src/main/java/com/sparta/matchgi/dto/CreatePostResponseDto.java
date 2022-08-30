@@ -32,7 +32,7 @@ public class CreatePostResponseDto {
 
     private String address;
 
-    private SubjectEnum subject;
+    private String subject;
 
     private String content;
 
@@ -46,20 +46,12 @@ public class CreatePostResponseDto {
 
     private int viewCount;
 
+    private int player;
 
-    public CreatePostResponseDto(Post post, List<ImagePathDto> imgpaths,List<ImageUrlDto> imgurls){
-        this.title=post.getTitle();
-        this.matchDeadline=post.getMatchDeadline();
-        this.address= post.getAddress();
-        this.subject=post.getSubject();
-        this.content=post.getContent();
-        this.matchStatus=post.getMatchStatus();
-        this.imgpaths=imgpaths;
-        this.owner=owner;
-        this.imgurls=imgurls;
-        this.postId=post.getId();
-        this.viewCount=post.getViewCount();
-    }
+    private String nickname;
+
+    private String profileImgUrl;
+
 
 
 }

@@ -41,7 +41,7 @@ public class UserRoomService {
 
         for(Room room:roomList){
 
-            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId());
+            List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
 
             List<Chat> chatList = redisChatList.stream().map(r->
                     new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
@@ -58,6 +58,7 @@ public class UserRoomService {
         return new ResponseEntity<>(showRoomResponseDtoList, HttpStatus.valueOf(200));
 
     }
+
     public ResponseEntity<?> updateLastActive(Long roomId, UserDetailsImpl userDetails) {
 
         Room room = roomRepository.findById(roomId).orElseThrow(
