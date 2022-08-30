@@ -37,7 +37,6 @@ public class UserRoomService {
 
         User user = userDetails.getUser();
 
-
         List<Room> roomList = userRoomRepository.findRoomList(user);
 
         for(Room room:roomList){
