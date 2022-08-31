@@ -54,6 +54,13 @@ public class PostService {
     public ResponseEntity<?> createPost(
             CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
 
+        LocalDateTime localDateTime = LocalDate.now().atStartOfDay();
+
+        Optional<Post> nowPost = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
+        if (nowPost.isPresent()){
+            throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
+        }
+
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
         Room room = new Room(userDetails.getUser(), post);
