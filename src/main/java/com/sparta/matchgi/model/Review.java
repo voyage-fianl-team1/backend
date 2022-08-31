@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -21,11 +21,7 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
     private String content;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID")
@@ -39,8 +35,7 @@ public class Review {
     private List<ReviewImgUrl> reviewImageList = new ArrayList<>();
 
 
-    public Review(String title, String content, Post post, User user) {
-        this.title = title;
+    public Review(String content, Post post, User user) {
         this.content = content;
         this.post = post;
         this.user = user;
