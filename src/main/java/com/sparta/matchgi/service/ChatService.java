@@ -61,11 +61,9 @@ public class ChatService {
                 ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다")
         );
 
-<<<<<<< HEAD
-        List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(String.valueOf(Long.valueOf(room.getId().toString())));
-=======
+
         List<RedisChat> redisChatList = redisChatRepository.findByRoomIdOrderByCreatedAt(room.getId().toString());
->>>>>>> 704003c098b6a761718d8c11c74a3e63da07824b
+
 
         List<Chat> chatList = redisChatList.stream().map(r->
                 new Chat(r.getRoom(),r.getMessage(),r.getUser(),r.getCreatedAt())
