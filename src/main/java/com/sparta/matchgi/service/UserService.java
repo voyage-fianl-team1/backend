@@ -51,6 +51,8 @@ public class UserService {
 
     private final ScoreRepository scoreRepository;
 
+    private final RequestRepositoryImpl requestRepositoryImpl;
+
 
 
     @Value("${S3.bucket.name}")
@@ -211,11 +213,8 @@ public class UserService {
         requestStatusList.add(RequestStatus.LOSE);
         requestStatusList.add(RequestStatus.DRAW);
 
-        if(subject.equals("ALL")){
-            return new ResponseEntity<>(requestRepository.AllScores(user,requestStatusList),HttpStatus.valueOf(200));
-        }else{
-            return new ResponseEntity<>(requestRepository.ScoresSubject(user,SubjectEnum.valueOf(subject),requestStatusList),HttpStatus.valueOf(200));
-        }
+        return new ResponseEntity<>(requestRepositoryImpl.ScoresSubject(user,subject,requestStatusList),HttpStatus.valueOf(200));
+
     }
 
 }

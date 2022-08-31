@@ -50,17 +50,11 @@ public class ReviewService {
 
         User user = userDetails.getUser();
 
-        Optional<Review> reviewFound = reviewRepository.findByPostAndUser(post,user);
-
-        if(reviewFound.isPresent()){
-            throw new IllegalArgumentException("한 게시글에 리뷰는 한번만 달 수 있습니다.");
-        }
-
-        Review review = new Review(registerReviewRequestDto.getTitle(),registerReviewRequestDto.getContent(),post,user);
+        Review review = new Review(registerReviewRequestDto.getContent(),post,user);
 
         reviewRepository.save(review);
 
-        return new ResponseEntity<>(new RegisterReviewResponseDto(review.getId(),review.getTitle(),review.getContent(),review.getUser().getNickname()), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(new RegisterReviewResponseDto(review.getId(),review.getContent(),review.getUser().getNickname()), HttpStatus.valueOf(201));
 
     }
 

@@ -24,20 +24,6 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
 
     List<Request> findAllByUser(User user);
 
-    @Query("SELECT new com.sparta.matchgi.dto.GetScoresResponseDto(p.matchDeadline ,p.subject,r.requestStatus) " +
-            "FROM Request r " +
-            "join r.user u  join r.post p " +
-            "where u = :user AND r.requestStatus IN :requestStatusList " +
-            "ORDER BY p.matchDeadline DESC ")
-    List<GetScoresResponseDto> AllScores(User user, List<RequestStatus> requestStatusList);
-
-    @Query("SELECT new com.sparta.matchgi.dto.GetScoresResponseDto(p.matchDeadline,p.subject,r.requestStatus) " +
-            "FROM Request r " +
-            "join r.user u  join r.post p " +
-            "where u = :user AND r.requestStatus IN :requestStatusList AND p.subject=:subject " +
-            "ORDER BY p.matchDeadline DESC ")
-    List<GetScoresResponseDto> ScoresSubject(User user, SubjectEnum subject, List<RequestStatus>requestStatusList);
-
 
     void deleteAllByPost(Post post);
 

@@ -58,7 +58,7 @@ public class PostService {
 
         Optional<Post> nowPost = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
         if (nowPost.isPresent()){
-            throw new IllegalArgumentException("하루에 한번만 작성 가능합니다.");
+            throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
         }
 
         Post post = new Post(createPostRequestDto, userDetails);
@@ -224,7 +224,7 @@ public class PostService {
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
 
-        if (post.getMatchDeadline().isBefore(DateConverter.millsToLocalDateTime(System.currentTimeMillis()))) {
+        if (post.getMatchDeadline().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("경기가 끝난 다음 날부터 경기를 종료할 수 있습니다.");
         }
 
@@ -243,5 +243,14 @@ public class PostService {
         return postRepositoryImpl.findAllByLocation(lat, lng);
     }
 
+    public ResponseEntity<?> confirmAuthority(UserDetailsImpl userDetails) {
+        LocalDateTime localDateTime = LocalDate.now().atStartOfDay();
 
+        Optional<Post> nowPost = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
+        if (nowPost.isPresent()){
+            throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
+        }
+
+        return new ResponseEntity<>("정상적으로 작성가능합니다",HttpStatus.valueOf(200));
+    }
 }
