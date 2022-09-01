@@ -68,6 +68,10 @@ public class PostService {
 
         UserRoom userRoom = new UserRoom(userDetails.getUser(), room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
         userRoomRepository.save(userRoom);
+
+        Request request = new Request(post,userDetails.getUser(),RequestStatus.MYMATCH);
+        requestRepository.save(request);
+
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, 1, -1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
@@ -224,8 +228,8 @@ public class PostService {
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
 
-        if (post.getMatchDeadline().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("경기가 끝난 다음 날부터 경기를 종료할 수 있습니다.");
+        if (post.getMatchDeadline().toLocalDate().isAfter(LocalDate.now().plusDays(1))) {
+            throw new IllegalArgumentException("모집마감일부터 경기를 종료할 수 있습니다.");
         }
 
         if (post.getMatchStatus().equals(MatchStatus.ONGOING)) {

@@ -1,14 +1,9 @@
 package com.sparta.matchgi.service;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
-import com.sparta.matchgi.dto.RegisterReviewRequestDto;
-import com.sparta.matchgi.dto.RegisterReviewResponseDto;
-import com.sparta.matchgi.dto.ReviewListResponseDto;
-import com.sparta.matchgi.dto.ShowReviewListResponseDto;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.Review;
-import com.sparta.matchgi.model.ReviewImgUrl;
-import com.sparta.matchgi.model.User;
+import com.sparta.matchgi.dto.*;
+import com.sparta.matchgi.model.*;
+import com.sparta.matchgi.repository.NotificationRepository;
 import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.repository.ReviewImgUrlRepository;
 import com.sparta.matchgi.repository.ReviewRepository;
@@ -18,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +35,10 @@ public class ReviewService {
 
     private final S3Image s3Image;
 
+    private final SimpMessagingTemplate template;
+
+    private final NotificationRepository notificationRepository;
+
     @Value("${S3.Url}")
     private String S3Url;
 
@@ -53,6 +53,13 @@ public class ReviewService {
         Review review = new Review(registerReviewRequestDto.getContent(),post,user);
 
         reviewRepository.save(review);
+
+        if(!user.getId().equals(post.getUser().getId())){
+            Notification notification = new Notification(post.getTitle()+"에 "+user.getNickname()+"님이 댓글을 작성했습니다.",post.getUser(),post);
+            notificationRepository.save(notification);
+            NotificationDetailResponseDto notificationDetailResponseDto = new NotificationDetailResponseDto(notification);
+            template.convertAndSend("/room/user/"+post.getUser().getId(),notificationDetailResponseDto);
+        }
 
         return new ResponseEntity<>(new RegisterReviewResponseDto(review.getId(),review.getContent(),review.getUser().getNickname()), HttpStatus.valueOf(201));
 

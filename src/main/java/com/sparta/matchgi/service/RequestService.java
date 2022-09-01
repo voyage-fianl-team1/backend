@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,8 @@ public class RequestService {
 
     private final SimpMessagingTemplate template;
 
+    private final RequestRepositoryImpl requestRepositoryImpl;
+
     public ResponseEntity<?> registerMatch(Long postId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
@@ -51,6 +54,9 @@ public class RequestService {
         }
         if(requestRepository.findByUserAndPost(user,postFound.get()).isPresent()){
             throw new IllegalArgumentException("참가신청을 중복으로 할 수 없습니다.");
+        }
+        if(postFound.get().getMatchDeadline().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("참가 신청이 지난 경기에는 참가신청 할 수 없습니다.");
         }
 
         Request request = new Request(postFound.get(),user);
@@ -130,7 +136,7 @@ public class RequestService {
 
             Room room = roomRepository.findByPost(request.getPost());
 
-            UserRoom userRoom = new UserRoom(user,room, DateConverter.millsToLocalDateTime(System.currentTimeMillis()));
+            UserRoom userRoom = new UserRoom(user,room, LocalDateTime.now());
             userRoomRepository.save(userRoom);
 
         } else if (requestStatus.equals(RequestStatus.REJECT)) {
@@ -153,7 +159,20 @@ public class RequestService {
             throw new IllegalArgumentException("존재하지 않는 포스트입니다.");
         }
 
-        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.showParticipationList(postFound.get())),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ParticipationResponseDto(requestRepository.showParticipationList(postFound.get(),RequestStatus.MYMATCH)),HttpStatus.valueOf(200));
+
+    }
+
+    public ResponseEntity<?> getAcceptRequest(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                ()-> new IllegalArgumentException("존재하지않는 포스트입니다")
+        );
+        List<RequestStatus> requestStatusList =  new ArrayList<>();
+        requestStatusList.add(RequestStatus.ACCEPT);
+        requestStatusList.add(RequestStatus.MYMATCH);
+        List<RequestResponseDto> requestResponseDtoList = requestRepositoryImpl.getAcceptRequest(post,requestStatusList);
+
+        return new ResponseEntity<>(requestResponseDtoList,HttpStatus.valueOf(200));
 
     }
 
@@ -198,6 +217,5 @@ public class RequestService {
                 new NotificationDetailResponseDto(notification);
         template.convertAndSend("/room/user/"+request.getUser().getId(),notificationDetailResponseDto);
     }
-
 
 }

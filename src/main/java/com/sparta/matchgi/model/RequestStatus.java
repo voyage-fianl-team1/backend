@@ -18,7 +18,7 @@ public enum RequestStatus {
     ACCEPT{
         @Override
         public String getNotificationContent(String title,String nickname) {
-            return title+"에 참가신청이 허락되었습니다.";
+            return title+"에 참가신청이 허락되었습니다. 채팅방을 확인해주세요";
         }
 
         @Override
@@ -60,12 +60,22 @@ public enum RequestStatus {
     DRAW{
         @Override
         public String getNotificationContent(String title,String nickname) {
-            return title+" 경기에서 패배하셨습니다.";
+            return title+" 경기에서 무승부하셨습니다.";
         }
 
         @Override
         public void addScore(Score score) {
             score.addDraw();
+        }
+    },
+    MYMATCH{
+        @Override
+        public String getNotificationContent(String title, String nickname) {
+            return null;
+        }
+
+        @Override
+        public void addScore(Score score) {
         }
     };
 

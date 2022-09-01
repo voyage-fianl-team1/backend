@@ -34,6 +34,12 @@ public class Request extends Timestamped {
         this.requestStatus = RequestStatus.PENDING;
     }
 
+    public Request(Post post,User user,RequestStatus requestStatus){
+        this.post = post;
+        this.user = user;
+        this.requestStatus = requestStatus;
+    }
+
     public void updateStatus(UpdateRequestDto updateRequestDto) {
         this.requestStatus = updateRequestDto.getStatus();
     }
