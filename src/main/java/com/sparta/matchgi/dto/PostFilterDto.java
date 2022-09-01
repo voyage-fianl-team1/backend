@@ -35,6 +35,8 @@ public class PostFilterDto {
 
     private String address;
 
+    private String content;
+
 
 
 }

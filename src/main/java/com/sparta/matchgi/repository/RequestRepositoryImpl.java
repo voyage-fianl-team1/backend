@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.GetScoresResponseDto;
+import com.sparta.matchgi.dto.RequestResponseDto;
 import com.sparta.matchgi.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,6 @@ public class RequestRepositoryImpl implements RequestRepositoryCustom {
     private final QPost qPost = QPost.post;
 
     private final QImgUrl qImgUrl = QImgUrl.imgUrl;
-
 
     @Override
     public List<GetScoresResponseDto> ScoresSubject(User user, String subject, List<RequestStatus> requestStatusList) {
@@ -58,6 +58,25 @@ public class RequestRepositoryImpl implements RequestRepositoryCustom {
                 .fetch();
 
         return getScoresResponseDtoList;
+    }
+
+    @Override
+    public List<RequestResponseDto> getAcceptRequest(Post post,List<RequestStatus> requestStatusList) {
+        List<RequestResponseDto> requestResponseDtoList = queryFactory.select(Projections.fields(
+                RequestResponseDto.class,
+                qRequest.id.as("requestId"),
+                qUser.nickname,
+                qRequest.requestStatus.as("status"),
+                qUser.profileImgUrl
+        ))
+                .from(qRequest)
+                .join(qRequest.user, qUser)
+                .where(qRequest.post.eq(post))
+                .where(qRequest.requestStatus.in(requestStatusList))
+                .orderBy(qRequest.id.desc())
+                .fetch();
+
+        return requestResponseDtoList;
     }
 
     private BooleanExpression getSubject(String subject){

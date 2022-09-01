@@ -21,6 +21,11 @@ public interface ScoreRepository  extends JpaRepository<Score,Long> {
             "where s.subject = :subject " +
             "order by s.win DESC")
     Slice<PersonalRankingResponseDto> findByPersonalRanking(Pageable pageable,SubjectEnum subject);
+    @Query("SELECT new com.sparta.matchgi.dto.PersonalRankingResponseDto(u.nickname,s.subject,u.profileImgUrl,s.win) " +
+            "FROM Score s " +
+            "join s.user u " +
+            "order by s.win DESC")
+    Slice<PersonalRankingResponseDto> findAllPersonalRanking(Pageable pageable);
 
     Optional<Score> findByUser(User user);
 

@@ -187,7 +187,12 @@ public class UserService {
     public ResponseEntity<?> personalRanking(int page, int size, String subject) {
         Pageable pageable = PageRequest.of(page,size);
 
-        return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+        if(subject.equals("ALL")){
+            return new ResponseEntity<>(scoreRepository.findAllPersonalRanking(pageable),HttpStatus.valueOf(200));
+        }else{
+            return new ResponseEntity<>(scoreRepository.findByPersonalRanking(pageable, SubjectEnum.valueOf(subject)),HttpStatus.valueOf(200));
+        }
+
 
     }
 
