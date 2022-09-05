@@ -60,6 +60,9 @@ public class PostService {
         if (nowPost.isPresent()){
             throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
         }
+        if(createPostRequestDto.getAddress().equals("주소를 선택해 주세요.")){
+            throw new IllegalArgumentException("주소를 선택해 주세요.");
+        }
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
