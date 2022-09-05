@@ -65,14 +65,14 @@ public class PostController {
 
 
     @PostMapping("/api/images/posts/{postId}")
-    public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files) throws IOException {
 
-        postService.imageUpload(postId,files,userDetails);
+        postService.imageUpload(postId,files);
     }
 
     @DeleteMapping("/api/images/posts/{objectKey}")
-    public void imageDelete(@PathVariable String objectKey,UserDetailsImpl userDetails){
-        postService.imageDelete(objectKey,userDetails);
+    public void imageDelete(@PathVariable String objectKey){
+        postService.imageDelete(objectKey);
     }
 
 
@@ -106,7 +106,7 @@ public class PostController {
 
     @GetMapping("/api/posts/gps")
     public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
-                                             @RequestParam("lng")double lng) throws ParseException {
+                                             @RequestParam("lng")double lng) {
         System.out.println("정렬 컨트롤러 진입");
 
         return postService.findLocation(lat,lng);
