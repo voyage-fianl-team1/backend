@@ -97,8 +97,18 @@ public class PostService {
         postRepository.updateView(postId);
         CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, owner, player);
 
-        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
+        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(200));
 
+    }
+
+    public ResponseEntity<?> getGuestPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        postRepository.updateView(postId);
+        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, -1, -1);
+
+        return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(200));
     }
 
     //이미지 db에서 지우기기

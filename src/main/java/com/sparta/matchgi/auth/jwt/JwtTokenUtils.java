@@ -16,9 +16,9 @@ public final class JwtTokenUtils {
     // JWT 토큰의 유효기간: 3일 (단위: seconds)
     private static final int JWT_TOKEN_VALID_SEC = 3 * DAY; // 259.2초
     // JWT 토큰의 유효기간: 3일 (단위: milliseconds)
-    private static final int JWT_TOKEN_VALID_MILLI_SEC = 1000*HOUR;
+    private static final int JWT_TOKEN_VALID_MILLI_SEC = 1000*DAY;
 
-    private static final int JWT_REFRESH_TOKEN_VALID_MILLI_SEC = 35*HOUR;
+    private static final int JWT_REFRESH_TOKEN_VALID_MILLI_SEC = 3*1000*DAY;
 
     public static final String CLAIM_EXPIRED_DATE = "EXPIRED_DATE";
     public static final String CLAIM_USER_NAME = "USER_NAME";
