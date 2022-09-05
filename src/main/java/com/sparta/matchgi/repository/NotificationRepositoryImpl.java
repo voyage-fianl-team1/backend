@@ -37,7 +37,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
                 .join(notification.post, post)
                 .join(notification.user, qUser)
                 .where(qUser.eq(user))
-                .orderBy(orderByisread())
+                .orderBy(orderByisread(),notification.createdAt.desc())
                 .fetch();
 
 

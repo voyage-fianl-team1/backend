@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RegisterReviewRequestDto {
 
-    private String title;
 
     private String content;
 

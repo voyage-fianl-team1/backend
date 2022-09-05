@@ -34,5 +34,10 @@ public class RequestController {
         return requestService.quitRequest(postId,userDetails);
     }
 
+    @GetMapping("/api/posts/{postId}/request/accept")
+    public ResponseEntity<?> getAcceptRequest(@PathVariable Long postId){
+        return requestService.getAcceptRequest(postId);
+    }
+
 
 }

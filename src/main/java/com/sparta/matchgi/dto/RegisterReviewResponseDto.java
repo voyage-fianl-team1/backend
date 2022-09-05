@@ -11,8 +11,6 @@ public class RegisterReviewResponseDto {
 
     private Long reviewId;
 
-    private String title;
-
     private String content;
 
     private String nickname;

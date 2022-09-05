@@ -57,6 +57,12 @@ public class PostController {
 
     }
 
+    @GetMapping("/api/posts/{postId}/guest")
+    public  ResponseEntity<?> getGuestPost(@PathVariable Long postId) {
+        return postService.getGuestPost(postId);
+
+    }
+
 
     @PostMapping("/api/images/posts/{postId}")
     public void imageUpload(@PathVariable Long postId,@RequestPart List<MultipartFile> files,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
@@ -104,6 +110,11 @@ public class PostController {
         System.out.println("정렬 컨트롤러 진입");
 
         return postService.findLocation(lat,lng);
+    }
+
+    @GetMapping("/api/posts/authority")
+    public ResponseEntity<?> confirmAuthority(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.confirmAuthority(userDetails);
     }
 
 

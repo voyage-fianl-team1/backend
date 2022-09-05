@@ -31,6 +31,7 @@ public class DtoConverter {
                 .viewCount(post.getViewCount())
                 .profileImgUrl(post.getUser().getProfileImgUrl())
                 .nickname(post.getUser().getNickname())
+                .subjectValue(post.getSubject())
                 .build();
 
         return createPostResponseDto;
@@ -43,8 +44,9 @@ public class DtoConverter {
                         .reviewId(r.getId())
                         .imgUrlList(r.getReviewImageList().stream().map(ReviewImgUrl::getUrl).collect(Collectors.toList()))
                         .nickname(r.getUser().getNickname())
-                        .title(r.getTitle())
                         .content(r.getContent())
+                        .profileImgUrl(r.getUser().getProfileImgUrl())
+                        .createdAt(r.getCreatedAt())
                         .build()
         ).collect(Collectors.toList());
 

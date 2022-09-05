@@ -25,7 +25,7 @@ public class JWTAuthProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
         String token = (String) authentication.getPrincipal();
-        String email = jwtDecoder.decodeUsername(token);
+        String email = jwtDecoder.decodeEmail(token);
 
         // TODO: API 사용시마다 매번 User DB 조회 필요
         //  -> 해결을 위해서는 UserDetailsImpl 에 User 객체를 저장하지 않도록 수정
