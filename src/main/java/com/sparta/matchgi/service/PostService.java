@@ -55,9 +55,9 @@ public class PostService {
 
         LocalDateTime localDateTime = LocalDate.now().atStartOfDay();
 
-        Optional<Post> nowPost = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
-        if (nowPost.isPresent()){
-            throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
+        List<Post> postList = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
+        if (postList.size()>2){
+            throw new IllegalArgumentException("게시글은 하루에 세번까지만 작성가능합니다.");
         }
         if(createPostRequestDto.getAddress().equals("주소를 선택해 주세요.")){
             throw new IllegalArgumentException("주소를 선택해 주세요.");
@@ -282,9 +282,9 @@ public class PostService {
     public ResponseEntity<?> confirmAuthority(UserDetailsImpl userDetails) {
         LocalDateTime localDateTime = LocalDate.now().atStartOfDay();
 
-        Optional<Post> nowPost = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
-        if (nowPost.isPresent()){
-            throw new IllegalArgumentException("게시글은 하루에 한번만 작성가능합니다.");
+        List<Post> postList = postRepository.findByCreatedAtAfterAndUser(localDateTime, userDetails.getUser());
+        if (postList.size()>2){
+            throw new IllegalArgumentException("게시글은 하루에 세번까지만 작성가능합니다.");
         }
 
         return new ResponseEntity<>("정상적으로 작성가능합니다",HttpStatus.valueOf(200));

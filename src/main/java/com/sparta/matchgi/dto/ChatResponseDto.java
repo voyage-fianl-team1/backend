@@ -37,7 +37,13 @@ public class ChatResponseDto {
     }
 
 
-
+    public ChatResponseDto(Chat chat) {
+        this.userId = chat.getUser().getId();
+        this.nickname = chat.getUser().getNickname();
+        this.profileImgUrl = chat.getUser().getProfileImgUrl();
+        this.message = chat.getMessage();
+        this.createdAt = chat.getCreatedAt();
+    }
 }
 
 
