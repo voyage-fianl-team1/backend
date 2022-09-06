@@ -122,7 +122,7 @@ public class PostService {
     }
 
     //이미지 db에서 지우기기
-    public void imageDelete(String objectKey, UserDetailsImpl userDetails) {
+    public void imageDelete(String objectKey) {
         ImgUrl imageUrl = imageRepository.findImgUrlByPath(objectKey); //post 마다 ImgUrl(path,url)
         imageRepository.delete(imageUrl);
     }
@@ -136,7 +136,7 @@ public class PostService {
 
 
     //이미지 업로드하기(완료)
-    public void imageUpload(Long postId, List<MultipartFile> files, UserDetailsImpl userDetails) throws IOException {
+    public void imageUpload(Long postId, List<MultipartFile> files) throws IOException {
         List<ImagePathDto> imagePathDtoList = new ArrayList<>();
 
         for (MultipartFile file : files) {
