@@ -148,7 +148,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         .multiply(cos(radians(post.lat)))
                         .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
                         .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
-                ).multiply(Expressions.constant(6371)).loe(5),post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
+                ).multiply(Expressions.constant(6371)).loe(500),post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
                 .orderBy(post.id.asc())
                 .fetch();
         return returnPost;

@@ -63,6 +63,16 @@ public class PostService {
         if(createPostRequestDto.getAddress().equals("주소를 선택해 주세요.")){
             throw new IllegalArgumentException("주소를 선택해 주세요.");
         }
+        if(createPostRequestDto.getTitle().isEmpty())
+            throw new NullPointerException("제목을 입력해주세요.");
+        if(createPostRequestDto.getSubject()==null)
+            throw new NullPointerException("종목을 입력해주세요.");
+        if(createPostRequestDto.getAddress().isEmpty())
+            throw new NullPointerException("주소를 입력해주세요.");
+        if(createPostRequestDto.getMatchDeadline()==null)
+            throw new NullPointerException("마감 날짜를 선택해주세요.");
+        if(createPostRequestDto.getContent().isEmpty())
+            throw new NullPointerException("내용을 입력해주세요.");
 
         Post post = new Post(createPostRequestDto, userDetails);
         postRepository.save(post);
@@ -112,7 +122,7 @@ public class PostService {
     }
 
     //이미지 db에서 지우기기
-    public void imageDelete(String objectKey, UserDetailsImpl userDetails) {
+    public void imageDelete(String objectKey) {
         ImgUrl imageUrl = imageRepository.findImgUrlByPath(objectKey); //post 마다 ImgUrl(path,url)
         imageRepository.delete(imageUrl);
     }
@@ -126,7 +136,7 @@ public class PostService {
 
 
     //이미지 업로드하기(완료)
-    public void imageUpload(Long postId, List<MultipartFile> files, UserDetailsImpl userDetails) throws IOException {
+    public void imageUpload(Long postId, List<MultipartFile> files) throws IOException {
         List<ImagePathDto> imagePathDtoList = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -161,6 +171,16 @@ public class PostService {
         Post post = postRepository.findPostById(postId);
         if (!userDetails.getUser().getEmail().equals(post.getUser().getEmail()))
             throw new IllegalArgumentException("수정 권한이 없습니다.");
+        if(createPostRequestDto.getTitle().isEmpty())
+            throw new NullPointerException("제목을 입력해주세요.");
+        if(createPostRequestDto.getSubject()==null)
+            throw new NullPointerException("종목을 입력해주세요.");
+        if(createPostRequestDto.getAddress().isEmpty())
+            throw new NullPointerException("주소를 입력해주세요.");
+        if(createPostRequestDto.getMatchDeadline()==null)
+            throw new NullPointerException("마감 날짜를 선택해주세요.");
+        if(createPostRequestDto.getContent().isEmpty())
+            throw new NullPointerException("내용을 입력해주세요.");
         int owner = -1;
         if (userDetails.getUser().getEmail().equals(post.getUser().getEmail())) {
             owner = 1;
