@@ -23,4 +23,9 @@ public class UserRoomController {
     public ResponseEntity<?> updateLastActive(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return userRoomService.updateLastActive(roomId,userDetails);
     }
+
+    @GetMapping("/api/users/rooms/{roomId}/userList")
+    public ResponseEntity<?> getRoomUserList(@PathVariable Long roomId){
+        return userRoomService.getRoomUserList(roomId);
+    }
 }

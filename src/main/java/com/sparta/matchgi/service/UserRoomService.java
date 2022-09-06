@@ -2,6 +2,7 @@ package com.sparta.matchgi.service;
 
 import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.dto.GetRoomUserResponseDto;
 import com.sparta.matchgi.dto.ShowRoomResponseDto;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.ChatRepository;
@@ -78,6 +79,16 @@ public class UserRoomService {
 
         return new ResponseEntity<>(HttpStatus.valueOf(200));
 
+    }
+
+    public ResponseEntity<?> getRoomUserList(Long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다.")
+        );
+
+        List<GetRoomUserResponseDto> userList = userRoomRepository.getRoomUserList(room);
+
+        return new ResponseEntity<>(userList,HttpStatus.valueOf(200));
     }
 }
 
