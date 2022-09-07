@@ -147,7 +147,7 @@ public class RequestService {
             Chat chat = new Chat(room,user.getNickname()+"님이 입장하셨습니다",admin,LocalDateTime.now());
             ChatResponseDto chatResponseDto = new ChatResponseDto(chat);
             chatRepository.save(chat);
-            template.convertAndSend("/room/"+room.getId(),chatResponseDto);
+            template.convertAndSend("/room/"+room.getId(),new ResponseEntity<>(chatResponseDto,HttpStatus.valueOf(200)));
 
         } else if (requestStatus.equals(RequestStatus.REJECT)) {
             User user = request.getUser();
