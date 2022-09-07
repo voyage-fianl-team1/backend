@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PersonalRankingResponseDto {
 
+    private Long userId;
+
     private String nickname;
 
     private SubjectEnum subject;
