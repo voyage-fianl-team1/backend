@@ -275,8 +275,8 @@ public class PostService {
 
 
     //거리찾기-querydsl 사용
-    public List<PostFilterDto> findLocationwithPoint(double NWlat,double Nwlng,double SElat,double SElng) {
-        return postRepositoryImpl.findAllByLocationPoint(NWlat,Nwlng,SElat,SElng);
+    public List<PostFilterDto> findLocationwithPoint(double NElat,double NElng,double SWlat,double SWlng) {
+        return postRepositoryImpl.findAllByLocationPoint(NElat,NElng,SWlat,SWlng);
     }
 
     //거리찾기-querydsl 사용

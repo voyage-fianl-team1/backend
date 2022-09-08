@@ -1,10 +1,12 @@
 package com.sparta.matchgi.repository;
 
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.model.MatchStatus;
@@ -159,7 +161,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     //querydsl이나 nativeQuery에서 st_distance_sphere을 쓰려면 db를 mysql로 연결해야함
 
     @Override
-    public List<PostFilterDto> findAllByLocationPoint(double NWlat,double Nwlng,double SElat,double SElng){
+    public List<PostFilterDto> findAllByLocationPoint(double NElat,double NElng,double SWlat,double SWlng){
 
         NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
 
@@ -190,7 +192,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         )
                 ))
                 .from(post)
-                .where(post.lat.between(NWlat,SElat).and(post.lng.between(Nwlng,SElng)))//getLocation(lat,lng)로하면 안뜸
+                .where(post.lat.between(SWlat,NElat).and(post.lng.between(NElng,SWlng)))//getLocation(lat,lng)로하면 안뜸
                 .orderBy(post.id.asc())
                 .fetch();
         return returnPost;
@@ -198,6 +200,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
 
+    @Override
+    public void deleteAll(Long postId){
+        long count=queryFactory
+                .delete(post)
+                .where(post.id.gt(postId))
+                .execute();
+    }
 
 
     private BooleanExpression getSubject(String subject){
