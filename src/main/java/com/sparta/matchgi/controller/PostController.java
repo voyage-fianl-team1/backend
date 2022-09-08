@@ -104,13 +104,25 @@ public class PostController {
        return  postService.changeStatus(postId,userDetails);
     }
 
+    //원래 지도
     @GetMapping("/api/posts/gps")
     public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
-                                             @RequestParam("lng")double lng) {
-        System.out.println("정렬 컨트롤러 진입");
-
+                                            @RequestParam("lng")double lng) {
         return postService.findLocation(lat,lng);
     }
+    //api/posts/gps/point?NWlat=&Nwlng=&SElat=&SElng=
+
+    @GetMapping("/api/posts/gps/point")
+    public List<PostFilterDto> findLocationPoint(@RequestParam("NWlat")double NWlat,
+                                             @RequestParam("Nwlng")double Nwlng,
+                                            @RequestParam("SElat")double SElat,
+                                            @RequestParam("SElng")double SElng
+                                            ) {
+        return postService.findLocationwithPoint(NWlat,Nwlng,SElat,SElng);
+    }
+
+
+
 
     @GetMapping("/api/posts/authority")
     public ResponseEntity<?> confirmAuthority(@AuthenticationPrincipal UserDetailsImpl userDetails){
