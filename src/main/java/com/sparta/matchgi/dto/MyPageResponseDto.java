@@ -17,8 +17,8 @@ public class MyPageResponseDto {
 
     private Object win;
 
-    private Object lose;
-
     private Object draw;
+
+    private Object lose;
 
 }

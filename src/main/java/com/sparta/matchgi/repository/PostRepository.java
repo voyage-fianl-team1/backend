@@ -27,7 +27,7 @@ public interface PostRepository extends JpaRepository<Post,Long>, PostRepository
     @Query("update Post p set p.viewCount = p.viewCount + 1 where p.id = :postId")
     int updateView(Long postId);
 
-    Optional<Post> findByCreatedAtAfterAndUser(LocalDateTime createdAt, User user);
+    List<Post> findByCreatedAtAfterAndUser(LocalDateTime createdAt, User user);
 
 
 

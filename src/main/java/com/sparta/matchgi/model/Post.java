@@ -103,6 +103,7 @@ public class Post extends Timestamped{
         this.lng = createPostRequestDto.getLng();
         this.content = createPostRequestDto.getContent();
         this.subject = createPostRequestDto.getSubject();
+        this.matchDeadline = DateConverter.dateToLocalDateTime(createPostRequestDto.getMatchDeadline());
     }
 
     public void addRequestCount() {

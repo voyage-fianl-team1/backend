@@ -1,10 +1,7 @@
 package com.sparta.matchgi.service;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
-import com.sparta.matchgi.dto.NotificationDetailResponseDto;
-import com.sparta.matchgi.dto.ParticipationResponseDto;
-import com.sparta.matchgi.dto.RequestResponseDto;
-import com.sparta.matchgi.dto.UpdateRequestDto;
+import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.converter.DateConverter;
@@ -41,6 +38,10 @@ public class RequestService {
     private final SimpMessagingTemplate template;
 
     private final RequestRepositoryImpl requestRepositoryImpl;
+
+    private final ChatRepository chatRepository;
+
+    private final UserRepository userRepository;
 
     public ResponseEntity<?> registerMatch(Long postId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -138,6 +139,15 @@ public class RequestService {
 
             UserRoom userRoom = new UserRoom(user,room, LocalDateTime.now());
             userRoomRepository.save(userRoom);
+
+            User admin = userRepository.findByEmail("admin").orElseThrow(
+                    () -> new IllegalArgumentException("관리자 계정이 없습니다")
+            );
+
+            Chat chat = new Chat(room,user.getNickname()+"님이 입장하셨습니다",admin,LocalDateTime.now());
+            ChatResponseDto chatResponseDto = new ChatResponseDto(chat);
+            chatRepository.save(chat);
+            template.convertAndSend("/room/"+room.getId(),new ResponseEntity<>(chatResponseDto,HttpStatus.valueOf(200)));
 
         } else if (requestStatus.equals(RequestStatus.REJECT)) {
             User user = request.getUser();

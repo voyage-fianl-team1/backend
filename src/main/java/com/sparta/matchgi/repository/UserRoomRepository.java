@@ -1,5 +1,6 @@
 package com.sparta.matchgi.repository;
 
+import com.sparta.matchgi.dto.GetRoomUserResponseDto;
 import com.sparta.matchgi.model.Room;
 import com.sparta.matchgi.model.User;
 import com.sparta.matchgi.model.UserRoom;
@@ -20,4 +21,13 @@ public interface UserRoomRepository extends JpaRepository<UserRoom,Long> {
     List<Room> findRoomList(User user);
 
     void deleteAllByRoom(Room room);
+
+
+
+    @Query("SELECT new com.sparta.matchgi.dto.GetRoomUserResponseDto(u.id,u.profileImgUrl,u.nickname) " +
+            "FROM UserRoom ur " +
+            "join ur.room r join  ur.user u " +
+            "where r=:room " +
+            "ORDER BY ur.id DESC ")
+    List<GetRoomUserResponseDto> getRoomUserList(Room room);
 }
