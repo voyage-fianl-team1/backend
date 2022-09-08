@@ -104,12 +104,17 @@ public class PostController {
        return  postService.changeStatus(postId,userDetails);
     }
 
+    //api/posts/gps?NWlat=&Nwlng=&SElat=&SElng=
+
     @GetMapping("/api/posts/gps")
-    public List<PostFilterDto> findLocation(@RequestParam("lat")double lat,
-                                             @RequestParam("lng")double lng) {
+    public List<PostFilterDto> findLocation(@RequestParam("NWlat")double NWlat,
+                                             @RequestParam("Nwlng")double Nwlng,
+                                            @RequestParam("SElat")double SElat,
+                                            @RequestParam("SElng")double SElng
+                                            ) {
         System.out.println("정렬 컨트롤러 진입");
 
-        return postService.findLocation(lat,lng);
+        return postService.findLocation(NWlat,Nwlng,SElat,SElng);
     }
 
     @GetMapping("/api/posts/authority")

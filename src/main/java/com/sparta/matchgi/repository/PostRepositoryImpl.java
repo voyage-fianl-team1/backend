@@ -113,7 +113,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     @Override
-    public List<PostFilterDto> findAllByLocation(double lat, double lng){
+    public List<PostFilterDto> findAllByLocation(double NWlat,double Nwlng,double SElat,double SElng){
 
         NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
 
@@ -144,11 +144,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 )
                         ))
                 .from(post)
-                .where(acos(cos(radians(Expressions.constant(lat)))
-                        .multiply(cos(radians(post.lat)))
-                        .multiply(cos(radians(post.lng).subtract(radians(Expressions.constant(lng)))))
-                        .add((sin(radians(Expressions.constant(lat))).multiply(sin(radians(post.lat)))))
-                ).multiply(Expressions.constant(6371)).loe(500),post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
+                .where(post.lat.between(NWlat,SElat).and(post.lng.between(Nwlng,SElng)))//getLocation(lat,lng)로하면 안뜸
                 .orderBy(post.id.asc())
                 .fetch();
         return returnPost;
