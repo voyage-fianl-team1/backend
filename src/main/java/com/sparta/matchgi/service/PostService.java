@@ -270,14 +270,7 @@ public class PostService {
             throw new IllegalArgumentException("경기가 끝난 게시물은 상태를 바꿀 수 없습니다.");
         }
 
-        return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다", HttpStatus.valueOf(200));
-    }
-
-
-    //거리찾기-querydsl 사용
-    public List<PostFilterDto> findLocationwithPoint(double NElat,double NElng,double SWlat,double SWlng) {
-        return postRepositoryImpl.findAllByLocationPoint(NElat,NElng,SWlat,SWlng);
-    }
+        return new ResponseEntity<>("정상적으로 경기상태가 변경되었습니다", HttpStatus.valueOf(200));}
 
     //거리찾기-querydsl 사용
     public List<PostFilterDto> findLocation(double lat, double lng) {

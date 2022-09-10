@@ -112,14 +112,7 @@ public class PostController {
     }
     //api/posts/gps/point?NWlat=&Nwlng=&SElat=&SElng=
 
-    @GetMapping("/api/posts/gps/point")
-    public List<PostFilterDto> findLocationPoint(@RequestParam("NElat")double NElat,
-                                             @RequestParam("NElng")double NElng,
-                                            @RequestParam("SWlat")double SWlat,
-                                            @RequestParam("SWlng")double SWlng
-                                            ) {
-        return postService.findLocationwithPoint(NElat,NElng,SWlat,SWlng);
-    }
+
 
 
 
@@ -128,11 +121,6 @@ public class PostController {
     public ResponseEntity<?> confirmAuthority(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.confirmAuthority(userDetails);
     }
-
-
-
-
-
 
 
 }
