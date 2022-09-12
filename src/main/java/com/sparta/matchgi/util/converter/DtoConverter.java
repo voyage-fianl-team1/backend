@@ -26,6 +26,7 @@ public class DtoConverter {
                 .title(post.getTitle())
                 .imgurls(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .imgpaths(post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList()))
+                .imgurl(post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList()))
                 .owner(owner)
                 .player(player)
                 .viewCount(post.getViewCount())
