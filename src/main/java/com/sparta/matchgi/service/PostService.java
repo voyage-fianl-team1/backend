@@ -278,8 +278,8 @@ public class PostService {
         return postRepositoryImpl.findAllByLocation(lat, lng);
     }
 
-    public List<PostFilterDto> findLocationWithPoint( double NWlat, double NWlng, double SElat, double SElng){
-       return postRepositoryImpl.findAllByLocationWithPoint(NWlat,NWlng,SElat,SElng);
+    public List<PostFilterDto> findLocationWithPoint( double NElat, double NElng, double SWlat, double SWlng){
+       return postRepositoryImpl.findAllByLocationWithPoint(NElat, NElng, SWlat, SWlng);
     }
 
     public ResponseEntity<?> confirmAuthority(UserDetailsImpl userDetails) {

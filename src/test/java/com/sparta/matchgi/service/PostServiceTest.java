@@ -130,19 +130,19 @@ class PostServiceTest {
 //    void imageDelete() {
 //    }
 //
-//    @Test
-//    void getImgUrl() {
-//        String path="s3://matchgi-bucket/1e8511ea-6924-46ae-9bd9-e50f152fc637_프사.jpg";
-//        PostService postService = new PostService(postRepository,imageRepository,amazonS3,postRepositoryImpl,roomRepository,userRoomRepository,reviewRepository,redisChatRepository,chatRepository,requestRepository,s3Image,notificationRepository);
-//        lenient().when(imageRepository.findImgUrlByPath(path))
-//                .thenReturn(Optional.of(path));
-//
-//        ImageUrlDto imageUrlDto=new ImageUrlDto(path);
-//        ImageUrlDto imageUrl=postService.getImgUrl(path);
-//
-//        assertEquals(imageUrlDto,imageUrl);
-//
-//    }
+    @Test
+    void getImgUrl() {
+        String path="s3://matchgi-bucket/1e8511ea-6924-46ae-9bd9-e50f152fc637_프사.jpg";
+        PostService postService = new PostService(postRepository,imageRepository,amazonS3,postRepositoryImpl,roomRepository,userRoomRepository,reviewRepository,redisChatRepository,chatRepository,requestRepository,s3Image,notificationRepository);
+        when(imageRepository.findImgUrlByPath(path))
+                .thenReturn(Optional.of(path));
+
+        ImageUrlDto imageUrlDto=new ImageUrlDto(path);
+        ImageUrlDto imageUrl=postService.getImgUrl(path);
+
+        assertEquals(imageUrlDto,imageUrl);
+
+    }
 //
 //    @Test
 //    void imageUpload() {
