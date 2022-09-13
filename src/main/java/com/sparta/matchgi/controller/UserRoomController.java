@@ -1,11 +1,15 @@
 package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
+import com.sparta.matchgi.dto.GetRoomUserResponseDto;
+import com.sparta.matchgi.dto.ShowRoomResponseDto;
 import com.sparta.matchgi.service.UserRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -15,7 +19,7 @@ public class UserRoomController {
 
 
     @GetMapping("/api/users/rooms")
-    public ResponseEntity<?> showUserRoom(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<List<ShowRoomResponseDto>> showUserRoom(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userRoomService.showUserRoom(userDetails);
     }
 
@@ -25,7 +29,7 @@ public class UserRoomController {
     }
 
     @GetMapping("/api/users/rooms/{roomId}/userList")
-    public ResponseEntity<?> getRoomUserList(@PathVariable Long roomId){
+    public ResponseEntity<List<GetRoomUserResponseDto>> getRoomUserList(@PathVariable Long roomId){
         return userRoomService.getRoomUserList(roomId);
     }
 }

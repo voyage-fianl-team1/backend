@@ -43,7 +43,7 @@ public class RequestService {
 
     private final UserRepository userRepository;
 
-    public ResponseEntity<?> registerMatch(Long postId, UserDetailsImpl userDetails) {
+    public ResponseEntity<RequestResponseDto> registerMatch(Long postId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
         Optional<Post> postFound = postRepository.findById(postId);
@@ -57,7 +57,7 @@ public class RequestService {
             throw new IllegalArgumentException("참가신청을 중복으로 할 수 없습니다.");
         }
         if(postFound.get().getMatchDeadline().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("참가 신청이 지난 경기에는 참가신청 할 수 없습니다.");
+            throw new IllegalArgumentException("기한이 지난 경기에는 참가신청 할 수 없습니다.");
         }
 
         Request request = new Request(postFound.get(),user);
@@ -74,7 +74,7 @@ public class RequestService {
     }
 
 
-    public ResponseEntity<?> updateRequest(Long requestId, UpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
+    public ResponseEntity<RequestResponseDto> updateRequest(Long requestId, UpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
         Optional<Request> requestFound = requestRepository.findById(requestId);
 
         if(!requestFound.isPresent()){
@@ -163,7 +163,7 @@ public class RequestService {
     }
 
 
-    public ResponseEntity<?> showParticipationList(Long postId) {
+    public ResponseEntity<ParticipationResponseDto> showParticipationList(Long postId) {
         Optional<Post> postFound = postRepository.findById(postId);
         if(!postFound.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 포스트입니다.");
@@ -173,9 +173,9 @@ public class RequestService {
 
     }
 
-    public ResponseEntity<?> getAcceptRequest(Long postId) {
+    public ResponseEntity<List<RequestResponseDto>> getAcceptRequest(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지않는 포스트입니다")
+                ()-> new IllegalArgumentException("존재하지 않는 포스트입니다.")
         );
         List<RequestStatus> requestStatusList =  new ArrayList<>();
         requestStatusList.add(RequestStatus.ACCEPT);

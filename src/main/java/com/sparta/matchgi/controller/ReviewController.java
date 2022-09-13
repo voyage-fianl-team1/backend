@@ -3,6 +3,8 @@ package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.RegisterReviewRequestDto;
+import com.sparta.matchgi.dto.RegisterReviewResponseDto;
+import com.sparta.matchgi.dto.ShowReviewListResponseDto;
 import com.sparta.matchgi.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class ReviewController {
 
 
     @PostMapping("/api/reviews/{postId}")
-    public ResponseEntity<?> registerReview(@PathVariable Long postId, @RequestBody RegisterReviewRequestDto registerReviewRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<RegisterReviewResponseDto> registerReview(@PathVariable Long postId, @RequestBody RegisterReviewRequestDto registerReviewRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return reviewService.registerReview(postId,registerReviewRequestDto,userDetails);
     }
 
@@ -30,7 +32,7 @@ public class ReviewController {
     }
 
     @GetMapping("/api/reviews/{postId}")
-    public ResponseEntity<?> showReviewList(@PathVariable Long postId){
+    public ResponseEntity<ShowReviewListResponseDto> showReviewList(@PathVariable Long postId){
         return reviewService.showReviewList(postId);
 
     }
