@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +21,6 @@ public class CreatePostRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date matchDeadline;
 
-    private int peoples;
-
     private double lat;
 
     private double lng;
@@ -31,5 +30,6 @@ public class CreatePostRequestDto {
     private SubjectEnum subject;
 
     private String content;
+
 
 }
