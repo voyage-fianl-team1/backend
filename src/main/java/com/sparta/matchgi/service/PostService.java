@@ -50,7 +50,7 @@ public class PostService {
     private String bucket;
 
     //포스트 생성하기(완료)
-    public ResponseEntity<?> createPost(
+    public ResponseEntity<CreatePostResponseDto> createPost(
             CreatePostRequestDto createPostRequestDto, UserDetailsImpl userDetails) {
 
         LocalDateTime localDateTime = LocalDate.now().atStartOfDay();
