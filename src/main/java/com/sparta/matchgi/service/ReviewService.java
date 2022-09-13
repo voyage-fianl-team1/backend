@@ -42,11 +42,14 @@ public class ReviewService {
     @Value("${S3.Url}")
     private String S3Url;
 
-    public ResponseEntity<?> registerReview(Long postId, RegisterReviewRequestDto registerReviewRequestDto, UserDetailsImpl userDetails) {
+    public ResponseEntity<RegisterReviewResponseDto> registerReview(Long postId, RegisterReviewRequestDto registerReviewRequestDto, UserDetailsImpl userDetails) {
 
-        Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지 않는 post입니다")
-        );
+        Optional<Post> postFound = postRepository.findById(postId);
+        if(!postFound.isPresent()){
+            throw new IllegalArgumentException("존재하지 않는 post입니다");
+        }
+
+        Post post = postFound.get();
 
         User user = userDetails.getUser();
 
@@ -84,7 +87,7 @@ public class ReviewService {
 
     }
 
-    public ResponseEntity<?> showReviewList(Long postId) {
+    public ResponseEntity<ShowReviewListResponseDto> showReviewList(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("존재하지 않는 post입니다")
         );

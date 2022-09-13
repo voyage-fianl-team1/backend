@@ -4,6 +4,7 @@ package com.sparta.matchgi.model;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.ReviseUserRequestDto;
 import com.sparta.matchgi.util.Image.S3Image;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
