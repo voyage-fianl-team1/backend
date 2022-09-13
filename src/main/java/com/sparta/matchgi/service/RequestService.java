@@ -117,6 +117,8 @@ public class RequestService {
 
             userRoomFound.ifPresent(userRoomRepository::delete);
 
+            requestRepository.delete(requestFound.get());
+
             Notification notification = new Notification(post.getTitle()+"에 "+user.getNickname()+"님이 참가신청을 취소하셨습니다.",post.getUser(),post);
             notificationRepository.save(notification);
             NotificationDetailResponseDto notificationDetailResponseDto =
