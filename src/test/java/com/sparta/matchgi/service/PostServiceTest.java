@@ -5,34 +5,26 @@ import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
 import com.sparta.matchgi.dto.CreatePostResponseDto;
+import com.sparta.matchgi.dto.ImageUrlDto;
 import com.sparta.matchgi.model.Post;
 import com.sparta.matchgi.model.SubjectEnum;
 import com.sparta.matchgi.model.User;
 import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.Image.S3Image;
-import com.sparta.matchgi.util.converter.DateConverter;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
-import sun.util.calendar.BaseCalendar;
-import sun.util.calendar.LocalGregorianCalendar;
+
 import java.util.Date;
-
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.data.repository.util.ClassUtils.ifPresent;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -89,7 +81,7 @@ class PostServiceTest {
 
         Date now = new Date();
         CreatePostRequestDto postRequestDto=new CreatePostRequestDto("TITLE",now,14.9,23.5,"대구광역시 북구",SubjectEnum.SOCCER,"축구하실분구함");
-        Post post=new Post(postRequestDto,userDetailsImpl1);
+        post=new Post(postRequestDto,userDetailsImpl1);
 
         PostService postService = new PostService(postRepository,imageRepository,amazonS3,postRepositoryImpl,roomRepository,userRoomRepository,reviewRepository,redisChatRepository,chatRepository,requestRepository,s3Image,notificationRepository);
         lenient().when(postRepository.findById(postId))
@@ -108,6 +100,26 @@ class PostServiceTest {
     @DisplayName("포스트 읽기")
     void getPost() {
 
+        Long postId = 1L;
+        PostService postService = new PostService(postRepository,imageRepository,amazonS3,postRepositoryImpl,roomRepository,userRoomRepository,reviewRepository,redisChatRepository,chatRepository,requestRepository,s3Image,notificationRepository);
+        lenient().when(postRepository.findById(postId))
+                .thenReturn(Optional.of(post));
+        CreatePostResponseDto postResponseDto=postService.getPost(postId,userDetailsImpl1).getBody();
+
+        assertEquals(post.getTitle(),postResponseDto.getTitle());
+        assertEquals(post.getSubject(),postResponseDto.getSubjectValue());
+        assertEquals(post.getId(),postResponseDto.getPostId());
+        assertEquals(post.getMatchDeadline(),postResponseDto.getMatchDeadline());
+        assertEquals(post.getLat(),postResponseDto.getLat());
+        assertEquals(post.getLng(),postResponseDto.getLng());
+        assertEquals(post.getAddress(),postResponseDto.getAddress());
+        assertEquals(post.getContent(),postResponseDto.getContent());
+        assertEquals(post.getMatchStatus(),postResponseDto.getMatchStatus());
+        assertEquals(post.getViewCount(),postResponseDto.getViewCount());
+
+
+
+
     }
 //
 //    @Test
@@ -120,6 +132,16 @@ class PostServiceTest {
 //
 //    @Test
 //    void getImgUrl() {
+//        String path="s3://matchgi-bucket/1e8511ea-6924-46ae-9bd9-e50f152fc637_프사.jpg";
+//        PostService postService = new PostService(postRepository,imageRepository,amazonS3,postRepositoryImpl,roomRepository,userRoomRepository,reviewRepository,redisChatRepository,chatRepository,requestRepository,s3Image,notificationRepository);
+//        lenient().when(imageRepository.findImgUrlByPath(path))
+//                .thenReturn(Optional.of(path));
+//
+//        ImageUrlDto imageUrlDto=new ImageUrlDto(path);
+//        ImageUrlDto imageUrl=postService.getImgUrl(path);
+//
+//        assertEquals(imageUrlDto,imageUrl);
+//
 //    }
 //
 //    @Test
