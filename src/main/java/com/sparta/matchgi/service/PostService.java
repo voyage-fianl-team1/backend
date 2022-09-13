@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,7 @@ public class PostService {
 
 
     //상세 게시글 보기(완료)
-    public ResponseEntity<?> getPost(Long postId, UserDetailsImpl userDetails) {
+    public ResponseEntity<CreatePostResponseDto> getPost(Long postId, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         int owner = -1;
@@ -275,6 +276,10 @@ public class PostService {
     //거리찾기-querydsl 사용
     public List<PostFilterDto> findLocation(double lat, double lng) {
         return postRepositoryImpl.findAllByLocation(lat, lng);
+    }
+
+    public List<PostFilterDto> findLocationWithPoint( double NWlat, double NWlng, double SElat, double SElng){
+       return postRepositoryImpl.findAllByLocationWithPoint(NWlat,NWlng,SElat,SElng);
     }
 
     public ResponseEntity<?> confirmAuthority(UserDetailsImpl userDetails) {

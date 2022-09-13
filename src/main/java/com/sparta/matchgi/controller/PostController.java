@@ -112,12 +112,12 @@ public class PostController {
     }
     //api/posts/gps/point?NWlat=&Nwlng=&SElat=&SElng=
 
-    @GetMapping("api/posts/gps/point")
-    void findLocationPoint(@RequestParam("NWlat") double NWlat,
-                                                 @RequestParam("Nwlng") double Nwlng,
+    @GetMapping("/api/posts/gps/point")
+    public List<PostFilterDto> findLocationPoint(@RequestParam("NWlat") double NWlat,
+                                                 @RequestParam("NWlng") double Nwlng,
                                                  @RequestParam("SElat") double SElat,
                                                  @RequestParam("SElng") double SElng){
-        System.out.println("쿼리테스트");
+       return postService.findLocationWithPoint(NWlat, Nwlng, SElat, SElng);
     }
 
 
