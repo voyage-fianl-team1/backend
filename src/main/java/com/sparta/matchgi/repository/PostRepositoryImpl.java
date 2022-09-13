@@ -1,10 +1,12 @@
 package com.sparta.matchgi.repository;
 
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.model.MatchStatus;
@@ -157,46 +159,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     }
     //querydsl이나 nativeQuery에서 st_distance_sphere을 쓰려면 db를 mysql로 연결해야함
-
-    @Override
-    public List<PostFilterDto> findAllByLocationPoint(double NWlat,double Nwlng,double SElat,double SElng){
-
-        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
-
-        List<PostFilterDto> returnPost= queryFactory.select(Projections.fields(
-                        PostFilterDto.class,
-                        post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
-                        post.createdAt,
-                        post.title,
-                        subjectCaseBuilder().as("subject"),
-                        post.viewCount,
-                        post.matchDeadline,
-                        post.requestCount,
-                        post.matchStatus,
-                        post.lat,
-                        post.lng,
-                        post.address,
-                        post.content,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .select(imgUrl.url)
-                                        .from(imgUrl)
-                                        .where(imgUrl.id.eq(
-                                                JPAExpressions
-                                                        .select(imgUrl.id.min())
-                                                        .from(imgUrl)
-                                                        .where(imgUrl.post.eq(post))
-                                        )),"imgUrl"
-                        )
-                ))
-                .from(post)
-                .where(post.lat.between(NWlat,SElat).and(post.lng.between(Nwlng,SElng)))//getLocation(lat,lng)로하면 안뜸
-                .orderBy(post.id.asc())
-                .fetch();
-        return returnPost;
-
-
-    }
 
 
 

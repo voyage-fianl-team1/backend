@@ -34,7 +34,7 @@ public class UserRoomService {
 
     private final RoomRepository roomRepository;
 
-    public ResponseEntity<?> showUserRoom(UserDetailsImpl userDetails) {
+    public ResponseEntity<List<ShowRoomResponseDto>> showUserRoom(UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
 
@@ -81,7 +81,7 @@ public class UserRoomService {
 
     }
 
-    public ResponseEntity<?> getRoomUserList(Long roomId) {
+    public ResponseEntity<List<GetRoomUserResponseDto>> getRoomUserList(Long roomId) {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()-> new IllegalArgumentException("일치하는 채팅방이 없습니다.")
         );

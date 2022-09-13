@@ -42,6 +42,8 @@ public class CreatePostResponseDto {
 
     private List<ImageUrlDto> imgurls;
 
+    private List<ImageUrlDto> imgurl;
+
     private int owner;
 
     private int viewCount;
