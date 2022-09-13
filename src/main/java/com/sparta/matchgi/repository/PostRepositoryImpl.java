@@ -158,6 +158,46 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
 
     }
+
+    @Override
+    public List<PostFilterDto> findAllByLocationWithPoint(double NElat, double NElng, double SWlat, double SWlng){
+
+        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+
+        List<PostFilterDto> returnPost= queryFactory.select(Projections.fields(
+                        PostFilterDto.class,
+                        post.id.as("postId"),//as를 꼭 해줘야 id가 들어감
+                        post.createdAt,
+                        post.title,
+                        subjectCaseBuilder().as("subject"),
+                        post.viewCount,
+                        post.matchDeadline,
+                        post.requestCount,
+                        post.matchStatus,
+                        post.lat,
+                        post.lng,
+                        post.address,
+                        post.content,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(imgUrl.url)
+                                        .from(imgUrl)
+                                        .where(imgUrl.id.eq(
+                                                JPAExpressions
+                                                        .select(imgUrl.id.min())
+                                                        .from(imgUrl)
+                                                        .where(imgUrl.post.eq(post))
+                                        )),"imgUrl"
+                        )
+                ))
+                .from(post)
+                .where(post.lat.between(SWlat,NElat).and(post.lng.between(SWlng,NElng)),post.matchStatus.eq(MatchStatus.ONGOING))//getLocation(lat,lng)로하면 안뜸
+                .orderBy(post.id.asc())
+                .fetch();
+        return returnPost;
+
+
+    }
     //querydsl이나 nativeQuery에서 st_distance_sphere을 쓰려면 db를 mysql로 연결해야함
 
 
