@@ -1,3 +1,4 @@
+
 # 매치기 서버
 
 [전체 아키텍처 확인하기](https://github.com/voyage-fianl-team1)
@@ -93,10 +94,4 @@ StompJs는 최초연결시 header를 담는 공간을 제한해 두었기 떄문
 서버에서 User와 Room의 관계가 @ManytoMany로 설정을 하였는데 이 경우 다른 컬럼을 추가하지 못하기 때문에 User와 Room을 @ManytoOne의 관계로 변경하고 UserRoom Entity를 새롭게 만들어, 마지막 활동 시간을 저장하는 lastActive 컬럼을 추가하여 해결하였다.
 
 <img src="https://user-images.githubusercontent.com/99013391/190172175-15ab9605-de06-4de6-ae38-5878f2a288e3.png" width="50%">
-
-
-
-
-
-
 
