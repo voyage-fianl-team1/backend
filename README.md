@@ -70,7 +70,7 @@ FetchType을 lazy 전략으로 한 후 Dto를 사용하여 검색 조건으로 e
 
 <img src="https://user-images.githubusercontent.com/99013391/190170935-48d64627-20ae-4320-9f05-380fbae95c8e.png" width="40%">
 
-###소켓통신 인증 문제
+### 소켓통신 인증 문제
 
 #### 요구사항
 
@@ -82,7 +82,7 @@ StompJs는 최초연결시 header를 담는 공간을 제한해 두었기 떄문
 
 ![image](https://user-images.githubusercontent.com/99013391/190171625-05d2a571-8a22-45c3-90a9-98b75cb1a8b9.png)
 
-###채팅방의 안 읽은 메시지 로직문제
+### 채팅방의 안 읽은 메시지 로직문제
 
 #### 요구사항
 
