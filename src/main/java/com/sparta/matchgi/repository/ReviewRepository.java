@@ -13,7 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
 
     List<Review> findByPost(Post post);
 
-    @Query("SELECT r FROM Review r join fetch r.user join fetch r.reviewImageList join r.post p where p=:post")
+    @Query("SELECT r FROM Review r join fetch r.user left join fetch r.reviewImageList join r.post p where p=:post")
     List<Review> findByPost_fetchUserAndReviewImage(Post post);
 
     List<Review> findAllByPost(Post post);
