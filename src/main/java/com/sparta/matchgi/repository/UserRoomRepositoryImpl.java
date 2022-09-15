@@ -9,7 +9,6 @@ import com.sparta.matchgi.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 @RequiredArgsConstructor

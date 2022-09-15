@@ -8,13 +8,11 @@ import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
 import com.sparta.matchgi.util.Image.S3Image;
 import com.sparta.matchgi.util.converter.DateConverter;
-import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -85,7 +83,7 @@ public class PostService {
         Request request = new Request(post,userDetails.getUser(),RequestStatus.MYMATCH);
         requestRepository.save(request);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, 1, -1);
+        CreatePostResponseDto createPostResponseDto = new CreatePostResponseDto(post, 1, -1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }
@@ -105,7 +103,7 @@ public class PostService {
             player = 1;
 
         postRepository.updateView(postId);
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, owner, player);
+        CreatePostResponseDto createPostResponseDto = new CreatePostResponseDto(post, owner, player);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(200));
 
@@ -116,7 +114,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         postRepository.updateView(postId);
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, -1, -1);
+        CreatePostResponseDto createPostResponseDto = new CreatePostResponseDto(post, -1, -1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(200));
     }
@@ -188,7 +186,7 @@ public class PostService {
         post.updatePost(createPostRequestDto, userDetails);
         postRepository.save(post);
 
-        CreatePostResponseDto createPostResponseDto = DtoConverter.PostToCreateResponseDto(post, owner, -1);
+        CreatePostResponseDto createPostResponseDto = new CreatePostResponseDto(post, owner, -1);
 
         return new ResponseEntity<>(createPostResponseDto, HttpStatus.valueOf(201));
     }

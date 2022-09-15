@@ -8,7 +8,6 @@ import com.sparta.matchgi.repository.PostRepository;
 import com.sparta.matchgi.repository.ReviewImgUrlRepository;
 import com.sparta.matchgi.repository.ReviewRepository;
 import com.sparta.matchgi.util.Image.S3Image;
-import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,6 +20,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -94,9 +94,24 @@ public class ReviewService {
 
         List<Review> reviewList = reviewRepository.findByPost_fetchUserAndReviewImage(post);
 
-        List<ReviewListResponseDto> reviewListResponseDtoList = DtoConverter.reviewListToReviewListResponseDto(reviewList);
+        List<ReviewListResponseDto> reviewListResponseDtoList = reviewListToReviewListResponseDto(reviewList);
 
         return new ResponseEntity<>(new ShowReviewListResponseDto(reviewListResponseDtoList),HttpStatus.valueOf(200));
 
+    }
+
+    public List<ReviewListResponseDto> reviewListToReviewListResponseDto(List<Review> reviewList){
+        List<ReviewListResponseDto> reviewListResponseDtoList = reviewList.stream().map(r->
+                ReviewListResponseDto.builder()
+                        .reviewId(r.getId())
+                        .imgUrlList(r.getReviewImageList().stream().map(ReviewImgUrl::getUrl).collect(Collectors.toList()))
+                        .nickname(r.getUser().getNickname())
+                        .content(r.getContent())
+                        .profileImgUrl(r.getUser().getProfileImgUrl())
+                        .createdAt(r.getCreatedAt())
+                        .build()
+        ).collect(Collectors.toList());
+
+        return reviewListResponseDtoList;
     }
 }

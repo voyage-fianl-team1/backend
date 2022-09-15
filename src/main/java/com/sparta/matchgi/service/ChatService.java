@@ -2,8 +2,8 @@ package com.sparta.matchgi.service;
 
 import com.sparta.matchgi.RedisRepository.RedisChatRepository;
 import com.sparta.matchgi.auth.jwt.JwtDecoder;
-import com.sparta.matchgi.dto.SendChatRequestDto;
 import com.sparta.matchgi.dto.ChatResponseDto;
+import com.sparta.matchgi.dto.SendChatRequestDto;
 import com.sparta.matchgi.model.Chat;
 import com.sparta.matchgi.model.RedisChat;
 import com.sparta.matchgi.model.Room;

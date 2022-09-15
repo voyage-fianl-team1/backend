@@ -1,16 +1,12 @@
 package com.sparta.matchgi.model;
 
 
-
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
-import com.sparta.matchgi.dto.ImagePathDto;
 import com.sparta.matchgi.util.converter.DateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
