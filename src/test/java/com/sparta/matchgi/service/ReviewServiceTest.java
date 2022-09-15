@@ -169,7 +169,7 @@ class ReviewServiceTest {
                 ReviewService reviewService = new ReviewService(postRepository,reviewRepository,reviewImgUrlRepository,s3Image,template,notificationRepository);
                 when(postRepository.findById(postId))
                         .thenReturn(Optional.of(post));
-                when(reviewRepository.findByPost(post))
+                when(reviewRepository.findByPost_fetchUserAndReviewImage(post))
                         .thenReturn(reviewList);
 
                 ShowReviewListResponseDto response = reviewService.showReviewList(postId).getBody();

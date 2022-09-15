@@ -92,7 +92,7 @@ public class ReviewService {
                 ()-> new IllegalArgumentException("존재하지 않는 post입니다")
         );
 
-        List<Review> reviewList = reviewRepository.findByPost(post);
+        List<Review> reviewList = reviewRepository.findByPost_fetchUserAndReviewImage(post);
 
         List<ReviewListResponseDto> reviewListResponseDtoList = DtoConverter.reviewListToReviewListResponseDto(reviewList);
 

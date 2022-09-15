@@ -75,7 +75,7 @@ public class RequestService {
 
 
     public ResponseEntity<RequestResponseDto> updateRequest(Long requestId, UpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
-        Optional<Request> requestFound = requestRepository.findById(requestId);
+        Optional<Request> requestFound = requestRepository.findById_fetchUserAndPost(requestId);
 
         if(!requestFound.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 request입니다");

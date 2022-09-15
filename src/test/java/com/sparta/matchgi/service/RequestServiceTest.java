@@ -217,7 +217,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.empty());
 
                 Exception exception = assertThrows(IllegalArgumentException.class,()-> requestService.updateRequest(requestId,updateRequestDto,userDetails));
@@ -239,7 +239,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.of(request));
 
                 Exception exception = assertThrows(IllegalArgumentException.class,()-> requestService.updateRequest(requestId,updateRequestDto,secondUserDetails));
@@ -265,7 +265,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.of(request));
 
 
@@ -289,7 +289,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.of(request));
 
 
@@ -313,7 +313,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.of(request));
 
 
@@ -337,7 +337,7 @@ class RequestServiceTest {
 
                 RequestService requestService = new RequestService(postRepository,requestRepository,scoreRepository,
                         notificationRepository,roomRepository,userRoomRepository,template,requestRepositoryImpl,chatRepository,userRepository);
-                when(requestRepository.findById(requestId))
+                when(requestRepository.findById_fetchUserAndPost(requestId))
                         .thenReturn(Optional.of(request));
 
 

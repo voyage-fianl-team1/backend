@@ -141,7 +141,7 @@ public class UserService {
     //나의 경기
     public ResponseEntity<MyMatchResponseDto> getMyMatch(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        List<Request> requests = requestRepository.findAllByUser(user);
+        List<Request> requests = requestRepository.findAllByUser_fetchPostAndImageList(user);
         List<MyMatchDetailResponseDto> myMatchDetailResponseDtos = new ArrayList<>();
 
         for (Request request : requests) {
