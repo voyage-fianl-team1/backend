@@ -25,7 +25,7 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
 
     List<Request> findAllByUser(User user);
 
-    @Query("SELECT r FROM Request r join fetch r.post p join fetch p.imageList join r.user u where u=:user ")
+    @Query("SELECT r FROM Request r join fetch r.post p left join fetch p.imageList join r.user u where u=:user ")
     List<Request> findAllByUser_fetchPostAndImageList(User user);
 
 
