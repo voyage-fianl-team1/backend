@@ -2,8 +2,6 @@ package com.sparta.matchgi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.matchgi.model.MatchStatus;
-import com.sparta.matchgi.model.Post;
-import com.sparta.matchgi.model.SubjectEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;

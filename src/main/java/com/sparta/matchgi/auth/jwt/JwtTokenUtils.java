@@ -2,7 +2,6 @@ package com.sparta.matchgi.auth.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 
 import java.util.Date;
 

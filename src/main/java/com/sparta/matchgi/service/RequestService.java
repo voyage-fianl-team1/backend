@@ -4,8 +4,6 @@ import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.*;
 import com.sparta.matchgi.model.*;
 import com.sparta.matchgi.repository.*;
-import com.sparta.matchgi.util.converter.DateConverter;
-import com.sparta.matchgi.util.converter.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +11,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +72,7 @@ public class RequestService {
 
 
     public ResponseEntity<RequestResponseDto> updateRequest(Long requestId, UpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
-        Optional<Request> requestFound = requestRepository.findById(requestId);
+        Optional<Request> requestFound = requestRepository.findById_fetchUserAndPost(requestId);
 
         if(!requestFound.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 request입니다");

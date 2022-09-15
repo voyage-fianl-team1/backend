@@ -1,12 +1,10 @@
 package com.sparta.matchgi.repository;
 
-import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.matchgi.dto.PostFilterDto;
 import com.sparta.matchgi.model.MatchStatus;

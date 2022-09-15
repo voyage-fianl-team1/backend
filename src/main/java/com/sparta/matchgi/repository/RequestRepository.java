@@ -14,6 +14,7 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
     Optional<Request> findByUserAndPost(User user, Post post);
 
     List<Request> findAllByPost(Post post);
+
     @Query("select new com.sparta.matchgi.dto.RequestResponseDto(r.id,u.nickname,r.requestStatus,u.profileImgUrl)" +
             " FROM Request r " +
             "join r.user u " +
@@ -24,7 +25,12 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
 
     List<Request> findAllByUser(User user);
 
+    @Query("SELECT r FROM Request r join fetch r.post p join fetch p.imageList join r.user u where u=:user ")
+    List<Request> findAllByUser_fetchPostAndImageList(User user);
 
-    void deleteAllByPost(Post post);
+
+    @Query("SELECT r from Request r join fetch r.post join fetch r.user where r.id=:id")
+    Optional<Request> findById_fetchUserAndPost(Long id);
+
 
 }

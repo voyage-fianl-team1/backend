@@ -3,18 +3,9 @@ package com.sparta.matchgi.controller;
 
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.dto.CreatePostRequestDto;
-import com.sparta.matchgi.dto.CreatePostResponseDto;
-import com.sparta.matchgi.dto.RevisePostRequetDto;
-
 import com.sparta.matchgi.dto.PostFilterDto;
-import com.sparta.matchgi.model.SubjectEnum;
-
 import com.sparta.matchgi.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.io.ParseException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,9 +1,5 @@
 package com.sparta.matchgi.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.matchgi.auth.auth.UserDetailsImpl;
 import com.sparta.matchgi.auth.jwt.HeaderTokenExtractor;
 import com.sparta.matchgi.auth.jwt.JwtDecoder;
@@ -28,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -141,7 +136,7 @@ public class UserService {
     //나의 경기
     public ResponseEntity<MyMatchResponseDto> getMyMatch(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        List<Request> requests = requestRepository.findAllByUser(user);
+        List<Request> requests = requestRepository.findAllByUser_fetchPostAndImageList(user);
         List<MyMatchDetailResponseDto> myMatchDetailResponseDtos = new ArrayList<>();
 
         for (Request request : requests) {

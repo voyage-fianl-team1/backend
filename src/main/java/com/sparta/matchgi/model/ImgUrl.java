@@ -2,14 +2,10 @@ package com.sparta.matchgi.model;
 
 import com.sparta.matchgi.dto.ImagePathDto;
 import com.sparta.matchgi.dto.ImageUrlDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.awt.*;
-import java.net.URL;
-import java.util.Optional;
 
 @Entity
 @Getter

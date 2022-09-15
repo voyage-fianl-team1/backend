@@ -1,14 +1,9 @@
 package com.sparta.matchgi.util.converter;
 
-import com.sparta.matchgi.dto.CreatePostResponseDto;
-import com.sparta.matchgi.model.ImgUrl;
-import com.sparta.matchgi.model.Post;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 public class DateConverter {
 

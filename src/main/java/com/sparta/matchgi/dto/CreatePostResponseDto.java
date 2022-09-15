@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -55,6 +56,29 @@ public class CreatePostResponseDto {
     private String profileImgUrl;
 
     private SubjectEnum subjectValue;
+
+    public CreatePostResponseDto (Post post,int owner, int player) {
+
+        this.postId = post.getId();
+        this.address = post.getAddress();
+        this.content = post.getContent();
+        this.lat = post.getLat();
+        this.lng = post.getLng();
+        this.matchDeadline = post.getMatchDeadline();
+        this.matchStatus = post.getMatchStatus();
+        this.subject = post.getSubject().getValue();
+        this.title = post.getTitle();
+        this.imgurls = post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList());
+        this.imgpaths = post.getImageList().stream().map(ImgUrl::getImagePathDto).collect(Collectors.toList());
+        this.imgurl = post.getImageList().stream().map(ImgUrl::getImageUrlDto).collect(Collectors.toList());
+        this.viewCount = post.getViewCount();
+        this.profileImgUrl = post.getUser().getProfileImgUrl();
+        this.nickname = post.getUser().getNickname();
+        this.subjectValue = post.getSubject();
+        this.owner = owner;
+        this.player = player;
+
+    }
 
 
 
