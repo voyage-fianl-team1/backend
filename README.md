@@ -72,6 +72,31 @@ FetchType을 lazy 전략으로 한 후 Dto를 사용하여 검색 조건으로 e
 
 <img src="https://user-images.githubusercontent.com/99013391/190170935-48d64627-20ae-4320-9f05-380fbae95c8e.png" width="40%">
 
+```sql
+explain select * from springdb.request where springdb.request.request_id = 291;
+```
+![Untitled](https://user-images.githubusercontent.com/99013391/191000130-6d287a78-7137-4c1c-b175-8aed4c52f61b.png)
+![이미지](https://user-images.githubusercontent.com/99013391/191001247-a0b3537e-a070-4521-8c76-e891bfa29c1f.png)
+```sql
+explain select * from springdb.post where springdb.post.post_id = 198;
+```
+![Untitled (2)](https://user-images.githubusercontent.com/99013391/191000204-d97d4980-d864-4e0a-8f8b-017b498f650e.png)
+![Untitled (3)](https://user-images.githubusercontent.com/99013391/191000218-42d47842-06f0-4cf1-925a-b2061434fb30.png)
+
+```sql
+explain select * from springdb.user where springdb.user.user_id = 99;
+```
+![Untitled (5)](https://user-images.githubusercontent.com/99013391/191000364-ce37bc59-d623-4d17-9421-5bf57b1f9a33.png)
+![Untitled (6)](https://user-images.githubusercontent.com/99013391/191000373-c973b455-7641-4bd6-b87d-bd33dd7d2b0c.png)
+
+```sql
+explain select * from springdb.request as R join springdb.post as P  on P.post_id = R.post_id join springdb.user U on U.user_id = R.user_id  where R.request_id = 291;
+```
+![Untitled (7)](https://user-images.githubusercontent.com/99013391/191000395-f9a89d22-fb60-4c99-aeac-7594d9ed7841.png)
+![Untitled (8)](https://user-images.githubusercontent.com/99013391/191000433-5fc8f215-22ab-4eef-a1bc-461ddb0bd919.png)
+
+검색되는 rows 값은 3으로 동일하지만 N+1 쿼리 문제가 발생하는 쿼리들의 duration을 합쳐보면 0.00095175 , N+1 쿼리 문제를 해결한 쿼리는 duration은 0.00044975이다. 쿼리 속도가 2배 이상 개선된 것을 볼 수 있다.
+
 ### 소켓통신 인증 문제
 
 #### 요구사항
